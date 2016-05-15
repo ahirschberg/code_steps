@@ -1,0 +1,12 @@
+{
+  "frames": [
+    {
+      "id": 1,
+      "text": "<b style=\"text-color: red; ...disallowed\">Does it <i>work??</i> - from JSON!</b>"
+    },
+    {
+      "id": 2,
+      "text": "<h1>VERY IMPORTANT!</h1>"
+    }
+  ]
+}
