@@ -3,8 +3,9 @@ import 'dart:html' show Element, HttpRequest, NodeValidatorBuilder, querySelecto
 import 'dart:convert';
 import 'dart:collection';
 
-import 'code_explanation_component.dart' show CodeExplanationComponent;
+import 'code_explanation_component.dart';
 import 'dart:async';
+import 'progression_service.dart';
 
 @Component(
   selector: 'code-guide',
@@ -12,28 +13,18 @@ import 'dart:async';
   directives: const [CodeExplanationComponent]
 )
 class CodeGuideComponent implements OnInit {
-  final NodeValidatorBuilder _htmlValidator = new NodeValidatorBuilder.common()
-    ..allowElement('section', attributes: const ["my_test"]);
 
-  var frameData;
-  final EventEmitter frameDataEmitter = new EventEmitter();
+  final ProgressionService _progressionService;
+
+  CodeGuideComponent(this._progressionService);
 
   void ngOnInit() {
     var request = HttpRequest.getString('/static/guide_ex.json').then((String value) {
       HashMap obj = JSON.decode(value);
-      print(obj);
-      frameData = getFrameHTML(obj, 0);
-      new Timer(new Duration(seconds: 30), () {print('frame2!'); frameData = getFrameHTML(obj, 1);});
+      _progressionService.getFrameHTML(obj, 0);
+      new Timer(new Duration(seconds: 5), () => _progressionService.getFrameHTML(obj, 1));
     }).catchError((Object o) => print(o));
-
-    print(request);
   }
 
-  getFrameHTML(HashMap hash, int i) {
-    var html_str = "<section my_test=\"test_attr\">Appended dynamically ${hash['frames'][i]['text']}</section>";
-    Element e = new Element.html(html_str, validator: _htmlValidator);
-    frameDataEmitter.emit(e);
-    return e;
-  }
 }
 
