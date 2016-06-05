@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 # this script builds the code and html steps files from their folder into json
 
+require 'json'
 
 def load_code_snippet(base_path)
   File.open(Dir.glob("#{base_path}/code.*").first) do |f|
@@ -18,20 +19,16 @@ def load_steps(base_path)
 end
 
 def build_json(code: nil, steps: [])
-  # todo: clean this up / use JSON.parse instead
-  <<HEREDOC
-{
-  "code": "#{code.gsub("\n", '\n').gsub('"', '\"') }",
-  "steps": [#{steps.each_with_index.map do |step, i|
-    %Q|{
-      "index": #{i},
-      "html": "#{step.gsub("\n", '\n')}"
-    }|
-      end.join(',')}]
-}
-HEREDOC
-  .gsub("\n", '')
-  # end HEREDOC
+  {
+    code: code,
+    steps: steps.each_with_index.map do |step, i|
+      {
+        "index": i,
+        "html": step
+          .gsub(/(?:\s{2,}|\n)/, '') # remove HTML ignored whitespace
+      }
+    end
+  }.to_json
 end
 
 

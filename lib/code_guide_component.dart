@@ -19,7 +19,6 @@ class CodeGuideComponent implements OnInit {
 
   void ngOnInit() {
     _progressionService.loadStepthroughData('/static/lesson-polymorphism.json');
-//    new Timer(new Duration(seconds: 5), () => _progressionService.loadStepthroughData('/static/404'));
   }
 
 }
