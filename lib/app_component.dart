@@ -1,4 +1,4 @@
-import 'package:angular2/core.dart' show Component;
+import 'package:angular2/core.dart' show Component, ViewEncapsulation;
 import 'code_guide_component.dart';
 import 'progression_service.dart';
 
