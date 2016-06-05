@@ -1,7 +1,7 @@
 import 'package:angular2/core.dart';
 import 'package:angular2/src/facade/async.dart';
 import 'progression_service.dart';
-import 'dart:collection';
+import 'package:observe/observe.dart';
 
 @Component(
     selector: 'code-explanation',
@@ -18,10 +18,10 @@ class CodeExplanationComponent implements OnInit {
   CodeExplanationComponent(this._elementRef, this.progressionService);
 
   ngOnInit() {
-    print('init??');
-    progressionService.changes.listen((UnmodifiableListView a) {
-      print("GOT MESSAGE FROM EMITTER! $a");
-      _elementRef.nativeElement.innerHtml = a.first.newValue;
+    progressionService.changes.listen((List<ChangeRecord> a) {
+      // on initial load, load first element
+      _elementRef.nativeElement.innerHtml
+          = progressionService.getExplanationText(0);
     });
   }
 }
