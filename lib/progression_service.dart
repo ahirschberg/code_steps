@@ -9,6 +9,7 @@ import 'dart:convert';
 class ProgressionService extends Injectable with ChangeNotifier {
 
   int _currStep = 1;
+  get currStep => _currStep;
 
   HashMap _currData;
   @reflectable get currData => _currData;
@@ -28,6 +29,8 @@ class ProgressionService extends Injectable with ChangeNotifier {
   void nextStep() {
     _currStep = notifyPropertyChange(#currStep, _currStep, _currStep + 1);
   }
+
+  bool hasNext() => currData != null && _currStep < _currData['steps'].length;
 
   get currStepExplanationHtml =>
       _currData['steps'][_currStep - 1]['html'].toString();

@@ -11,6 +11,7 @@ import 'code_step_higlight_directive.dart';
     styles: const ['''
       :host { padding: 0; }
       :host pre { margin: 0; }
+      :host c-frame.active-step { background-color: red; }
     '''],
     directives: const [CodeStepHighlight]
 )
@@ -39,17 +40,16 @@ class CodeViewerComponent implements OnInit {
 
     filterChangeStreamByProp(progressionService.changes, [#currStep, #currData])
         .listen((PropertyChangeRecord change) {
-          CodeStepHighlight.applyAll__hack(_elementRef);
+          new CodeStepHighlight(null, progressionService, root: _elementRef); // TODO remove hack!
         });
   }
 
-  Stream filterChangeStreamByProp(Stream propStream, List<Symbol> propNames) {
-    return propStream
+  Stream filterChangeStreamByProp(Stream propStream, List<Symbol> propNames) =>
+    propStream
         .map((List<ChangeRecord> changes) =>
-        changes.lastWhere((ChangeRecord c) =>
-        c.runtimeType == PropertyChangeRecord
-            && propNames.contains((c as PropertyChangeRecord).name),
+          changes.lastWhere((ChangeRecord c) =>
+            c.runtimeType == PropertyChangeRecord
+              && propNames.contains((c as PropertyChangeRecord).name),
             orElse: () => null)
-    ).where((test) => test != null);
-  }
+        ).where((test) => test != null);
 }

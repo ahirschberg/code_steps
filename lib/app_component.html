@@ -1,4 +1,6 @@
 <code-guide class="container">
 </code-guide>
 
-<button class="btn btn-primary" (click)="progressionService.nextStep()">Next</button>
+<button class="btn btn-primary"
+        (click)="progressionService.nextStep()"
+        [disabled]="!progressionService.hasNext()">Next</button>
