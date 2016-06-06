@@ -6,7 +6,10 @@ import 'progression_service.dart';
     selector: 'my-app',
     templateUrl: 'app_component.html',
     styleUrls: const ['app_component.css'],
-    directives: const [CodeGuideComponent],
-    providers: const [ProgressionService]
+    directives: const [CodeGuideComponent]
 )
-class AppComponent {}
+class AppComponent {
+  ProgressionService progressionService;
+
+  AppComponent(this.progressionService);
+}

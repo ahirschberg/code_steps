@@ -4,6 +4,7 @@ import 'code_explanation_component.dart';
 import 'progression_service.dart';
 import 'dart:async';
 import 'code_viewer_component.dart';
+import 'package:Polymorph/code_step_higlight_directive.dart';
 
 @Component(
   selector: 'code-guide',
@@ -17,9 +18,7 @@ class CodeGuideComponent implements OnInit {
 
   CodeGuideComponent(this._progressionService);
 
-  void ngOnInit() {
-    _progressionService.loadStepthroughData('/static/lesson-polymorphism.json');
-  }
-
+  void ngOnInit() => _progressionService
+      .loadStepthroughData('/static/lesson-polymorphism.json');
 }
 

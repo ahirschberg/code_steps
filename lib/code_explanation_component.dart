@@ -19,9 +19,8 @@ class CodeExplanationComponent implements OnInit {
 
   ngOnInit() {
     progressionService.changes.listen((List<ChangeRecord> a) {
-      // on initial load, load first element
       _elementRef.nativeElement.innerHtml
-          = progressionService.getExplanationText(0);
+          = progressionService.currStepExplanationHtml;
     });
   }
 }
