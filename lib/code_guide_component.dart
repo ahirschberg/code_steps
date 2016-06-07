@@ -18,7 +18,8 @@ class CodeGuideComponent implements OnInit {
 
   CodeGuideComponent(this._progressionService);
 
-  void ngOnInit() => _progressionService
-      .loadStepthroughData('/static/lesson-polymorphism.json');
+  void ngOnInit() {
+    _progressionService.selectLesson('/static/lesson-polymorphism.json');
+  }
 }
 

@@ -1,30 +1,26 @@
 import 'package:angular2/core.dart';
 import 'package:observe/observe.dart';
-import 'dart:async';
-import 'dart:html';
 import 'dart:collection';
-import 'dart:convert';
+import 'lesson_loader.dart';
 
 @Injectable()
 class ProgressionService extends Injectable with ChangeNotifier {
 
+  LessonLoader _lessonLoader;
+  ProgressionService(LessonLoader this._lessonLoader);
+
+  void selectLesson(url) {
+    _lessonLoader.loadData(url)
+        .then((HashMap lessonData) => currData = lessonData);
+  }
+
   int _currStep = 1;
-  get currStep => _currStep;
+  int get currStep => _currStep;
 
   HashMap _currData;
   @reflectable get currData => _currData;
   @reflectable set currData(HashMap val) =>
     _currData = notifyPropertyChange(#currData, _currData, val);
-
-  Future<HashMap> _loadData(url) {
-    return HttpRequest.getString(url).then((String value) {
-      return JSON.decode(value);
-    }).catchError((Object o) => print(o));
-  }
-
-  void loadStepthroughData(url) {
-    _loadData(url).then((data) => currData = data);
-  }
 
   void nextStep() {
     _currStep = notifyPropertyChange(#currStep, _currStep, _currStep + 1);

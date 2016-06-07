@@ -11,7 +11,8 @@ import 'code_step_higlight_directive.dart';
     styles: const ['''
       :host { padding: 0; }
       :host pre { margin: 0; }
-      :host c-frame.active-step { background-color: red; }
+      :host c-frm.active-step.hl-pass { background-color: green; }
+      :host c-frm.active-step.hl-fail { background-color: red; }
     '''],
     directives: const [CodeStepHighlight]
 )
@@ -19,7 +20,7 @@ class CodeViewerComponent implements OnInit {
 
   final NodeValidatorBuilder _codeViewerValidator = new NodeValidatorBuilder()
     ..allowElement('pre')
-    ..allowElement('c-frame', attributes: const ["data-frame"]);
+    ..allowElement('c-frm', attributes: const ["class", "f-step"]);
 
   ProgressionService progressionService;
   ElementRef _elementRef;

@@ -4,8 +4,9 @@
 import 'package:angular2/platform/browser.dart';
 
 import 'package:Polymorph/app_component.dart';
-import 'package:Polymorph/progression_service.dart';
+import 'package:Polymorph/lesson_loader.dart';
+import 'package:Polymorph/progression_service_provider.dart';
 
 main() {
-  bootstrap(AppComponent, [ProgressionService]);
+  bootstrap(AppComponent, [LessonLoader, progressionServiceProvider]);
 }

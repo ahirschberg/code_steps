@@ -5,10 +5,9 @@ import 'dart:html';
 import 'package:Polymorph/progression_service.dart';
 
 
-// TODO figure out how to remove hack and have selector
-// re-run when changes detected
+// TODO figure out how to remove hack and have selector re-run when changes detected
 @Directive(
-    selector: 'c-frame[data-frame]'
+    selector: 'c-frm[f-step]'
 )
 class CodeStepHighlight {
   ProgressionService progressionService;
@@ -27,11 +26,11 @@ class CodeStepHighlight {
   /// initial startup
   void applyAll__hack(ElementRef root) {
     (root.nativeElement as Element)
-        .querySelectorAll('c-frame[data-frame]')
+        .querySelectorAll('c-frm[f-step]')
         .forEach(_apply);
   }
   void _apply(Element element) {
-    if (element.attributes['data-frame'] == progressionService.currStep.toString()) {
+    if (element.attributes['f-step'] == progressionService.currStep.toString()) {
       element.classes.add('active-step');
     } else {
       element.classes.remove('active-step');
