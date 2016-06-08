@@ -28,6 +28,12 @@ class ProgressionService extends Injectable with ChangeNotifier {
 
   bool hasNext() => currData != null && _currStep < _currData['steps'].length;
 
+  void prevStep() {
+    _currStep = notifyPropertyChange(#currStep, _currStep, _currStep - 1);
+  }
+
+  bool hasPrev() => currData != null && _currStep > 1;
+
   get currStepExplanationHtml =>
       _currData['steps'][_currStep - 1]['html'].toString();
   get codeHtml => _currData['code'];

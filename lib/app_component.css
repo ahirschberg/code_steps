@@ -1,3 +1,12 @@
 :host {
     font-size: 1.2rem;
 }
+
+nav.lesson-steps-nav {
+    margin: 10px auto 0;
+    display: table;
+}
+
+nav.lesson-steps-nav button {
+    margin: 0 5px;
+}

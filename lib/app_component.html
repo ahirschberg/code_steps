@@ -1,6 +1,11 @@
 <code-guide class="container">
 </code-guide>
 
-<button class="btn btn-primary"
-        (click)="progressionService.nextStep()"
-        [disabled]="!progressionService.hasNext()">Next</button>
+<nav class="lesson-steps-nav">
+    <button class="btn btn-primary"
+            (click)="progressionService.prevStep()"
+            [disabled]="!progressionService.hasPrev()">Previous</button>
+    <button class="btn btn-primary"
+            (click)="progressionService.nextStep()"
+            [disabled]="!progressionService.hasNext()">Next</button>
+</nav>
