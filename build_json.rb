@@ -3,6 +3,12 @@
 
 require 'json'
 require 'cgi'
+require 'redcarpet'
+
+renderer = Redcarpet::Render::HTML.new(
+  safe_links_only: true, prettify: true, hard_wrap: true)
+$markdown = Redcarpet::Markdown.new(renderer,
+                                   autolink: true, fenced_code_blocks: true)
 
 def load_code_snippet(base_path)
   File.open(Dir.glob("#{base_path}/code.*").first) do |f|
@@ -11,7 +17,7 @@ def load_code_snippet(base_path)
 end
 
 def load_steps(base_path)
-  File.open("#{base_path}/steps.html") do |f|
+  File.open("#{base_path}/steps.md") do |f|
     f
       .read
       .scan(/{{ \d+ }}(.*?)(?={{ \d+ }}|\z)/m)
@@ -25,7 +31,7 @@ def build_json(code: nil, steps: [])
     steps: steps.each_with_index.map do |step, i|
       {
         "index": i,
-        "html": ParseHelper.strip_html_ignored_whitespace(step)
+        "html": $markdown.render(step)
 
       }
     end

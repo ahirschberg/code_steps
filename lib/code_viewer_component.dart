@@ -11,8 +11,19 @@ import 'code_step_higlight_directive.dart';
     styles: const ['''
       :host { padding: 0; }
       :host pre { margin: 0; }
-      :host c-frm.active-step.hl-pass { background-color: green; }
-      :host c-frm.active-step.hl-fail { background-color: red; }
+      :host c-frm.active-step {
+        border-radius: 2px;
+        padding: 2px;
+        margin: -2px;
+      }
+      :host c-frm.active-step.hl-pass {
+        background-color: #1C531C;
+        box-shadow: 0px 0px 1px 1px #138613;
+      }
+      :host c-frm.active-step.hl-fail {
+        background-color: #532323;
+        box-shadow: 0px 0px 1px 1px #9B3434;
+      }
     '''],
     directives: const [CodeStepHighlight]
 )
