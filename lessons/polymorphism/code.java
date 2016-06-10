@@ -1,6 +1,8 @@
 public class Example {
     public static void main(String... args) {
-        {{2 Set<String> +}} o = {{2 new Set<>() +}};
-        {{3 Set<String> -}} o = {{3 "abc" -}};
+{{1*
+        {{2+ Set<String> mySet ~}} = {{2+ new HashSet<>() ~}};
+        {{3+ Object o ~}} = {{3+ new HashSet<String>() ~}};
+        {{4- Set<String> s ~}} = {{4- o ~}}; ~}}
     }
 }

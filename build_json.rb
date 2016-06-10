@@ -12,8 +12,9 @@ $markdown = Redcarpet::Markdown.new(renderer,
 
 def load_code_snippet(base_path)
   File.open(Dir.glob("#{base_path}/code.*").first) do |f|
-    f.read
+    yield f
   end
+  nil
 end
 
 def load_steps(base_path)
@@ -27,7 +28,7 @@ end
 
 def build_json(code: nil, steps: [])
   {
-    code: ParseHelper.decorate_code(code),
+    code: ParseHelper.decorate_code_fancy(code).string,
     steps: steps.each_with_index.map do |step, i|
       {
         "index": i,
@@ -44,19 +45,32 @@ class ParseHelper
   MODE_MAP = Hash.new { |hash, key| raise "The mode #{key} is not a valid mode for step highlighting."}
   MODE_MAP.merge!({
     '+': 'hl-pass',
-    '-': 'hl-fail'
+    '-': 'hl-fail',
+    '*': 'hl-focus'
   })
 
-  def self.decorate_code(raw_code)
-    raw_code.gsub(DECORATOR_REGEX) do
-      m = Regexp.last_match
-      strip_html_ignored_whitespace(%Q{
-        <c-frm f-step="#{ m['step_i'] }"
-            class="#{ MODE_MAP[m['mode'].to_sym] }">
-            #{ CGI.escapeHTML m['text'] }
-          </c-frm>
-      })
+  def self.decorate_code_fancy(code_file)
+    strio = StringIO.new
+    last_whitespace = ''
+    code_file.read.split(/(?<=\s)/).each do |token|
+      if /^(.*?){{(\d+)(\+|-|\*)/m =~ token
+        match = Regexp.last_match
+        strio << last_whitespace
+        strio << match[1]
+        strio << %Q{<c-frm f-step="#{match[2]}" class="#{MODE_MAP[match[3].to_sym]}">}
+        last_whitespace = ''
+      elsif /^~}}(.*)/m =~ token
+        match = Regexp.last_match
+        strio << "</c-frm>#{match[1]}"
+        last_whitespace = ''
+      else
+        strio << last_whitespace
+        match = /^(\S+)?(\s+)$/m.match(token)
+        last_whitespace = match[2]
+        strio << CGI.escapeHTML(match[1]) if match[1]
+      end
     end
+    strio
   end
 
   def self.strip_html_ignored_whitespace(str)
@@ -70,7 +84,9 @@ if __FILE__ == $0
     path = "lessons/#{filename}"
     if File.directory? path
       File.open("web/static/lesson-#{filename}.json", 'w') do |output|
-        output << build_json(code: load_code_snippet(path), steps: load_steps(path))
+        load_code_snippet(path) do |f| 
+          output << build_json(code: f, steps: load_steps(path))
+        end
       end
     end
   end

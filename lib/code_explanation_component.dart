@@ -5,7 +5,8 @@ import 'package:observe/observe.dart';
 
 @Component(
     selector: 'code-explanation',
-    template: '<div>TEST</div>'
+    template: '',
+    styleUrls: const ['code_explanation_component.css']
 )
 class CodeExplanationComponent implements OnInit {
 

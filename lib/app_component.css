@@ -2,6 +2,10 @@
     font-size: 1.2rem;
 }
 
+code-guide {
+    margin: 50px auto 10px;
+}
+
 nav.lesson-steps-nav {
     margin: 10px auto 0;
     display: table;

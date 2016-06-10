@@ -19,3 +19,8 @@
     background-color: #532323;
     box-shadow: 0px 0px 1px 1px #9B3434;
 }
+
+:host c-frm.active-step.hl-focus {
+    background-color: #5A564E;
+    box-shadow: 0px 0px 1px 1px #FFED94;
+}
