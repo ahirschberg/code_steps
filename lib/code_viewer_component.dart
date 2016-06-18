@@ -17,7 +17,7 @@ class CodeViewerComponent implements OnInit {
     ..allowElement('pre')
     ..allowElement('c-frm', attributes: const ["class", "f-step"]);
 
-  ProgressionService progressionService;
+  final ProgressionService progressionService;
   ElementRef _elementRef;
 
   CodeViewerComponent(this.progressionService, this._elementRef);

@@ -6,21 +6,11 @@
     margin: 0;
     height: inherit;
 }
-:host c-frm.active-step {
-    border-radius: 2px;
-    padding: 2px;
-    margin: -2px;
-}
 :host c-frm.active-step.hl-pass {
-    background-color: #1C531C;
-    box-shadow: 0px 0px 1px 1px #138613;
+    box-shadow: 0 0 1px 3px #256825,
+        0 0 1em 1em #256825 inset;
 }
 :host c-frm.active-step.hl-fail {
-    background-color: #532323;
-    box-shadow: 0px 0px 1px 1px #9B3434;
-}
-
-:host c-frm.active-step.hl-focus {
-    background-color: #5A564E;
-    box-shadow: 0px 0px 1px 1px #FFED94;
+    box-shadow: 0px 0px 1px 3px #532323,
+        0 0 1em 1em #532323 inset;
 }

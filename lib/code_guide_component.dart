@@ -22,4 +22,3 @@ class CodeGuideComponent implements OnInit {
     _progressionService.selectLesson('/static/lesson-polymorphism.json');
   }
 }
-
