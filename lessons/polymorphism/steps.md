@@ -1,4 +1,4 @@
-# { step: 1, pass: [a, b] }
+# { step: 1a, pass: [a, b] }
 **this is an explanation**
 
-# { step: 2, fail: [c, d] show: [e] }
+# { step: 2, fail: [c, d], show: [e] }
