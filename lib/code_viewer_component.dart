@@ -15,7 +15,7 @@ class CodeViewerComponent implements OnInit {
 
   final NodeValidatorBuilder _codeViewerValidator = new NodeValidatorBuilder()
     ..allowElement('pre')
-    ..allowElement('c-frm', attributes: const ["class", "f-step"]);
+    ..allowElement('c-frm', attributes: const ["f-id"]);
 
   final ProgressionService progressionService;
   ElementRef _elementRef;
@@ -45,7 +45,6 @@ class CodeViewerComponent implements OnInit {
         .map((List<ChangeRecord> changes) =>
           changes.lastWhere((ChangeRecord c) =>
             c.runtimeType == PropertyChangeRecord
-              && propNames.contains((c as PropertyChangeRecord).name),
-            orElse: () => null)
-        ).where((test) => test != null);
+              && propNames.contains((c as PropertyChangeRecord).name))
+        ).handleError((error) {}, test: (e) => e.runtimeType == StateError);
 }

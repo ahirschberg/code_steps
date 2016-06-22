@@ -12,9 +12,8 @@ $markdown = Redcarpet::Markdown.new(renderer,
 
 def load_code_snippet(base_path)
   File.open(Dir.glob("#{base_path}/code.*").first) do |f|
-    yield f
+    return f.read
   end
-  nil
 end
 
 def load_steps(base_path)
@@ -49,28 +48,36 @@ class ParseHelper
     '*': 'hl-focus'
   })
 
-  def self.decorate_code_fancy(code_file)
+  def self.decorate_code_fancy(code_str)
     strio = StringIO.new
-    last_whitespace = ''
-    code_file.read.split(/(?<=\s)/).each do |token|
-      if /^(.*?){{(\d+)(\+|-|\*)/m =~ token
-        match = Regexp.last_match
-        strio << last_whitespace
-        strio << match[1]
-        strio << %Q{<c-frm f-step="#{match[2]}" class="#{MODE_MAP[match[3].to_sym]}">}
-        last_whitespace = ''
-      elsif /^~}}(.*)/m =~ token
-        match = Regexp.last_match
-        strio << "</c-frm>#{match[1]}"
-        last_whitespace = ''
+    code_lines = code_str.split "\n"
+    line_lookahead = false
+
+    code_lines.each_with_index do |line, i|
+      (line_lookahead = false; next) if line_lookahead # line already processed
+      prev_match_end = 0
+      if line =~ /^\/\/#/
+        next_line = code_lines[i + 1]
+        line_lookahead = true
+        line.scan(/(?:(\w+)|\|\s*(\w+)\s*\|)/) do |s|
+          match = Regexp.last_match
+          matched_id = match[1] || match[2]
+          strio << next_line[prev_match_end...match.begin(0)]
+          strio << add_frame_tags(
+            next_line[match.begin(0)...match.end(0)], matched_id)
+          prev_match_end = match.end 0
+        end
+        strio << "\n"
       else
-        strio << last_whitespace
-        match = /^(\S+)?(\s+)$/m.match(token)
-        last_whitespace = match[2]
-        strio << CGI.escapeHTML(match[1]) if match[1]
+        strio << line << "\n"
       end
     end
     strio
+  end
+
+  def self.add_frame_tags(substring, frame_id)
+    %Q{<c-frm f-id="#{frame_id}">#{
+      CGI.escapeHTML(substring)}</c-frm>}
   end
 
   def self.strip_html_ignored_whitespace(str)
@@ -84,9 +91,7 @@ if __FILE__ == $0
     path = "lessons/#{filename}"
     if File.directory? path
       File.open("web/static/lesson-#{filename}.json", 'w') do |output|
-        load_code_snippet(path) do |f| 
-          output << build_json(code: f, steps: load_steps(path))
-        end
+        output << build_json(code: load_code_snippet(path), steps: load_steps(path))
       end
     end
   end
