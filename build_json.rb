@@ -83,7 +83,20 @@ class ParseHelper
   def self.strip_html_ignored_whitespace(str)
     str.gsub(/(?:\s{2,}|\n)/, '') # remove HTML ignored whitespace
   end
+
+  def self.jsonify_step_cmds(step_header_str)
+    step_cmds = step_header_str.match(/# ?({.*})/)[1]
+    step_cmds_obj = JSON.parse(step_cmds
+      .gsub(/(\w+)\s*:/, '"\1":') # surround all keys with quotes
+      .gsub(/(?<=\[).*?(?=\])/) do |text| # add quotes to ids inside [  ]
+        text.gsub(/(\w+),?/, '"\1",')[0..-2]
+      end
+    )
+    JSON.generate(step_cmds_obj) # is json parse then generate bad practice?
+  end
 end
+
+exit
 
 if __FILE__ == $0
   Dir.foreach('lessons') do |filename|
