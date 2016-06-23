@@ -14,12 +14,17 @@ class StepsParser
 
   def generate_steps(lesson_path)
     File.open("#{lesson_path}/steps.md") do |steps_file|
-      parse steps_file.read
+      steps_data = parse steps_file.read
+      steps_data.sort
     end
   end
 
   private
-  StepData = Struct.new :index, :cmds, :text
+  StepData = Struct.new :index, :cmds, :text do
+    def <=>(other)
+      self.index <=> other.index
+    end
+  end
 
   def parse(raw_steps)
 
