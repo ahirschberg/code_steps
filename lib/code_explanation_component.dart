@@ -6,7 +6,7 @@ import 'package:observe/observe.dart';
 @Component(
     selector: 'code-explanation',
     template: '',
-    styleUrls: const ['code_explanation_component.css']
+    styleUrls: const ['css/code_explanation_component.css']
 )
 class CodeExplanationComponent implements OnInit {
 
@@ -21,7 +21,7 @@ class CodeExplanationComponent implements OnInit {
   ngOnInit() {
     progressionService.changes.listen((List<ChangeRecord> a) {
       _elementRef.nativeElement.innerHtml
-          = progressionService.currStepExplanationHtml;
+          = progressionService.currStep.html;
     });
   }
 }

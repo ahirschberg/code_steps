@@ -4,8 +4,8 @@ import 'progression_service.dart';
 
 @Component(
     selector: 'my-app',
-    templateUrl: 'app_component.html',
-    styleUrls: const ['app_component.css'],
+    templateUrl: 'html/app_component.html',
+    styleUrls: const ['css/app_component.css'],
     directives: const [CodeGuideComponent]
 )
 class AppComponent {
