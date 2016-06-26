@@ -1,16 +1,15 @@
-import 'package:angular2/core.dart' show Component, ComponentRef, Directive, DynamicComponentLoader, ElementRef, EventEmitter, OnInit, ViewChild, ViewContainerRef;
+import 'package:angular2/core.dart' show Component, OnInit;
 
 import 'code_explanation_component.dart';
 import 'progression_service.dart';
-import 'dart:async';
 import 'code_viewer_component.dart';
-import 'package:Polymorph/code_step_higlight_directive.dart';
+import 'package:Polymorph/step_cmds_directive.dart';
 
 @Component(
   selector: 'code-guide',
-  templateUrl: 'code_guide_component.html',
-  styleUrls: const ['code_guide_component.css'],
-  directives: const [CodeExplanationComponent, CodeViewerComponent]
+  templateUrl: 'html/code_guide_component.html',
+  styleUrls: const ['css/code_guide_component.css'],
+  directives: const [CodeExplanationComponent, CodeViewerComponent, StepCommandsDirective]
 )
 class CodeGuideComponent implements OnInit {
 

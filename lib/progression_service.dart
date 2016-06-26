@@ -2,6 +2,7 @@ import 'package:angular2/core.dart';
 import 'package:observe/observe.dart';
 import 'dart:collection';
 import 'lesson_loader.dart';
+import 'package:Polymorph/step_data.dart';
 
 @Injectable()
 class ProgressionService extends Injectable with ChangeNotifier {
@@ -10,31 +11,38 @@ class ProgressionService extends Injectable with ChangeNotifier {
   ProgressionService(LessonLoader this._lessonLoader);
 
   void selectLesson(url) {
-    _lessonLoader.loadData(url)
-        .then((HashMap lessonData) => currData = lessonData);
+    _lessonLoader.loadData(url).then((HashMap lessonData) {
+      loadedSteps = StepData.toStepData(lessonData['steps']);
+      loadedCode = lessonData['code'];
+      print(loadedCode);
+    });
   }
 
-  int _currStep = 1;
-  int get currStep => _currStep;
+  int _currStep = 0;
 
-  HashMap _currData;
-  @reflectable get currData => _currData;
-  @reflectable set currData(HashMap val) =>
-    _currData = notifyPropertyChange(#currData, _currData, val);
+  List<StepData> _loadedSteps;
+  @reflectable List<StepData> get loadedSteps => _loadedSteps;
+  @reflectable set loadedSteps(List<StepData> val) =>
+    _loadedSteps = notifyPropertyChange(#loadedSteps, _loadedSteps, val);
+
+  String _loadedCode;
+  @reflectable String get loadedCode => _loadedCode;
+  @reflectable set loadedCode(String val) =>
+      _loadedCode = notifyPropertyChange(#loadedCode, _loadedCode, val);
 
   void nextStep() {
     _currStep = notifyPropertyChange(#currStep, _currStep, _currStep + 1);
   }
 
-  bool hasNext() => currData != null && _currStep < _currData['steps'].length;
+  bool hasNext() => _loadedSteps != null && _currStep < _loadedSteps.length - 1;
 
   void prevStep() {
     _currStep = notifyPropertyChange(#currStep, _currStep, _currStep - 1);
   }
 
-  bool hasPrev() => currData != null && _currStep > 1;
+  bool hasPrev() => _loadedSteps != null && _currStep > 0;
 
-  get currStepExplanationHtml =>
-      _currData['steps'][_currStep - 1]['html'].toString();
-  get codeHtml => _currData['code'];
+  StepData get currStep => loadedSteps == null ? null :
+      loadedSteps[_currStep];
+  String get currCodeHtml => loadedCode;
 }

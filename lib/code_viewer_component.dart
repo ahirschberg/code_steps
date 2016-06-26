@@ -3,19 +3,18 @@ import 'package:Polymorph/progression_service.dart';
 import 'package:observe/observe.dart';
 import 'package:Polymorph/highlightjs_interop.dart' as highlighter;
 import 'dart:html';
-import 'code_step_higlight_directive.dart';
+import 'package:Polymorph/util.dart';
 
 @Component(
     selector: 'code-viewer',
     template: '',
-    styleUrls: const ['code_viewer_component.css'],
-    directives: const [CodeStepHighlight]
+    styleUrls: const ['css/code_viewer_component.css']
 )
 class CodeViewerComponent implements OnInit {
 
   final NodeValidatorBuilder _codeViewerValidator = new NodeValidatorBuilder()
     ..allowElement('pre')
-    ..allowElement('c-frm', attributes: const ["class", "f-step"]);
+    ..allowElement('c-frm', attributes: const ["f-id"]);
 
   final ProgressionService progressionService;
   ElementRef _elementRef;
@@ -23,29 +22,17 @@ class CodeViewerComponent implements OnInit {
   CodeViewerComponent(this.progressionService, this._elementRef);
 
   ngOnInit() {
-    filterChangeStreamByProp(progressionService.changes, [#currData])
+    Util.filterChangeStreamByProp(progressionService.changes, [#loadedCode])
         .listen((PropertyChangeRecord change) {
           Element e = new Element.html(
-              "<pre>${progressionService.codeHtml}</pre>",
+              "<pre>${progressionService.currCodeHtml}</pre>",
               validator: _codeViewerValidator);
 
           _elementRef.nativeElement.append(e);
           highlighter.highlightBlock(e);
           return false;
         });
-
-    filterChangeStreamByProp(progressionService.changes, [#currStep, #currData])
-        .listen((PropertyChangeRecord change) {
-          new CodeStepHighlight(null, progressionService, root: _elementRef); // TODO remove hack!
-        });
   }
 
-  Stream filterChangeStreamByProp(Stream propStream, List<Symbol> propNames) =>
-    propStream
-        .map((List<ChangeRecord> changes) =>
-          changes.lastWhere((ChangeRecord c) =>
-            c.runtimeType == PropertyChangeRecord
-              && propNames.contains((c as PropertyChangeRecord).name),
-            orElse: () => null)
-        ).where((test) => test != null);
+
 }
