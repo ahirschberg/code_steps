@@ -86,9 +86,9 @@ class CodeParser
             next_line[match.begin(0)...match.end(0)], matched_id)
           prev_match_end = match.end 0
         end
-        strio << "\n"
+        strio << next_line[prev_match_end..-1] << ?\n
       else
-        strio << line << "\n"
+        strio << line << ?\n
       end
     end
     strio
