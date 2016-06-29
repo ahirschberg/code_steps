@@ -7,19 +7,18 @@
     height: inherit;
 }
 :host c-frm.hl-pass {
-    box-shadow: 0 0 0 1px #256825;
-    background-color: #256825;
+    box-shadow: 0 0 1px 3px #256825,
+        0 0 1em 1em #256825 inset;
 }
 :host c-frm.hl-fail {
-    box-shadow: 0 0 0 1px #532323;
-    background-color: #532323;
+    box-shadow: 0px 0px 1px 3px #532323,
+        0 0 1em 1em #532323 inset;
 }
 
 :host c-frm.hl-hide {
     display: none;
 }
 
-:host c-frm.hl-spotlight {
-    box-shadow: 0 0 0 1px rgba(125, 103, 7, 0.5);
-    background-color: rgba(125, 103, 7, 0.5)
+:host c-frm.hl-show {
+
 }
