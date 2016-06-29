@@ -1,0 +1,128 @@
+{
+  "ngDeps": {
+    "1": "",
+    "3": [
+      {
+        "1": "package:angular2/core.dart",
+        "5": false
+      },
+      {
+        "1": "lesson_loader.dart",
+        "5": false
+      },
+      {
+        "1": "package:Polymorph/progression_service.dart",
+        "5": false
+      }
+    ],
+    "5": [
+      {
+        "1": "progressionServiceFactory",
+        "3": true,
+        "4": [
+          {
+            "1": "Injectable",
+            "4": false
+          }
+        ],
+        "5": [
+          {
+            "1": "LessonLoader",
+            "4": "lessonLoader"
+          }
+        ]
+      }
+    ],
+    "6": "progression_service_provider.dart"
+  },
+  "type": {
+    "progressionServiceProvider": {
+      "class": "Identifier",
+      "name": "progressionServiceProvider",
+      "moduleUrl": "asset:Polymorph/lib/progression_service_provider.dart",
+      "prefix": null,
+      "value": {
+        "class": "Provider",
+        "token": {
+          "value": null,
+          "identifier": {
+            "class": "Identifier",
+            "name": "ProgressionService",
+            "moduleUrl": null,
+            "prefix": null,
+            "value": null
+          },
+          "identifierIsInstance": false
+        },
+        "useClass": null,
+        "useExisting": null,
+        "useValue": null,
+        "useFactory": {
+          "class": "Factory",
+          "name": "progressionServiceFactory",
+          "prefix": null,
+          "moduleUrl": null,
+          "value": null,
+          "diDeps": []
+        },
+        "multi": false,
+        "deps": [
+          {
+            "token": {
+              "value": null,
+              "identifier": {
+                "class": "Identifier",
+                "name": "LessonLoader",
+                "moduleUrl": null,
+                "prefix": null,
+                "value": null
+              },
+              "identifierIsInstance": false
+            },
+            "query": null,
+            "viewQuery": null,
+            "value": null,
+            "isAttribute": false,
+            "isSelf": false,
+            "isHost": false,
+            "isSkipSelf": false,
+            "isOptional": false,
+            "isValue": false
+          }
+        ]
+      }
+    },
+    "progressionServiceFactory": {
+      "class": "Factory",
+      "name": "progressionServiceFactory",
+      "prefix": null,
+      "moduleUrl": "asset:Polymorph/lib/progression_service_provider.dart",
+      "value": null,
+      "diDeps": [
+        {
+          "token": {
+            "value": null,
+            "identifier": {
+              "class": "Identifier",
+              "name": "LessonLoader",
+              "moduleUrl": null,
+              "prefix": null,
+              "value": null
+            },
+            "identifierIsInstance": false
+          },
+          "query": null,
+          "viewQuery": null,
+          "value": null,
+          "isAttribute": false,
+          "isSelf": false,
+          "isHost": false,
+          "isSkipSelf": false,
+          "isOptional": false,
+          "isValue": false
+        }
+      ]
+    }
+  },
+  "alias": {}
+}

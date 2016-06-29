@@ -1,0 +1,13 @@
+{
+  "ngDeps": null,
+  "type": {
+    "StepData": {
+      "class": "Identifier",
+      "name": "StepData",
+      "moduleUrl": "asset:Polymorph/lib/step_data.dart",
+      "prefix": null,
+      "value": null
+    }
+  },
+  "alias": {}
+}
