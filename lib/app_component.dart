@@ -15,7 +15,7 @@ class AppComponent implements OnInit {
   AppComponent(this.progressionService);
 
   void userSelectLesson() {
-    progressionService.selectLesson('/static/lesson-$lessonName.json')
+    progressionService.selectLesson('static/lesson-$lessonName.json')
         .catchError((dynamic err) =>
           print('ERROR: $err'));
   }
