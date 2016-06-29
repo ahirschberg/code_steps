@@ -19,6 +19,7 @@
     display: none;
 }
 
-:host c-frm.hl-show {
-
+:host c-frm.hl-spotlight {
+    box-shadow: 0 0 1px 3px rgba(172, 158, 101, 0.61),
+        0 0 1em 1em rgba(172, 158, 101, 0.61) inset;
 }
