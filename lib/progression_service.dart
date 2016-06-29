@@ -3,6 +3,7 @@ import 'package:observe/observe.dart';
 import 'dart:collection';
 import 'lesson_loader.dart';
 import 'package:Polymorph/step_data.dart';
+import 'dart:async';
 
 @Injectable()
 class ProgressionService extends Injectable with ChangeNotifier {
@@ -10,11 +11,11 @@ class ProgressionService extends Injectable with ChangeNotifier {
   LessonLoader _lessonLoader;
   ProgressionService(LessonLoader this._lessonLoader);
 
-  void selectLesson(url) {
-    _lessonLoader.loadData(url).then((HashMap lessonData) {
+  Future selectLesson(url) {
+    return _lessonLoader.loadData(url).then((HashMap lessonData) {
       loadedSteps = StepData.toStepData(lessonData['steps']);
       loadedCode = lessonData['code'];
-      print(loadedCode);
+      _currStep = notifyPropertyChange(#currStep, _currStep, 0);
     });
   }
 
