@@ -88,7 +88,7 @@ class CodeParser
         end
         strio << next_line[prev_match_end..-1] << ?\n
       else
-        strio << line << ?\n
+        strio << CGI.escapeHTML(line) << ?\n
       end
     end
     strio
