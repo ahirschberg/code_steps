@@ -32,6 +32,10 @@ class StepCommandsDirective implements OnInit {
     commandActions['hide'] = (List<String> targets,
         Map<Element, List<String>> changes) =>
         selectMatching(targets, 'hl-hide', changes, persistent: true);
+
+    commandActions['spotlight'] = (List<String> targets,
+        Map<Element, List<String>> changes) =>
+        selectMatching(targets, 'hl-spotlight', changes);
   }
 
   selectMatching(List<String> f_ids, class_to_apply,
