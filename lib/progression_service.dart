@@ -14,7 +14,7 @@ class ProgressionService extends Injectable with ChangeNotifier {
     _lessonLoader.loadData(url).then((HashMap lessonData) {
       loadedSteps = StepData.toStepData(lessonData['steps']);
       loadedCode = lessonData['code'];
-      print(loadedCode);
+      notifyPropertyChange(#currStep, _currStep, 0);
     });
   }
 

@@ -1,4 +1,4 @@
-import 'package:angular2/core.dart' show Component, ViewEncapsulation;
+import 'package:angular2/core.dart' show Component;
 import 'code_guide_component.dart';
 import 'progression_service.dart';
 
@@ -10,6 +10,12 @@ import 'progression_service.dart';
 )
 class AppComponent {
   ProgressionService progressionService;
+  String lessonName = '';
 
   AppComponent(this.progressionService);
+
+  void userSelectLesson() {
+    print('loading $lessonName');
+    progressionService.selectLesson('/static/lesson-$lessonName.json');
+  }
 }
