@@ -8,4 +8,9 @@
     <button class="btn btn-primary"
             (click)="progressionService.nextStep()"
             [disabled]="!progressionService.hasNext()">Next</button>
+
+    <!-- should be moved to component -->
+    <form id="lesson-select-poc" (ngSubmit)="userSelectLesson()">
+        <input type="text" [(ngModel)]="lessonName" placeholder="Enter lesson name">
+    </form>
 </nav>
