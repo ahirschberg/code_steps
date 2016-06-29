@@ -6,7 +6,6 @@ require 'cgi'
 require 'redcarpet'
 
 
-
 class StepsParser
   def initialize(markdown_parser)
     @md_parser = markdown_parser
@@ -44,7 +43,7 @@ class StepsParser
 
   def convert_cmds_to_valid_json(step_cmds)
     fixed = step_cmds
-      .gsub(/(\w+)\s*:/, '"\1":') # surround all keys with quotes
+      .gsub(/([A-z\-]+)\s*:/, '"\1":') # surround all keys with quotes
       .gsub(/(?<="step":) *(\w+)/, '"\1"') # surround step value with quotes
       .gsub(/(?<=\[).*?(?=\])/) do |text| # add quotes to frame ids inside [  ]
         text.gsub(/(\w+),?/, '"\1",')[0..-2]
@@ -71,6 +70,7 @@ class CodeParser
     strio = StringIO.new
     code_lines = code_str.split "\n"
     line_lookahead = false
+    directives_count = 1
 
     code_lines.each_with_index do |line, i|
       (line_lookahead = false; next) if line_lookahead
@@ -78,6 +78,7 @@ class CodeParser
       if line =~ /^\/\/#/
         next_line = code_lines[i + 1]
         line_lookahead = true
+
         line.scan(/(?:(\w)|\|\s*(\w+)\s*\|)/) do |s| # match x or | x |
           match = Regexp.last_match
           matched_id = match[1] || match[2]
@@ -86,10 +87,13 @@ class CodeParser
             next_line[match.begin(0)...match.end(0)], matched_id)
           prev_match_end = match.end 0
         end
-        strio << next_line[prev_match_end..-1] << ?\n
+        strio << next_line[prev_match_end..-1]
+        strio << line_higlight_marker(directives_count)
+        directives_count += 1
       else
-        strio << CGI.escapeHTML(line) << ?\n
+        strio << CGI.escapeHTML(line)
       end
+      strio << ?\n
     end
     strio
   end
@@ -97,6 +101,10 @@ class CodeParser
   def self.add_frame_tags(substring, frame_id)
     %Q{<c-frm f-id="#{frame_id}">#{
       CGI.escapeHTML(substring)}</c-frm>}
+  end
+
+  def self.line_higlight_marker(line_num)
+    %Q{<c-hl f-ln-num="#{line_num}"></c-hl>}
   end
 end
 
