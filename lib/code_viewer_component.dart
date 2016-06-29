@@ -24,13 +24,12 @@ class CodeViewerComponent implements OnInit {
   ngOnInit() {
     Util.filterChangeStreamByProp(progressionService.changes, [#loadedCode])
         .listen((PropertyChangeRecord change) {
-          Element e = new Element.html(
-              "<pre>${progressionService.currCodeHtml}</pre>",
-              validator: _codeViewerValidator);
+          // why is nativeElement dynamic :{
+          Element root = _elementRef.nativeElement as Element;
 
-          _elementRef.nativeElement.append(e);
-          highlighter.highlightBlock(e);
-          return false;
+          root.setInnerHtml("<pre>${progressionService.currCodeHtml}</pre>",
+              validator: _codeViewerValidator);
+          highlighter.highlightBlock(root.firstChild);
         });
   }
 

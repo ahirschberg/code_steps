@@ -14,3 +14,10 @@ nav.lesson-steps-nav {
 nav.lesson-steps-nav button {
     margin: 0 5px;
 }
+
+#lesson-select-poc {
+    font-size: medium;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
