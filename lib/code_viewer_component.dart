@@ -14,7 +14,8 @@ class CodeViewerComponent implements OnInit {
 
   final NodeValidatorBuilder _codeViewerValidator = new NodeValidatorBuilder()
     ..allowElement('pre')
-    ..allowElement('c-frm', attributes: const ["f-id"]);
+    ..allowElement('c-frm', attributes: const ["f-id"])
+    ..allowElement('c-hl', attributes: const ["f-ln-num"]);
 
   final ProgressionService progressionService;
   ElementRef _elementRef;
