@@ -7,15 +7,15 @@
         "5": false
       },
       {
-        "1": "package:angular2/src/facade/async.dart",
-        "5": false
-      },
-      {
         "1": "progression_service.dart",
         "5": false
       },
       {
         "1": "package:observe/observe.dart",
+        "5": false
+      },
+      {
+        "1": "dart:html",
         "5": false
       }
     ],
@@ -44,12 +44,8 @@
         "4": "i0"
       },
       {
-        "1": "package:angular2/src/facade/async.ngfactory.dart",
-        "4": "i1"
-      },
-      {
         "1": "progression_service.ngfactory.dart",
-        "4": "i2"
+        "4": "i1"
       }
     ]
   },
@@ -114,10 +110,7 @@
         ]
       },
       "changeDetection": 5,
-      "inputs": {
-        "emitter": "changeListener",
-        "test": "my_test"
-      },
+      "inputs": {},
       "outputs": {},
       "hostListeners": {},
       "hostProperties": {},
@@ -139,6 +132,13 @@
       "viewProviders": [],
       "queries": [],
       "viewQueries": []
+    },
+    "_AllUriPolicy": {
+      "class": "Identifier",
+      "name": "_AllUriPolicy",
+      "moduleUrl": "asset:Polymorph/lib/code_explanation_component.dart",
+      "prefix": null,
+      "value": null
     }
   },
   "alias": {}
