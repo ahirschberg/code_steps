@@ -1,5 +1,4 @@
 import 'package:angular2/core.dart';
-import 'package:angular2/src/facade/async.dart';
 import 'progression_service.dart';
 import 'package:observe/observe.dart';
 import 'dart:html';

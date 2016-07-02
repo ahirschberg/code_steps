@@ -48,48 +48,38 @@ class StepsParser
       .gsub(/(?<=\[).*?(?=\])/) do |text| # add quotes to frame ids inside [  ]
         text.gsub(/(\w+),?/, '"\1",')[0..-2]
       end
-    p fixed
     fixed
   end
 end
 
 class CodeParser
-  def self.generate_code(lesson_name)
-    raw_code = load_code_snippet lesson_name
-    CodeParser.decorate_code_fancy(raw_code).string
-  end
+  LANG_ESCAPE_SEQS = {
+    'java': %r{//~},
+    'py': %r{#~}
+  }
 
-  private
-  def self.load_code_snippet(base_path)
-    File.open(Dir.glob("#{base_path}/code.*").first) do |f|
-      return f.read
+
+  def self.decorate_code(lesson_name)
+    File.open(Dir.glob("#{lesson_name}/code.*").first) do |f|
+      cp = CodeParser.new File.extname(f.path)[1..-1] # remove leading dot from filepath
+      cp.decorate_code(f.read).string
     end
   end
 
-  def self.decorate_code_fancy(code_str)
+  def initialize(file_ext)
+    @directive_esc_seq = LANG_ESCAPE_SEQS[file_ext.to_sym]
+  end
+
+  def decorate_code(code_str)
     strio = StringIO.new
     code_lines = code_str.split "\n"
     line_lookahead = false
-    directives_count = 1
 
     code_lines.each_with_index do |line, i|
       (line_lookahead = false; next) if line_lookahead
-      prev_match_end = 0
-      if line =~ /^\/\/#/
-        next_line = code_lines[i + 1]
+      if line =~ @directive_esc_seq
         line_lookahead = true
-
-        line.scan(/(?:(\w)|\|\s*(\w+)\s*\|)/) do |s| # match x or | x |
-          match = Regexp.last_match
-          matched_id = match[1] || match[2]
-          strio << next_line[prev_match_end...match.begin(0)]
-          strio << add_frame_tags(
-            next_line[match.begin(0)...match.end(0)], matched_id)
-          prev_match_end = match.end 0
-        end
-        strio << next_line[prev_match_end..-1]
-        strio << line_higlight_marker(directives_count)
-        directives_count += 1
+        strio << enhance_line(line, code_lines, i)
       else
         strio << CGI.escapeHTML(line)
       end
@@ -98,12 +88,29 @@ class CodeParser
     strio
   end
 
-  def self.add_frame_tags(substring, frame_id)
-    %Q{<c-frm f-id="#{frame_id}">#{
-      CGI.escapeHTML(substring)}</c-frm>}
+  def enhance_line(line, all_lines, index)
+    line_builder = StringIO.new
+    prev_match_end = 0
+    next_line = all_lines[index + 1]
+
+    line.scan(/(?:(\w)|\|\s*(\w+)\s*\|)/) do |s| # match x or | x |
+      match = Regexp.last_match
+      matched_id = match[1] || match[2]
+      line_builder << next_line[prev_match_end...match.begin(0)]
+      line_builder << add_frame_tags(
+        next_line[match.begin(0)...match.end(0)], matched_id)
+      prev_match_end = match.end 0
+    end
+    line_builder << next_line[prev_match_end..-1]
+    line_builder.string
   end
 
-  def self.line_higlight_marker(line_num)
+  def add_frame_tags(substring, frame_id)
+    %Q{<c-frm f-id="#{frame_id}">#{
+    CGI.escapeHTML(substring)}</c-frm>}
+  end
+
+  def line_higlight_marker(line_num)
     %Q{<c-hl f-ln-num="#{line_num}"></c-hl>}
   end
 end
@@ -125,14 +132,14 @@ if __FILE__ == $0
   renderer = Redcarpet::Render::HTML.new(
     safe_links_only: true, prettify: true, hard_wrap: true)
   markdown_parser = Redcarpet::Markdown.new(renderer,
-                                      autolink: true, fenced_code_blocks: true)
+                                            autolink: true, fenced_code_blocks: true)
   Dir.foreach('lessons') do |filename|
     next if filename == '.' or filename == '..'
     path = "lessons/#{filename}"
     if File.directory? path
       steps_parser = StepsParser.new markdown_parser
       File.open("web/static/lesson-#{filename}.json", 'w') do |output|
-        output << build_json(code: CodeParser.generate_code(path),
+        output << build_json(code: CodeParser.decorate_code(path),
                              steps: steps_parser.generate_steps(path))
       end
     end
