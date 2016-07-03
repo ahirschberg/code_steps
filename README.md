@@ -10,6 +10,8 @@ This project is written in Dart, with Angular 2. Unless you're interested in con
 
 # Writing your own tutorials
 
+#### Note: This portion of the tutorial is incomplete. See [this issue](https://github.com/ahirschberg/code_steps/issues/12) for details.
+
 ### Dependencies:
 * **ruby** 2.0 or above
 * **redcarpet** gem - can be gotten with `gem install redcarpet`
