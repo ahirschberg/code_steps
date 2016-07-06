@@ -1,0 +1,14 @@
+:host {
+    display: block;
+    height: 500px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.48);
+}
+
+:host .row {
+    height: 100%;
+}
+
+code-explanation, code-viewer {
+    height: 100%;
+}
+
