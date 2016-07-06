@@ -28,7 +28,7 @@ last_msg="$(git log -1 --pretty=%B)"
 trap "cd \"$dir\"; rm -rf \"$tmp\"" EXIT
 
 echo "Building project..."
-#pub build
+pub build
 
 echo "Cloning into a temporary directory..."
 git clone $dir $tmp
@@ -58,5 +58,5 @@ git commit -m "Built commit '$last_msg'" -m "commit: $last_rev"
 git push -u origin gh-pages # pushes to original local repo
 echo "Done."
 cd $dir
-git checkout gh-pages
-git push -u origin gh-pages --dry-run # pushes to github
+git checkout gh-pages --force
+git push -u origin gh-pages $FINAL_PAGES_PUSH_FLAGS # pushes to github
