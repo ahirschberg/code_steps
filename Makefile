@@ -3,4 +3,4 @@
 all: lessons
 
 lessons: build_json.rb
-	./build_json.rb static
+	ruby build_json.rb static
