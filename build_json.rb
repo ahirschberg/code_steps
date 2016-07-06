@@ -138,7 +138,8 @@ if __FILE__ == $0
     path = "lessons/#{filename}"
     if File.directory? path
       steps_parser = StepsParser.new markdown_parser
-      File.open("web/static/lesson-#{filename}.json", 'w') do |output|
+      output_dir = Dir.new ARGV[0]
+      File.open("#{output_dir.path}/lesson-#{filename}.json", 'w') do |output|
         output << build_json(code: CodeParser.decorate_code(path),
                              steps: steps_parser.generate_steps(path))
       end
