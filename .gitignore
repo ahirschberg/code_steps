@@ -24,3 +24,4 @@ doc/api/
 # Additional excludes
 web/static
 tags
+Gemfile.lock
