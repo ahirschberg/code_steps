@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # this script builds the code and html steps files from their folder into json
 
 require 'json'
