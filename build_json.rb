@@ -13,38 +13,37 @@ class StepsParser
 
   def generate_steps(lesson_path)
     File.open("#{lesson_path}/steps.md") do |steps_file|
-      steps_data = parse steps_file.read
-      steps_data.sort
+      parse steps_file.read
     end
   end
 
   private
-  StepData = Struct.new :index, :cmds, :text do
-    def <=>(other)
-      self.index <=> other.index
-    end
-  end
+  StepData = Struct.new :cmds, :text
+
+  STEP_HEADER = /#step ?(?<step_meta>{.*?})?/
+  STEP_FULL   = /#{STEP_HEADER}[ ]*$      # step header on its own line
+                 (?<text>.*?)
+                 (?=#{STEP_HEADER}|\z)    # match text until next header or EOF
+                /omx
 
   def parse(raw_steps)
-
     steps_data = []
-    raw_steps.scan(/# ?({.*?})(.*?)(?=# ?{.*}|\z)/m) do |step_cmds, text|
-      cmd_hash = parse_step_cmds step_cmds
-      step_id = cmd_hash.delete 'step'
-      steps_data << StepData.new(step_id, cmd_hash, @md_parser.render(text))
+    raw_steps.scan(STEP_FULL) do |step_data, text|
+      cmd_hash = parse_step_cmds step_data
+      steps_data << StepData.new(cmd_hash, @md_parser.render(text))
     end
 
     steps_data
   end
 
   def parse_step_cmds(step_cmds)
+    return {} if step_cmds.nil?
     JSON.parse convert_cmds_to_valid_json(step_cmds)
   end
 
   def convert_cmds_to_valid_json(step_cmds)
     fixed = step_cmds
       .gsub(/([A-z\-]+)\s*:/, '"\1":') # surround all keys with quotes
-      .gsub(/(?<="step":) *(\w+)/, '"\1"') # surround step value with quotes
       .gsub(/(?<=\[).*?(?=\])/) do |text| # add quotes to frame ids inside [  ]
         text.gsub(/(\w+),?/, '"\1",')[0..-2]
       end
@@ -120,7 +119,6 @@ def build_json(code: nil, steps: nil)
     code: code,
     steps: steps.map do |step_data|
       {
-        "index": step_data.index,
         "cmds": step_data.cmds,
         "html": step_data.text
       }
