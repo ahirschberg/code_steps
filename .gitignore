@@ -1,0 +1,17 @@
+# Files and directories created by pub
+.packages
+.pub/
+build/
+packages
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Additional excludes
+web/static
+tags
+Gemfile.lock
+.bundle/
