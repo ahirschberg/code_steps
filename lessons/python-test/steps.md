@@ -1,2 +1,2 @@
-# {step: 1, pass: [a]}
+#step {pass: [a]}
 This is step 1!
