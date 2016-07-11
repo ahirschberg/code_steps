@@ -1,6 +1,13 @@
 #!/bin/bash
 # inspired by https://gist.github.com/Stebalien/d4a32c4abc03376db903
 
+# Ensure there is a branch set to build to
+if [ -z $TARGET_BRANCH ]
+then
+    >&2 echo -e "\e[31mERROR: TARGET_BRANCH env var must be set\e[39m"
+    exit 1
+fi
+
 git config --global user.name 'build-bot'
 git config --global user.email 'alexhirschberg97@gmail.com'
 
@@ -8,12 +15,12 @@ git config --global user.email 'alexhirschberg97@gmail.com'
 # in detached mode
 git checkout $CI_BRANCH
 
-# set-branches adds the gh-pages branch to the refs that git looks at when
+# set-branches adds the $TARGET_BRANCH branch to the refs that git looks at when
 # talking to the remote. This is necessary because codeship clones the repo
 # with the --branch option, which specifies a specific branch to look at
-git remote set-branches --add origin gh-pages
+git remote set-branches --add origin $TARGET_BRANCH
 git remote update
-git checkout gh-pages # initialize gh-pages branch
+git checkout $TARGET_BRANCH # initialize $TARGET_BRANCH on our remote
 git checkout -
 
 # not necessary anymore :P
@@ -33,30 +40,31 @@ pub build
 echo "Cloning into a temporary directory..."
 git clone $dir $tmp
 cd "$tmp"
+
 echo "Copying build files"
-git checkout gh-pages
+git checkout $TARGET_BRANCH
+git status
 
 # Clean and replace build
 git rm -q --ignore-unmatch -rf .
-cp -a $dir/{build/web/*,build_json.rb,lessons,Gemfile} .
-git checkout HEAD Makefile # regenerate Makefile from current head
+cp -a $dir/{build/web,build_json.rb,lessons,Gemfile} .
+git checkout HEAD -- Makefile .gitignore # regenerate from current head
 
-# Build existing lesson files
-mkdir 'static/'
+# ensure lessons output dir exists
+mkdir 'web/static' --parents
 
-# setup ruby
+# Ensure the proper ruby version
 source "$HOME/.rvm/scripts/rvm"
 rvm install ruby 2.3.1
 rvm use 2.3.1
 bundle install
-GEM_PATH=~/cache/bundler:$GEM_PATH # this took far too long to figure out...
+GEM_PATH=~/cache/bundler:$GEM_PATH # necessary on Codeship to get requires to work.
 make lessons
 
 git add .
-echo `ls`
-git commit -m "Built commit '$last_msg'" -m "commit: $last_rev"
-git push -u origin gh-pages # pushes to original local repo
-echo "Done."
+git commit -m "Built commit '$last_rev' to js" -m "commit: $last_msg"
+git push -u origin $TARGET_BRANCH # pushes to original local repo
+echo "Done and ready to push to github."
 cd $dir
-git checkout gh-pages --force
-git push -u origin gh-pages $FINAL_PAGES_PUSH_FLAGS # pushes to github
+git checkout $TARGET_BRANCH --force
+git push -u origin $TARGET_BRANCH $GH_PUSH_FLAGS # pushes to github
