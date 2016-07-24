@@ -7,19 +7,19 @@
         "5": false
       },
       {
-        "1": "package:Polymorph/app_component.dart",
+        "1": "package:code_steps/app_component.dart",
         "5": false
       },
       {
-        "1": "package:Polymorph/lesson_loader.dart",
+        "1": "package:code_steps/lesson_loader.dart",
         "5": false
       },
       {
-        "1": "package:Polymorph/progression_service_provider.dart",
+        "1": "package:code_steps/progression_service_provider.dart",
         "5": false
       },
       {
-        "1": "package:Polymorph/step_cmds_directive.dart",
+        "1": "package:code_steps/step_cmds_directive.dart",
         "5": false
       }
     ],
@@ -30,19 +30,19 @@
         "4": "i0"
       },
       {
-        "1": "package:Polymorph/app_component.ngfactory.dart",
+        "1": "package:code_steps/app_component.ngfactory.dart",
         "4": "i1"
       },
       {
-        "1": "package:Polymorph/lesson_loader.ngfactory.dart",
+        "1": "package:code_steps/lesson_loader.ngfactory.dart",
         "4": "i2"
       },
       {
-        "1": "package:Polymorph/progression_service_provider.ngfactory.dart",
+        "1": "package:code_steps/progression_service_provider.ngfactory.dart",
         "4": "i3"
       },
       {
-        "1": "package:Polymorph/step_cmds_directive.ngfactory.dart",
+        "1": "package:code_steps/step_cmds_directive.ngfactory.dart",
         "4": "i4"
       }
     ]
@@ -51,7 +51,7 @@
     "main": {
       "class": "Identifier",
       "name": "main",
-      "moduleUrl": "asset:Polymorph/web/main.dart",
+      "moduleUrl": "asset:code_steps/web/main.dart",
       "prefix": null,
       "value": null
     }
