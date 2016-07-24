@@ -1,9 +1,9 @@
 import 'package:angular2/core.dart';
-import 'package:Polymorph/progression_service.dart';
+import 'package:code_steps/progression_service.dart';
 import 'package:observe/observe.dart';
-import 'package:Polymorph/highlightjs_interop.dart' as highlighter;
+import 'package:code_steps/highlightjs_interop.dart' as highlighter;
 import 'dart:html';
-import 'package:Polymorph/util.dart';
+import 'package:code_steps/util.dart';
 
 @Component(
     selector: 'code-viewer',

@@ -50,9 +50,6 @@ git rm -q --ignore-unmatch -rf .
 cp -a $dir/{build/web,build_json.rb,lessons,Gemfile} .
 git checkout HEAD -- Makefile .gitignore # regenerate from current head
 
-# ensure lessons output dir exists
-mkdir 'web/static' --parents
-
 # Ensure the proper ruby version
 source "$HOME/.rvm/scripts/rvm"
 rvm install ruby 2.3.1
@@ -62,7 +59,7 @@ GEM_PATH=~/cache/bundler:$GEM_PATH # necessary on Codeship to get requires to wo
 make lessons
 
 git add .
-git commit -m "Built commit '$last_rev' to js" -m "commit: $last_msg"
+git commit -m "Commit '$last_msg' built to js" -m "Original commit: $last_rev" -m ":runner: *This commit was created automatically*"
 git push -u origin $TARGET_BRANCH # pushes to original local repo
 echo "Done and ready to push to github."
 cd $dir

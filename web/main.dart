@@ -3,10 +3,10 @@
 
 import 'package:angular2/platform/browser.dart';
 
-import 'package:Polymorph/app_component.dart';
-import 'package:Polymorph/lesson_loader.dart';
-import 'package:Polymorph/progression_service_provider.dart';
-import 'package:Polymorph/step_cmds_directive.dart';
+import 'package:code_steps/app_component.dart';
+import 'package:code_steps/lesson_loader.dart';
+import 'package:code_steps/progression_service_provider.dart';
+import 'package:code_steps/step_cmds_directive.dart';
 
 main() {
   bootstrap(AppComponent, [LessonLoader, progressionServiceProvider]);

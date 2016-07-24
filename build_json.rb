@@ -3,6 +3,7 @@
 
 require 'json'
 require 'cgi'
+require 'fileutils'
 require 'redcarpet'
 
 
@@ -131,13 +132,13 @@ if __FILE__ == $0
     safe_links_only: true, prettify: true, hard_wrap: true)
   markdown_parser = Redcarpet::Markdown.new(renderer,
                                             autolink: true, fenced_code_blocks: true)
+  output_dir = FileUtils.mkdir_p("./#{ARGV[0]}").first
   Dir.foreach('lessons') do |filename|
     next if filename == '.' or filename == '..'
     path = "lessons/#{filename}"
     if File.directory? path
       steps_parser = StepsParser.new markdown_parser
-      output_dir = Dir.new ARGV[0]
-      File.open("#{output_dir.path}/lesson-#{filename}.json", 'w') do |output|
+      File.open("#{output_dir}/lesson-#{filename}.json", 'w') do |output|
         output << build_json(code: CodeParser.decorate_code(path),
                              steps: steps_parser.generate_steps(path))
       end

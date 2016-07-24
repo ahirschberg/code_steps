@@ -2,7 +2,7 @@ import 'package:angular2/core.dart' show Component;
 
 import 'code_explanation_component.dart';
 import 'code_viewer_component.dart';
-import 'package:Polymorph/step_cmds_directive.dart';
+import 'package:code_steps/step_cmds_directive.dart';
 
 @Component(
   selector: 'code-guide',

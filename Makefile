@@ -1,4 +1,4 @@
-.PHONY: all lessons
+.PHONY: all lessons install
 
 all: lessons
 

@@ -2,7 +2,7 @@ import 'package:angular2/core.dart';
 import 'package:observe/observe.dart';
 import 'dart:collection';
 import 'lesson_loader.dart';
-import 'package:Polymorph/step_data.dart';
+import 'package:code_steps/step_data.dart';
 import 'dart:async';
 
 @Injectable()

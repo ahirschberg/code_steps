@@ -1,6 +1,6 @@
 import 'package:angular2/core.dart';
 import 'lesson_loader.dart';
-import 'package:Polymorph/progression_service.dart';
+import 'package:code_steps/progression_service.dart';
 
 @Injectable()
 progressionServiceFactory(LessonLoader lessonLoader) =>

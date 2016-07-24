@@ -1,7 +1,7 @@
 import 'package:angular2/core.dart';
-import 'package:Polymorph/progression_service.dart';
+import 'package:code_steps/progression_service.dart';
 import 'dart:collection';
-import 'package:Polymorph/util.dart';
+import 'package:code_steps/util.dart';
 import 'package:observe/observe.dart';
 import 'dart:html';
 

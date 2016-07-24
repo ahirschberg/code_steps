@@ -1,4 +1,4 @@
-#step hide: [e], append: true
+#step {hide: [e], append: true}
 ## Inheritance at compile time in Java
 In order for your Java code to compile, it has to pass the compiler's type checks. First, let's look at how this is checked when a variable is assigned via the `=` operator.
 

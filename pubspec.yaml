@@ -1,6 +1,6 @@
-name: Polymorph
-description: A Dart app that uses Angular 2
-version: 0.0.1
+name: code_steps
+description: Platform for rapidly developing step-by-step tutorials with robust features for content creators
+version: 0.4.0
 environment:
   sdk: '>=1.13.0 <2.0.0'
 dependencies:
