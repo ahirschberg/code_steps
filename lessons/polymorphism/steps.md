@@ -1,9 +1,9 @@
-#step {hide: [e], append: true}
+#step {hide: [e, v], append: true}
 ## Inheritance at compile time in Java
 In order for your Java code to compile, it has to pass the compiler's type checks. First, let's look at how this is checked when a variable is assigned via the `=` operator.
 
 
-#step { spotlight: [a] }
+#step { spotlight-line: [0] }
 Keeping in mind the types given, will this statement compile?
 
 
@@ -12,8 +12,10 @@ Whenever something in Java is assigned to a variable, the variable's type must m
 
 This statement is valid, because the type `String` given to the variable matches the type `String` given to the string literal.
 
+#step { show: [v], spotlight: [v]}
+This is another way to write the line, which compiles into the exact same code. With this (redundant and seldom used) form of string instantiation, the type is explicit.
 
-#step { spotlight: [b, c] }
+#step { spotlight-line: [1] }
 What about this line? `Object` isn't the same as `String`. How does the compiler handle this?
 
 
@@ -21,7 +23,7 @@ What about this line? `Object` isn't the same as `String`. How does the compiler
 The compiler has no issue with this, because `String` inherits from `Object`. In other words, a `String` is an `Object`, and so the statement is valid.
 
 
-#step { spotlight: [b, d]}
+#step { spotlight-line: [2]}
 How will the compiler process this line, keeping in mind that `strAsObj` is defined as `"string b"`?
 
 

@@ -74,12 +74,14 @@ class CodeParser
     strio = StringIO.new
     code_lines = code_str.split "\n"
     line_lookahead = false
+    num_lines_enhanced = 0;
 
     code_lines.each_with_index do |line, i|
       (line_lookahead = false; next) if line_lookahead
       if line =~ @directive_esc_seq
         line_lookahead = true
-        strio << enhance_line(line, code_lines, i)
+        strio << enhance_line(line, code_lines, i, num_lines_enhanced)
+        num_lines_enhanced += 1
       else
         strio << CGI.escapeHTML(line)
       end
@@ -88,10 +90,12 @@ class CodeParser
     strio
   end
 
-  def enhance_line(line, all_lines, index)
+  def enhance_line(line, all_lines, index, enhancement_index)
     line_builder = StringIO.new
     prev_match_end = 0
     next_line = all_lines[index + 1]
+
+    line_builder << line_highlight_marker(enhancement_index)
 
     line.scan(/(?:(\w)|\|\s*(\w+)\s*\|)/) do |s| # match x or | x |
       match = Regexp.last_match
@@ -110,8 +114,8 @@ class CodeParser
     CGI.escapeHTML(substring)}</c-frm>}
   end
 
-  def line_higlight_marker(line_num)
-    %Q{<c-hl f-ln-num="#{line_num}"></c-hl>}
+  def line_highlight_marker(reference_num)
+    %Q{<c-line f-id="#{reference_num}"></c-line>}
   end
 end
 
