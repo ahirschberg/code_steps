@@ -5,41 +5,34 @@ import 'package:code_steps/util.dart';
 import 'package:observe/observe.dart';
 import 'dart:html';
 
-@Directive(
-    selector: 'code-viewer'
-)
+@Directive(selector: 'code-viewer')
 class StepCommandsDirective implements OnInit {
-  Map<String, Function> commandActions = {
-    'fail': 'test'
-  };
+  final Map<String, Function> commandActions = {};
   ElementRef root;
   ProgressionService progressionService;
-  Map<Element, List<String>> lastModified = new HashMap<Element, List<String>>();
+  Map<Element, List<String>> lastModified =
+      new HashMap<Element, List<String>>();
 
   StepCommandsDirective(this.root, this.progressionService) {
-    commandActions['fail'] = (List<String> targets,
-                              Map<Element, List<String>> changes) =>
-        selectMatching(targets, 'hl-fail', changes);
-
-    commandActions['pass'] = (List<String> targets,
-                              Map<Element, List<String>> changes) =>
-        selectMatching(targets, 'hl-pass', changes);
-
-    commandActions['show'] = (List<String> targets,
-        Map<Element, List<String>> changes) =>
-        selectMatching(targets, 'hl-show', changes, persistent: true);
-
-    commandActions['hide'] = (List<String> targets,
-        Map<Element, List<String>> changes) =>
-        selectMatching(targets, 'hl-hide', changes, persistent: true);
-
-    commandActions['spotlight'] = (List<String> targets,
-        Map<Element, List<String>> changes) =>
-        selectMatching(targets, 'hl-spotlight', changes);
+    commandActions.addAll({
+      'fail': (List<String> targets, Map<Element, List<String>> changes) =>
+          selectMatching(targets, 'hl-fail', changes),
+      'pass': (List<String> targets, Map<Element, List<String>> changes) =>
+          selectMatching(targets, 'hl-pass', changes),
+      'show': (List<String> targets, Map<Element, List<String>> changes) =>
+          selectMatching(targets, 'hl-show', changes, persistent: true),
+      'hide': (List<String> targets, Map<Element, List<String>> changes) =>
+          selectMatching(targets, 'hl-hide', changes, persistent: true),
+      'spotlight': (List<String> targets, Map<Element, List<String>> changes) =>
+          selectMatching(targets, 'hl-spotlight', changes),
+      'spotlight-line': (List<String> targets, Map<Element, List<String>> changes) =>
+          selectMatching(targets, 'active', changes) // TODO
+    });
   }
 
-  selectMatching(List<String> f_ids, class_to_apply,
-                 Map<Element, List<String>> changes, {persistent: false}) {
+  selectMatching(
+      List<String> f_ids, class_to_apply, Map<Element, List<String>> changes,
+      {persistent: false}) {
     f_ids.forEach((String target) {
       dynamic matches = root.nativeElement.querySelectorAll('[f-id="$target"]');
       matches.forEach((Element e) {
@@ -56,23 +49,25 @@ class StepCommandsDirective implements OnInit {
     });
   }
 
-
   void applyStepCommands(HashMap<String, List<String>> cmds) {
     Map<Element, List<String>> modified = new HashMap<Element, List<String>>();
-    lastModified.forEach((element, classes) => element.classes.removeAll(classes));
+    lastModified
+        .forEach((element, classes) => element.classes.removeAll(classes));
     cmds.forEach((action, targets) {
       if (commandActions.containsKey(action)) {
         commandActions[action](targets, modified);
       } else {
-        throw new Exception('No such action "$action"');
+        //throw new Exception('No such action "$action"');
       }
     });
     lastModified = modified;
   }
 
   ngOnInit() {
-    Util.filterChangeStreamByProp(progressionService.changes, [#currStep, #loadedCode]).listen(
-        (PropertyChangeRecord change) => applyStepCommands(progressionService.currStep.cmds)
-    );
+    Util.filterChangeStreamByProp(progressionService.changes, [
+      #currStep,
+      #loadedCode
+    ]).listen((PropertyChangeRecord change) =>
+        applyStepCommands(progressionService.currStep.cmds));
   }
 }
