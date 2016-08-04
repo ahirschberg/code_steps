@@ -15,15 +15,36 @@ git config --global user.email 'alexhirschberg97@gmail.com'
 # in detached mode
 git checkout $CI_BRANCH
 
-# set-branches adds the $TARGET_BRANCH branch to the refs that git looks at when
+
+# install latest pub if not installed or version <1.18
+if (! hash pub 2>/dev/null) \
+    || dpkg --compare-versions \
+            "$(pub --version | awk '{print $2}')" \
+            'lt' \
+            '1.18'
+            then
+    echo "Upgrading pub"
+    wget https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-linux-x64-release.zip
+    unzip -o dartsdk-linux-x64-release.zip -d ~
+fi
+
+# set-branches adds the branch to the refs that git looks at when
 # talking to the remote. This is necessary because codeship clones the repo
 # with the --branch option, which specifies a specific branch to look at
-git remote set-branches --add origin $TARGET_BRANCH
-git remote update
-git checkout $TARGET_BRANCH # initialize $TARGET_BRANCH on our remote
-git checkout -
+initialize_branch() {
+    if [ -z "$1" ]
+    then
+        echo "ERROR: branch name must not be zero length"
+    else
+        git remote set-branches --add origin $1
+        git remote update
+        git checkout $1 # initialize $TARGET_BRANCH on our remote
+        git checkout -
+    fi
+}
 
-# not necessary anymore :P
+initialize_branch $TARGET_BRANCH
+
 set -e
 [[ "$(git symbolic-ref --short HEAD)" == "master" ]] || exit 0
 
@@ -35,6 +56,7 @@ last_msg="$(git log -1 --pretty=%B)"
 trap "cd \"$dir\"; rm -rf \"$tmp\"" EXIT
 
 echo "Building project..."
+pub get
 pub build
 
 echo "Cloning into a temporary directory..."
@@ -68,10 +90,11 @@ git push -u origin $TARGET_BRANCH $GH_PUSH_FLAGS # pushes to github
 
 if [ "$MIRROR_TO_PAGES" == '1' ]
 then # from http://stackoverflow.com/a/13102849/5927655
+    initialize_branch gh-pages
     git branch -D gh-pages
     git checkout --orphan gh-pages
     git add -A  # Add all files and commit them
-    git commit
+    git commit -m ":memo: Copy of latest master-js commit." -m "Original commit: $last_rev"
     git push -uf origin gh-pages $GH_PUSH_FLAGS
 fi
 
