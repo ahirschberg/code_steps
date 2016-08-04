@@ -65,3 +65,13 @@ echo "Done and ready to push to github."
 cd $dir
 git checkout $TARGET_BRANCH --force
 git push -u origin $TARGET_BRANCH $GH_PUSH_FLAGS # pushes to github
+
+if [ "$MIRROR_TO_PAGES" == '1' ]
+then # from http://stackoverflow.com/a/13102849/5927655
+    git branch -D gh-pages
+    git checkout --orphan gh-pages
+    git add -A  # Add all files and commit them
+    git commit
+    git push -uf origin gh-pages $GH_PUSH_FLAGS
+fi
+

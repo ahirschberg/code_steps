@@ -1,10 +1,11 @@
 :host {
     padding: 0;
+    display: block;
     height: 100%;
 }
 :host pre {
     margin: 0;
-    height: inherit;
+    height: 100%;
 }
 :host c-frm.hl-pass {
     box-shadow: 0 0 0 1px #256825;
