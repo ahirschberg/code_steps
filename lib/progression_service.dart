@@ -1,5 +1,5 @@
 import 'package:angular2/core.dart';
-import 'package:code_steps/step_cmds_directive.dart';
+import 'package:code_steps/step_actions_provider.dart';
 import 'package:observe/observe.dart';
 import 'dart:collection';
 import 'lesson_loader.dart';
@@ -10,12 +10,12 @@ import 'dart:async';
 class ProgressionService extends Injectable with ChangeNotifier {
 
   LessonLoader _lessonLoader;
-  StepActionsProvider _stepCommandsDirective;
-  ProgressionService(LessonLoader this._lessonLoader, this._stepCommandsDirective);
+  StepActionsProvider _stepActionsProvider;
+  ProgressionService(LessonLoader this._lessonLoader, this._stepActionsProvider);
 
   Future selectLesson(url) {
     return _lessonLoader.loadData(url).then((HashMap lessonData) {
-      loadedSteps = StepData.toStepData(_stepCommandsDirective, lessonData['steps']);
+      loadedSteps = StepData.toStepData(_stepActionsProvider, lessonData['steps']);
       loadedCode = lessonData['code'];
       _currStep = notifyPropertyChange(#currStep, _currStep, 0);
     });

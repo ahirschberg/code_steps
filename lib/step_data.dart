@@ -1,5 +1,6 @@
 import 'package:angular2/core.dart';
-import 'step_cmds_directive.dart';
+import 'step_actions_provider.dart';
+import 'step_action.dart';
 
 class StepData {
   String index;
