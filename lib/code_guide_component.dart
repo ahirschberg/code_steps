@@ -8,6 +8,6 @@ import 'package:code_steps/step_cmds_directive.dart';
   selector: 'code-guide',
   templateUrl: 'html/code_guide_component.html',
   styleUrls: const ['css/code_guide_component.css'],
-  directives: const [CodeExplanationComponent, CodeViewerComponent, StepCommandsDirective]
+  directives: const [CodeExplanationComponent, CodeViewerComponent]
 )
 class CodeGuideComponent {}

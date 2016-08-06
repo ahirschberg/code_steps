@@ -3,10 +3,10 @@
 
 <nav class="lesson-steps-nav">
     <button class="btn btn-primary"
-            (click)="progressionService.prevStep()"
-            [disabled]="!progressionService.hasPrev()">Previous</button>
+            (click)="progressionService.gotoPreviousStep()"
+            [disabled]="!progressionService.hasPreviousStep()">Previous</button>
     <button class="btn btn-primary"
-            (click)="progressionService.nextStep()"
+            (click)="progressionService.gotoNextStep()"
             [disabled]="!progressionService.hasNext()">Next</button>
 </nav>
 <!-- should be moved to component -->

@@ -9,5 +9,5 @@ import 'package:code_steps/progression_service_provider.dart';
 import 'package:code_steps/step_cmds_directive.dart';
 
 main() {
-  bootstrap(AppComponent, [LessonLoader, progressionServiceProvider]);
+  bootstrap(AppComponent, [LessonLoader, StepActionsProvider, progressionServiceProvider]);
 }

@@ -30,7 +30,8 @@ class StepsParser
   def parse(raw_steps)
     steps_data = []
     raw_steps.scan(STEP_FULL) do |step_data, text|
-      cmd_hash = parse_step_cmds step_data
+      cmd_hash = parse_step_cmds(step_data)
+      cmd_hash = validate_cmds(cmd_hash)
       steps_data << StepData.new(cmd_hash, @md_parser.render(text))
     end
 
@@ -49,6 +50,15 @@ class StepsParser
         text.gsub(/(\w+),?/, '"\1",')[0..-2]
       end
     fixed
+  end
+
+  VALID_KEYS = %I[fail pass spotlight show hide spotlight-line]
+  # todo make more robust! check values too...
+  def validate_cmds(step_cmds)
+    invalid_keys = step_cmds.keys.reject {|key| VALID_KEYS.include? key.to_sym}
+    puts "WARN: The following keys are not valid and were removed: " \
+      "#{invalid_keys}" if !invalid_keys.empty?
+    step_cmds.reject {|k, v| invalid_keys.include? k}
   end
 end
 

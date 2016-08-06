@@ -1,4 +1,5 @@
 import 'package:angular2/core.dart';
+import 'package:code_steps/step_cmds_directive.dart';
 import 'package:observe/observe.dart';
 import 'dart:collection';
 import 'lesson_loader.dart';
@@ -9,11 +10,12 @@ import 'dart:async';
 class ProgressionService extends Injectable with ChangeNotifier {
 
   LessonLoader _lessonLoader;
-  ProgressionService(LessonLoader this._lessonLoader);
+  StepActionsProvider _stepCommandsDirective;
+  ProgressionService(LessonLoader this._lessonLoader, this._stepCommandsDirective);
 
   Future selectLesson(url) {
     return _lessonLoader.loadData(url).then((HashMap lessonData) {
-      loadedSteps = StepData.toStepData(lessonData['steps']);
+      loadedSteps = StepData.toStepData(_stepCommandsDirective, lessonData['steps']);
       loadedCode = lessonData['code'];
       _currStep = notifyPropertyChange(#currStep, _currStep, 0);
     });
@@ -31,19 +33,31 @@ class ProgressionService extends Injectable with ChangeNotifier {
   @reflectable set loadedCode(String val) =>
       _loadedCode = notifyPropertyChange(#loadedCode, _loadedCode, val);
 
-  void nextStep() {
-    _currStep = notifyPropertyChange(#currStep, _currStep, _currStep + 1);
+  void gotoNextStep() {
+    _currStep = notifyPropertyChange(#nextStep, _currStep, _currStep + 1);
   }
 
   bool hasNext() => _loadedSteps != null && _currStep < _loadedSteps.length - 1;
 
-  void prevStep() {
-    _currStep = notifyPropertyChange(#currStep, _currStep, _currStep - 1);
+  void gotoPreviousStep() {
+    _currStep = notifyPropertyChange(#previousStep, _currStep, _currStep - 1);
   }
 
-  bool hasPrev() => _loadedSteps != null && _currStep > 0;
+  bool hasPreviousStep() => _loadedSteps != null && _currStep > 0;
 
   StepData get currStep => loadedSteps == null ? null :
       loadedSteps[_currStep];
+  StepData get previousStep =>
+      (loadedSteps == null || _currStep - 1 < 0)
+          ? null
+          : loadedSteps[_currStep - 1];
+
+  StepData get nextStep =>
+      (loadedSteps == null || _currStep >= _loadedSteps.length)
+          ? null
+          : loadedSteps[_currStep + 1];
+
   String get currCodeHtml => loadedCode;
+
+  int get test => _currStep;
 }
