@@ -9,20 +9,20 @@ class StepActionsProvider extends Injectable {
   StepActionsProvider() {
     commandActions.addAll({
       'fail':
-      new NonDirectionalActionModel.fromPair(easyPairAddClass('hl-fail')),
+      new NonDirectionalActionModel.fromPair(_easyPairAddClass('hl-fail')),
       'pass':
-      new NonDirectionalActionModel.fromPair(easyPairAddClass('hl-pass')),
+      new NonDirectionalActionModel.fromPair(_easyPairAddClass('hl-pass')),
       'spotlight': new NonDirectionalActionModel.fromPair(
-          easyPairAddClass('hl-spotlight')),
-      'hide': new ToggleActionModel.fromPair(easyPairAddClass('hl-hide')),
+          _easyPairAddClass('hl-spotlight')),
+      'hide': new ToggleActionModel.fromPair(_easyPairAddClass('hl-hide')),
       'show': new ToggleActionModel.fromPair(
-          easyPairAddClass('hl-hide').reversed.toList()),
+          _easyPairAddClass('hl-hide').reversed.toList()),
       'spotlight-line': new NonDirectionalActionModel.fromPair(
-          easyPairAddClass('active')) // little bit hack-ey here...
+          _easyPairAddClass('active')) // little bit hack-ey here...
     });
   }
 
-  Function applyToRegion(Function action) {
+  Function _applyToRegion(Function action) {
     return (ElementRef root, String target) {
       dynamic matches = root.nativeElement.querySelectorAll('[f-id="$target"]');
       matches.forEach((Element e) => action(e));
@@ -35,16 +35,10 @@ class StepActionsProvider extends Injectable {
    *
    * Returns a [List] of length 2 with the pattern [apply(), destroy()].
    */
-  List<Function> easyPairAddClass(String html_class) {
+  List<Function> _easyPairAddClass(String html_class) {
     return [
-      applyToRegion((Element e) {
-        print('adding $html_class');
-        e.classes.add(html_class);
-      }),
-      applyToRegion((Element e) {
-        print('removing $html_class');
-        e.classes.remove(html_class);
-      })
+      _applyToRegion((Element e) => e.classes.add(html_class)),
+      _applyToRegion((Element e) => e.classes.remove(html_class))
     ];
   }
 }

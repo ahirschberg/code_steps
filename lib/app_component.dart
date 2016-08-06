@@ -1,6 +1,6 @@
 import 'package:angular2/core.dart' show Component, OnInit;
 import 'code_guide_component.dart';
-import 'progression_service.dart';
+import 'step_context_service.dart';
 
 @Component(
     selector: 'my-app',
@@ -9,13 +9,13 @@ import 'progression_service.dart';
     directives: const [CodeGuideComponent]
 )
 class AppComponent implements OnInit {
-  ProgressionService progressionService;
+  StepContextService stepContextService;
   String lessonName = 'polymorphism';
 
-  AppComponent(this.progressionService);
+  AppComponent(this.stepContextService);
 
   void userSelectLesson() {
-    progressionService.selectLesson('static/lesson-$lessonName.json')
+    stepContextService.selectLesson('static/lesson-$lessonName.json')
         .catchError((dynamic err) =>
           print('ERROR: $err'));
   }
