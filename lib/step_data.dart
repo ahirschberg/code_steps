@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:angular2/core.dart';
 import 'step_actions_provider.dart';
 import 'step_action.dart';
@@ -32,8 +33,38 @@ class StepData {
         throw new Exception("Action targets must be of type List<String>,"
             " got ${action_targets.runtimeType}");
       }
-      return new StepAction(
-          stepActionsProvider.commandActions[action_name], action_targets);
+      return new StepAction(stepActionsProvider.getActionModel(action_name),
+          action_targets.toSet());
     }).toList();
+  }
+
+  static void interpolateSteps(
+      StepActionsProvider stepActionsProvider, List<StepData> steps) {
+    Map<StepActionType, StepAction> toggles =
+        new Map<StepActionType, StepAction>();
+    print(steps.first.actions);
+    steps.forEach((StepData step) {
+      step.actions = step.actions.map((StepAction action) {
+        if (action.model is ToggleActionModel) {
+          toggles
+              .putIfAbsent(action.model.type, () => action)
+              .targets
+              .addAll(action.targets); // merge like toggles
+          StepActionType opposite =
+              (action.model as ToggleActionModel).opposite;
+          print('toggles: $toggles, need to check opposite? ${toggles.containsKey(opposite)}');
+          debugger();
+          if (toggles.containsKey(opposite)) {
+            toggles[opposite].targets.removeAll(action.targets);
+            print('removed ${action.targets} from opposite $opposite');
+          }
+          return null; // remove the toggled action from the list, for now
+        } else {
+          return action;
+        }
+      }).where((e) => e != null).toList(); // todo make this more elegant!
+      step.actions.addAll(toggles.values.map((action) => action.copy()));
+    });
+    print(steps.first.actions);
   }
 }

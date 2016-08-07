@@ -17,6 +17,7 @@ class StepContextService extends Injectable with ChangeNotifier {
     return _lessonLoader.loadData(url).then((HashMap lessonData) {
       loadedSteps =
           StepData.toStepData(_stepActionsProvider, lessonData['steps']);
+      StepData.interpolateSteps(_stepActionsProvider, loadedSteps);
       loadedCode = lessonData['code'];
       _stepIndex = notifyPropertyChange(#currStep, _stepIndex, 0);
     });
