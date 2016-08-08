@@ -15,11 +15,15 @@
         "5": false
       },
       {
-        "1": "package:code_steps/progression_service_provider.dart",
+        "1": "package:code_steps/step_context_service_provider.dart",
         "5": false
       },
       {
-        "1": "package:code_steps/step_cmds_directive.dart",
+        "1": "package:code_steps/step_action.dart",
+        "5": false
+      },
+      {
+        "1": "package:code_steps/step_actions_provider.dart",
         "5": false
       }
     ],
@@ -38,12 +42,16 @@
         "4": "i2"
       },
       {
-        "1": "package:code_steps/progression_service_provider.template.dart",
+        "1": "package:code_steps/step_context_service_provider.template.dart",
         "4": "i3"
       },
       {
-        "1": "package:code_steps/step_cmds_directive.template.dart",
+        "1": "package:code_steps/step_action.template.dart",
         "4": "i4"
+      },
+      {
+        "1": "package:code_steps/step_actions_provider.template.dart",
+        "4": "i5"
       }
     ]
   },

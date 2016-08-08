@@ -15,11 +15,15 @@
         "5": false
       },
       {
-        "1": "package:code_steps/progression_service_provider.dart",
+        "1": "package:code_steps/step_context_service_provider.dart",
         "5": false
       },
       {
-        "1": "package:code_steps/step_cmds_directive.dart",
+        "1": "package:code_steps/step_action.dart",
+        "5": false
+      },
+      {
+        "1": "package:code_steps/step_actions_provider.dart",
         "5": false
       }
     ],
