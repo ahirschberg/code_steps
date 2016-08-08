@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:angular2/core.dart';
 import 'step_actions_provider.dart';
 import 'step_action.dart';
@@ -12,10 +11,8 @@ class StepData {
 
   void applyAllActions(ElementRef root) =>
       actions.forEach((StepAction a) => a.apply(root));
-  void destroyActionsToPrev(ElementRef root) =>
-      actions.forEach((StepAction a) => a.destroyToPrevious(root));
-  void destroyActionsToNext(ElementRef root) =>
-      actions.forEach((StepAction a) => a.destroyToNext(root));
+  void destroy(ElementRef root) =>
+      actions.forEach((StepAction a) => a.destroy(root));
 
   static List<StepData> toStepData(
       StepActionsProvider stepActionsProvider, Iterable raw_steps) {
@@ -42,7 +39,6 @@ class StepData {
       StepActionsProvider stepActionsProvider, List<StepData> steps) {
     Map<StepActionType, StepAction> toggles =
         new Map<StepActionType, StepAction>();
-    print(steps.first.actions);
     steps.forEach((StepData step) {
       step.actions = step.actions.map((StepAction action) {
         if (action.model is ToggleActionModel) {
@@ -52,11 +48,8 @@ class StepData {
               .addAll(action.targets); // merge like toggles
           StepActionType opposite =
               (action.model as ToggleActionModel).opposite;
-          print('toggles: $toggles, need to check opposite? ${toggles.containsKey(opposite)}');
-          debugger();
           if (toggles.containsKey(opposite)) {
             toggles[opposite].targets.removeAll(action.targets);
-            print('removed ${action.targets} from opposite $opposite');
           }
           return null; // remove the toggled action from the list, for now
         } else {
@@ -65,6 +58,5 @@ class StepData {
       }).where((e) => e != null).toList(); // todo make this more elegant!
       step.actions.addAll(toggles.values.map((action) => action.copy()));
     });
-    print(steps.first.actions);
   }
 }

@@ -40,7 +40,7 @@ class StepContextService extends Injectable with ChangeNotifier {
       _loadedCode = notifyPropertyChange(#loadedCode, _loadedCode, val);
 
   void gotoNext() {
-    _stepIndex = notifyPropertyChange(#nextStep, _stepIndex, _stepIndex + 1);
+    _stepIndex = notifyPropertyChange(#changeStep, _stepIndex, _stepIndex + 1);
   }
 
   bool hasNext() =>
@@ -48,7 +48,7 @@ class StepContextService extends Injectable with ChangeNotifier {
 
   void gotoPrevious() {
     _stepIndex =
-        notifyPropertyChange(#previousStep, _stepIndex, _stepIndex - 1);
+        notifyPropertyChange(#changeStep, _stepIndex, _stepIndex - 1);
   }
 
   bool hasPrevious() => _loadedSteps != null && _stepIndex > 0;
@@ -63,7 +63,7 @@ class StepContextService extends Injectable with ChangeNotifier {
   set stepIndex(new_currStep) {
     if (new_currStep is String) new_currStep = int.parse(new_currStep);
     _stepIndex = notifyPropertyChange(
-        new_currStep < _stepIndex ? #previousStep : #nextStep,
+        #changeStep,
         _stepIndex,
         new_currStep);
   }

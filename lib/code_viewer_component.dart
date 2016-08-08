@@ -1,5 +1,6 @@
 import 'package:angular2/core.dart';
 import 'package:code_steps/step_context_service.dart';
+import 'package:code_steps/step_data.dart';
 import 'package:observe/observe.dart';
 import 'package:code_steps/highlightjs_interop.dart' as highlighter;
 import 'dart:html';
@@ -17,6 +18,7 @@ class CodeViewerComponent implements OnInit {
 
   final StepContextService stepContextService;
   ElementRef _elementRef;
+  StepData _lastStep;
 
   CodeViewerComponent(this.stepContextService, this._elementRef);
 
@@ -36,21 +38,12 @@ class CodeViewerComponent implements OnInit {
     });
 
     Util.filterChangeStreamByProp(stepContextService.changes, [
-      #nextStep, #loadedCode
+      #changeStep, #loadedCode
     ]).listen((PropertyChangeRecord change) {
-      stepContextService
-          .previousStep?.destroyActionsToNext(_elementRef);
+      _lastStep?.destroy(_elementRef);
       stepContextService
           .currStep.applyAllActions(_elementRef);
-    });
-
-    Util.filterChangeStreamByProp(stepContextService.changes, [
-      #previousStep
-    ]).listen((PropertyChangeRecord change) {
-      stepContextService
-          .nextStep.destroyActionsToPrev(_elementRef);
-      stepContextService
-          .currStep.applyAllActions(_elementRef);
+      _lastStep = stepContextService.currStep;
     });
   }
 }
