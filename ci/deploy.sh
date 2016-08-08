@@ -25,7 +25,7 @@ if (! hash pub 2>/dev/null) \
             then
     echo "Upgrading pub"
     wget https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-linux-x64-release.zip
-    unzip -o dartsdk-linux-x64-release.zip -d ~
+    unzip -o -qq dartsdk-linux-x64-release.zip -d ~
 fi
 
 # set-branches adds the branch to the refs that git looks at when
@@ -38,7 +38,7 @@ initialize_branch() {
     else
         git remote set-branches --add origin $1
         git remote update
-        git checkout $1 # initialize $TARGET_BRANCH on our remote
+        git checkout -f $1 # initialize $TARGET_BRANCH on our remote
         git checkout -
     fi
 }
@@ -81,18 +81,18 @@ GEM_PATH=~/cache/bundler:$GEM_PATH # necessary on Codeship to get requires to wo
 make lessons
 
 git add .
-git commit -m "Commit '$last_msg' built to js" -m "Original commit: $last_rev" -m ":runner: *This commit was created automatically*"
-git push -u origin $TARGET_BRANCH # pushes to original local repo
+git commit -m "Commit '$last_msg' built to js" -m "Original commit: $last_rev" -m ":runner: *This commit was created automatically*" || true
+git push -u origin $TARGET_BRANCH || true # pushes to original local repo
 echo "Done and ready to push to github."
 cd $dir
-git checkout $TARGET_BRANCH --force
-git push -u origin $TARGET_BRANCH $GH_PUSH_FLAGS # pushes to github
+git checkout --force $TARGET_BRANCH || true
+git push -u origin $TARGET_BRANCH $GH_PUSH_FLAGS || true # pushes to github
 
 if [ "$MIRROR_TO_PAGES" == '1' ]
 then # from http://stackoverflow.com/a/13102849/5927655
     initialize_branch gh-pages
     git branch -D gh-pages
-    git checkout --orphan gh-pages
+    git checkout -f --orphan gh-pages
     git add -A  # Add all files and commit them
     git commit -m ":memo: Copy of latest master-js commit." -m "Original commit: $last_rev"
     git push -uf origin gh-pages $GH_PUSH_FLAGS
