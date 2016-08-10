@@ -1,29 +1,36 @@
-:host {
+:host .code-card {
     display: block;
     height: 500px;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.48);
 }
 
-:host .row {
+.code-card .row {
     height: 100%;
 }
 
-@media (min-width: 1200px) {
-    :host {
-        max-width: 1200px;
+@media (min-width: 992px) {
+    .code-card {
+        max-width: 992px;
     }
 }
 
 @media (max-width: 991px) {
-    :host {
+    .code-card {
         max-width: 100%;
-        margin-top: 0 !important;
     }
-
 }
 
 @media (max-width: 543px) {
     code-explanation, code-viewer {
         height: 50%
     }
+}
+
+nav.lesson-steps-nav {
+    margin: 10px auto 0;
+    display: table;
+}
+
+nav.lesson-steps-nav button {
+    margin: 0 5px;
 }

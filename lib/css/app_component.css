@@ -2,19 +2,16 @@
     font-size: 1.2rem;
 }
 
-code-guide {
+:host code-guide {
     margin: 50px auto 10px;
+    display:block;
+    width: 100%;
 }
 
-nav.lesson-steps-nav {
-    margin: 10px auto 0;
-    display: table;
+@media (max-width: 992px) {
+    :host code-guide {
+        margin-top: 0 !important;
+    }
 }
 
-nav.lesson-steps-nav button {
-    margin: 0 5px;
-}
 
-#lesson-select-poc {
-    font-size: medium;
-}

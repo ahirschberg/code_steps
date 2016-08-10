@@ -13,13 +13,13 @@ class StepContextService extends Injectable with ChangeNotifier {
   StepContextService(
       LessonLoader this._lessonLoader, this._stepActionsProvider);
 
-  Future selectLesson(url) {
+  Future selectLesson(url, [initial_step_index]) {
     return _lessonLoader.loadData(url).then((HashMap lessonData) {
       loadedSteps =
           StepData.toStepData(_stepActionsProvider, lessonData['steps']);
       StepData.interpolateSteps(_stepActionsProvider, loadedSteps);
       loadedCode = lessonData['code'];
-      _stepIndex = notifyPropertyChange(#currStep, _stepIndex, 0);
+      stepIndex = initial_step_index ?? 0;
     });
   }
 
@@ -36,8 +36,10 @@ class StepContextService extends Injectable with ChangeNotifier {
   @reflectable
   String get loadedCode => _loadedCode;
   @reflectable
-  set loadedCode(String val) =>
-      _loadedCode = notifyPropertyChange(#loadedCode, _loadedCode, val);
+  set loadedCode(String val) {
+    _loadedCode = null; // hack to force refresh the code even if equal
+    _loadedCode = notifyPropertyChange(#loadedCode, _loadedCode, val);
+  }
 
   void gotoNext() {
     _stepIndex = notifyPropertyChange(#changeStep, _stepIndex, _stepIndex + 1);
@@ -47,8 +49,7 @@ class StepContextService extends Injectable with ChangeNotifier {
       _loadedSteps != null && _stepIndex < _loadedSteps.length - 1;
 
   void gotoPrevious() {
-    _stepIndex =
-        notifyPropertyChange(#changeStep, _stepIndex, _stepIndex - 1);
+    _stepIndex = notifyPropertyChange(#changeStep, _stepIndex, _stepIndex - 1);
   }
 
   bool hasPrevious() => _loadedSteps != null && _stepIndex > 0;
@@ -60,25 +61,19 @@ class StepContextService extends Injectable with ChangeNotifier {
   /**
    * Sets the step index to a desired value. If a string is passed in, it is converted to an integer automatically
    */
-  set stepIndex(new_currStep) {
-    if (new_currStep is String) new_currStep = int.parse(new_currStep);
-    _stepIndex = notifyPropertyChange(
-        #changeStep,
-        _stepIndex,
-        new_currStep);
+  set stepIndex(new_stepIndex) {
+    if (new_stepIndex is String) new_stepIndex = int.parse(new_stepIndex);
+    if (new_stepIndex >= 0 && new_stepIndex < length) {
+      _stepIndex = notifyPropertyChange(#changeStep, _stepIndex, new_stepIndex);
+    } else {
+      print('ERROR: Index $new_stepIndex out of bounds.');
+    }
   }
 
   /**
    * Returns the number of steps, or zero if no steps are loaded
    */
   int get length => loadedSteps?.length ?? 0;
-
-  StepData get previousStep => (loadedSteps == null || _stepIndex - 1 < 0)
-      ? null
-      : loadedSteps[_stepIndex - 1];
-
-  StepData get nextStep => (loadedSteps == null ||
-      _stepIndex >= _loadedSteps.length) ? null : loadedSteps[_stepIndex + 1];
 
   String get currCodeHtml => loadedCode;
 }

@@ -1,18 +1,2 @@
-<code-guide class="container-fluid">
-</code-guide>
+<router-outlet></router-outlet>
 
-<nav class="lesson-steps-nav">
-    <button class="btn btn-primary"
-            (click)="stepContextService.gotoPrevious()"
-            [disabled]="!stepContextService.hasPrevious()">Previous</button>
-    <input [(ngModel)]="stepContextService.stepIndex" type="range" min="0"
-           [max]="stepContextService.length - 1" title="step-progress">
-    <button class="btn btn-primary"
-            (click)="stepContextService.gotoNext()"
-            [disabled]="!stepContextService.hasNext()">Next</button>
-</nav>
-<!-- should be moved to component -->
-    <form id="lesson-select-poc" (ngSubmit)="userSelectLesson()">
-        <div>Select a lesson</div>
-        <input type="text" [(ngModel)]="lessonName" placeholder="Enter lesson name">
-    </form>

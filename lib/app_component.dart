@@ -1,26 +1,23 @@
-import 'package:angular2/core.dart' show Component, OnInit;
+import 'package:angular2/core.dart' show Component;
+import 'package:angular2/router.dart';
 import 'code_guide_component.dart';
-import 'step_context_service.dart';
+
+@RouteConfig(const [
+  const Route(
+      path: '/lesson/:lesson_name',
+      name: 'Lesson',
+      component: CodeGuideComponent
+  ),
+  const Redirect(
+      path: '/',
+      redirectTo: const ['Lesson', const {'lesson_name': 'polymorphism'}]
+  )
+])
 
 @Component(
     selector: 'my-app',
     templateUrl: 'html/app_component.html',
     styleUrls: const ['css/app_component.css'],
-    directives: const [CodeGuideComponent]
+    directives: const [CodeGuideComponent, ROUTER_DIRECTIVES]
 )
-class AppComponent implements OnInit {
-  StepContextService stepContextService;
-  String lessonName = 'polymorphism';
-
-  AppComponent(this.stepContextService);
-
-  void userSelectLesson() {
-    stepContextService.selectLesson('static/lesson-$lessonName.json')
-        .catchError((dynamic err) =>
-          print('ERROR: $err'));
-  }
-
-  void ngOnInit() {
-    userSelectLesson();
-  }
-}
+class AppComponent {}
