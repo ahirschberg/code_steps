@@ -9,7 +9,7 @@
             (click)="stepContextService.gotoPrevious()"
             [disabled]="!stepContextService.hasPrevious()">Previous</button>
     <input [(ngModel)]="stepContextService.stepIndex" type="range" min="0"
-           [max]="stepContextService.length - 1" title="step-progress">
+           [max]="stepContextService.length - 1" title="step-progress" class="step-progress">
     <button class="btn btn-primary"
             (click)="stepContextService.gotoNext()"
             [disabled]="!stepContextService.hasNext()">Next</button>
