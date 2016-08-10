@@ -1,4 +1,16 @@
-<div class="row">
-    <code-explanation class="col-sm-6"></code-explanation>
-    <code-viewer class="col-sm-6"></code-viewer>
+<div class="code-card container-fluid">
+    <div class="row">
+        <code-explanation class="col-sm-6"></code-explanation>
+        <code-viewer class="col-sm-6"></code-viewer>
+    </div>
 </div>
+<nav class="lesson-steps-nav">
+    <button class="btn btn-primary"
+            (click)="stepContextService.gotoPrevious()"
+            [disabled]="!stepContextService.hasPrevious()">Previous</button>
+    <input [(ngModel)]="stepContextService.stepIndex" type="range" min="0"
+           [max]="stepContextService.length - 1" title="step-progress">
+    <button class="btn btn-primary"
+            (click)="stepContextService.gotoNext()"
+            [disabled]="!stepContextService.hasNext()">Next</button>
+</nav>
