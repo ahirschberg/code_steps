@@ -1,5 +1,5 @@
 import 'package:angular2/core.dart';
-import 'lesson_loader.dart';
+import 'package:code_steps/lesson_loader.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'package:code_steps/step_actions_provider.dart';
 

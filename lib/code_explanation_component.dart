@@ -1,5 +1,5 @@
 import 'package:angular2/core.dart';
-import 'step_context_service.dart';
+import 'package:code_steps/step_context_service.dart';
 import 'package:observe/observe.dart';
 import 'dart:html';
 

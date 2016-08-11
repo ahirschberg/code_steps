@@ -2,7 +2,7 @@ import 'package:angular2/core.dart';
 import 'package:code_steps/step_actions_provider.dart';
 import 'package:observe/observe.dart';
 import 'dart:collection';
-import 'lesson_loader.dart';
+import 'package:code_steps/lesson_loader.dart';
 import 'package:code_steps/step_data.dart';
 import 'dart:async';
 

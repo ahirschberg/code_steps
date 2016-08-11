@@ -1,6 +1,7 @@
 import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
-import 'code_guide_component.dart';
+import 'package:code_steps/code_editor_component.dart';
+import 'package:code_steps/code_guide_component.dart';
 import 'package:code_steps/lesson_list_component.dart';
 
 @RouteConfig(const [
@@ -13,6 +14,11 @@ import 'package:code_steps/lesson_list_component.dart';
       path: '/lessons',
       name: 'Lesson List',
       component: LessonListComponent
+  ),
+  const Route(
+      path: '/new',
+      name: 'Lesson Editor',
+      component: CodeEditorComponent
   ),
   const Redirect(
       path: '/',
