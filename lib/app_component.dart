@@ -1,6 +1,7 @@
-import 'package:angular2/core.dart' show Component;
+import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
 import 'code_guide_component.dart';
+import 'package:code_steps/lesson_list_component.dart';
 
 @RouteConfig(const [
   const Route(
@@ -8,9 +9,14 @@ import 'code_guide_component.dart';
       name: 'Lesson',
       component: CodeGuideComponent
   ),
+  const Route(
+      path: '/lessons',
+      name: 'Lesson List',
+      component: LessonListComponent
+  ),
   const Redirect(
       path: '/',
-      redirectTo: const ['Lesson', const {'lesson_name': 'polymorphism'}]
+      redirectTo: const ['Lesson List']
   )
 ])
 
