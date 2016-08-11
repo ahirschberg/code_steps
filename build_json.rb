@@ -129,16 +129,23 @@ class CodeParser
   end
 end
 
-def build_json(code: nil, steps: nil)
+def build_map(code: nil, steps: nil)
   {
     code: code,
     steps: steps.map do |step_data|
       {
-        "cmds": step_data.cmds,
-        "html": step_data.text
+        cmds: step_data.cmds,
+        html: step_data.text
       }
     end
-  }.to_json
+  }
+end
+
+def build_lessons_metadata(target:, lesson_name:, lesson_data:)
+  target << {
+    'name': lesson_name,
+    'length': lesson_data[:steps].length
+  }
 end
 
 if __FILE__ == $0
@@ -147,15 +154,25 @@ if __FILE__ == $0
   markdown_parser = Redcarpet::Markdown.new(renderer,
                                             autolink: true, fenced_code_blocks: true)
   output_dir = FileUtils.mkdir_p("./#{ARGV[0]}").first
+  lesson_metadata = []
   Dir.foreach('lessons') do |filename|
     next if filename == '.' or filename == '..'
     path = "lessons/#{filename}"
     if File.directory? path
       steps_parser = StepsParser.new markdown_parser
-      File.open("#{output_dir}/lesson-#{filename}.json", 'w') do |output|
-        output << build_json(code: CodeParser.decorate_code(path),
+      lesson_map = build_map(code: CodeParser.decorate_code(path),
                              steps: steps_parser.generate_steps(path))
+      build_lessons_metadata target: lesson_metadata,
+                             lesson_name: filename,
+                             lesson_data: lesson_map
+      File.open("#{output_dir}/lesson-#{filename}.json", 'w') do |lesson_json|
+        lesson_json << lesson_map.to_json
       end
     end
+  end
+  File.open("#{output_dir}/lessons.json", 'w') do |lessons_list_json|
+    lessons_list_json << {
+      lessons: lesson_metadata
+    }.to_json
   end
 end
