@@ -1,5 +1,24 @@
 <pre id="ace-edit">
-    test_code() {
-        // test code
-    }
+#!/usr/bin/env ruby
+# this script builds the code and html steps files from their folder into json
+
+require 'json'
+require 'cgi'
+require 'fileutils'
+require 'redcarpet'
+
+
+class StepsParser
+  def initialize(markdown_parser)
+    @md_parser = markdown_parser
+  end
+
+  def generate_steps(lesson_path)
+    File.open("#{lesson_path}/steps.md") do |steps_file|
+      parse steps_file.read
+    end
+  end
+end
 </pre>
+<button (click)="addActionMarker()">Select</button>
+<action-region-editor [region]="activeRegion" (onDelete)="removeActionMarker($event)"></action-region-editor>
