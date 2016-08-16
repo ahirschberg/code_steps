@@ -1,20 +1,8 @@
-import 'dart:mirrors';
 import 'package:angular2/core.dart';
 import 'package:dson/dson.dart';
 
 @serializable
 enum StepActionType { Pass, Fail, Spotlight, Hide, Show, LineSpotlight }
-
-class EnumStringHelper<T> {
-  T enumFromString(String value) {
-    return (reflectType(T) as ClassMirror)
-        .getField(#values)
-        .reflectee
-        .firstWhere((e) =>
-            e.toString().split('.')[1].toUpperCase() == value.toUpperCase());
-  }
-  String stringFromEnum(T value) => value.toString().split('.')[1];
-}
 
 abstract class StepActionModel {
   Function _apply, _destroy;

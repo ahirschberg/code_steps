@@ -11,8 +11,7 @@ dependencies:
   ace: any
   ng_bootstrap: any
   sass: any
-  dson: ^0.3.3
-  reflectable: ^0.5.4
+  jsonx: any
 transformers:
 - angular2:
     platform_directives:
@@ -20,8 +19,5 @@ transformers:
     platform_pipes:
     - 'package:angular2/common.dart#COMMON_PIPES'
     entry_points: web/main.dart
-- reflectable:
-    entry_points:
-    - web/main.dart
 - dart_to_js_script_rewriter
 - sass

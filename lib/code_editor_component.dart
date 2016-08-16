@@ -1,18 +1,21 @@
-import 'dart:convert';
 import 'package:angular2/core.dart';
 import 'package:ace/ace.dart' as ace;
 import 'package:ace/proxy.dart';
 import 'package:code_steps/action_region_editor_component.dart';
+import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/step_action.dart';
 import 'package:code_steps/code_guide_component.dart';
 import 'package:code_steps/step_context_service.dart';
-import 'package:dson/dson.dart';
 
 @Component(
     selector: 'code-editor',
     templateUrl: 'html/code_editor_component.html',
-    directives: const [ActionRegionEditorComponent, CodeGuideComponent],
-    styles: const ['''
+    directives: const [
+      ActionRegionEditorComponent,
+      CodeGuideComponent
+    ],
+    styles: const [
+      '''
     #code-edit {
         margin: 0;
         width: 640px;
@@ -68,10 +71,11 @@ class CodeEditorComponent implements OnInit {
     activeRegion = getRegionAtCursor();
   }
 
-  ActionRegion getRegionAtCursor() =>
-      actionRegions.values.firstWhere((ActionRegion region) =>
-        region.marker.className.contains('cs-mark') &&
-        region.marker.range.comparePoint(editor.selection.cursor) == 0, orElse: () {});
+  ActionRegion getRegionAtCursor() => actionRegions.values.firstWhere(
+      (ActionRegion region) =>
+          region.marker.className.contains('cs-mark') &&
+          region.marker.range.comparePoint(editor.selection.cursor) == 0,
+      orElse: () {});
 
   _updateMarkerFields(ace.Marker oldMarker,
       {ace.Range newRange: null, String newClass: null}) {
@@ -84,14 +88,11 @@ class CodeEditorComponent implements OnInit {
   }
 
   jsonTest() {
-    //print(toJson(actionRegions.values.toSet()));
-    print(new JsonEncoder().convert(actionRegions));
+    print(LessonSerializer.encode(actionRegions.values.toList()));
   }
 }
 
-@serializable
 class ActionRegion {
-  @ignore
   ace.Marker marker;
   Map<int, Set<StepActionType>> stepData = {};
 
@@ -101,11 +102,9 @@ class ActionRegion {
 
   Map toJson() {
     return {
-      'range': {
-        'start': {
-          'row': marker.range.start.row
-        }
-      }
+      'range': marker.range,
+      'stepData': LessonSerializer.stringifyMapData(stepData,
+          valuesTransformer: LessonSerializer.stepActionTypeSetTransformer)
     };
   }
 }
