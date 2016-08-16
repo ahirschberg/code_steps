@@ -1,22 +1,25 @@
-import 'dart:developer';
+import 'dart:convert';
 import 'package:angular2/core.dart';
 import 'package:ace/ace.dart' as ace;
 import 'package:ace/proxy.dart';
 import 'package:code_steps/action_region_editor_component.dart';
 import 'package:code_steps/step_action.dart';
+import 'package:code_steps/code_guide_component.dart';
+import 'package:code_steps/step_context_service.dart';
+import 'package:dson/dson.dart';
 
 @Component(
     selector: 'code-editor',
     templateUrl: 'html/code_editor_component.html',
-    directives: const [ActionRegionEditorComponent],
+    directives: const [ActionRegionEditorComponent, CodeGuideComponent],
     styles: const ['''
-    #ace-edit {
+    #code-edit {
         margin: 0;
         width: 640px;
         height: 480px;
         font-size: 1.2rem;
     }
-    :host div.c-frm {
+    :host div.cs-mark {
         background-color: gray;
         position: absolute;
     }
@@ -27,10 +30,14 @@ class CodeEditorComponent implements OnInit {
   ActionRegion activeRegion;
   Map<int, ActionRegion> actionRegions = {};
 
+  StepContextService stepContextService;
+
+  CodeEditorComponent(this.stepContextService);
+
   @override
   ngOnInit() {
     ace.implementation = ACE_PROXY_IMPLEMENTATION;
-    editor = ace.edit('ace-edit');
+    editor = ace.edit('code-edit');
     editor
       ..theme = new ace.Theme.named(ace.Theme.SOLARIZED_DARK)
       ..session.mode = new ace.Mode.named(ace.Mode.RUBY);
@@ -38,10 +45,11 @@ class CodeEditorComponent implements OnInit {
         new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
 
     editor.selection.onChangeCursor.listen(onData);
+    stepContextService.loadedCode = editor.session.document.value; // todo
   }
 
   addActionMarker() {
-    _insertMarker(editor.selectionRange, 'c-frm');
+    _insertMarker(editor.selectionRange, 'cs-mark');
   }
 
   removeActionMarker(int id) {
@@ -53,16 +61,16 @@ class CodeEditorComponent implements OnInit {
     int id = editor.session.addMarker(selection, tag, type: ace.Marker.TEXT);
     actionRegions[id] =
         new ActionRegion(editor.session.getMarkers()[id.toString()]);
+    activeRegion = getRegionAtCursor();
   }
 
   void onData(Null) {
-    print('onData called');
     activeRegion = getRegionAtCursor();
   }
 
   ActionRegion getRegionAtCursor() =>
       actionRegions.values.firstWhere((ActionRegion region) =>
-        region.marker.className.contains('c-frm') &&
+        region.marker.className.contains('cs-mark') &&
         region.marker.range.comparePoint(editor.selection.cursor) == 0, orElse: () {});
 
   _updateMarkerFields(ace.Marker oldMarker,
@@ -74,13 +82,30 @@ class CodeEditorComponent implements OnInit {
     actionRegions[newId] = actionRegions[oldMarker.id];
     removeActionMarker(oldMarker.id);
   }
+
+  jsonTest() {
+    //print(toJson(actionRegions.values.toSet()));
+    print(new JsonEncoder().convert(actionRegions));
+  }
 }
 
+@serializable
 class ActionRegion {
+  @ignore
   ace.Marker marker;
-  Map<int, List<StepActionModel>> stepData = {};
+  Map<int, Set<StepActionType>> stepData = {};
 
   ActionRegion(this.marker);
 
   String toString() => "ActionEditRegion($marker, $stepData)";
+
+  Map toJson() {
+    return {
+      'range': {
+        'start': {
+          'row': marker.range.start.row
+        }
+      }
+    };
+  }
 }

@@ -1,4 +1,4 @@
-<pre id="ace-edit">
+<pre id="code-edit">
 #!/usr/bin/env ruby
 # this script builds the code and html steps files from their folder into json
 
@@ -21,4 +21,5 @@ class StepsParser
 end
 </pre>
 <button (click)="addActionMarker()">Select</button>
+<button (click)="jsonTest()">jsonTest</button>
 <action-region-editor [region]="activeRegion" (onDelete)="removeActionMarker($event)"></action-region-editor>

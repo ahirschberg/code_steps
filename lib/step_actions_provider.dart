@@ -24,6 +24,8 @@ class StepActionsProvider extends Injectable {
     };
   }
 
+  StepActionModel modelFromType(StepActionType t) => _commandActions[t];
+
   StepActionModel getActionModel(String action_name) {
     const transformer = const {
       'pass': StepActionType.Pass,
