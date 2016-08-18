@@ -1,3 +1,7 @@
+<pre id="explanation-edit">
+# Big Header
+</pre>
+<input type="text" #filepath_form placeholder="ex: Example.java" (keyup)="updateCodeEditorFiletype(filepath_form.value)">
 <pre id="code-edit">
 #!/usr/bin/env ruby
 # this script builds the code and html steps files from their folder into json
@@ -26,3 +30,4 @@ end
                       (onDelete)="removeActionMarker($event)"
                       (onDataChange)="recolorActiveRegion($event)">
 </action-region-editor>
+

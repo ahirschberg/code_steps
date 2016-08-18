@@ -1,5 +1,4 @@
 import 'dart:js';
-import 'dart:math';
 import 'package:angular2/core.dart';
 import 'package:ace/ace.dart' as ace;
 import 'package:ace/proxy.dart';
@@ -20,7 +19,7 @@ import 'package:fff/color.dart';
     ],
     styles: const [
       '''
-    #code-edit {
+    #code-edit, #explanation-edit {
         margin: 0;
         width: 640px;
         height: 480px;
@@ -33,9 +32,10 @@ import 'package:fff/color.dart';
     '''
     ])
 class CodeEditorComponent implements OnInit {
-  ace.Editor editor;
   ActionRegion activeRegion;
   Map<int, ActionRegion> actionRegions = {};
+  List<ace.Editor> editors;
+  ace.Editor codeEditor;
 
   StepContextService stepContextService;
 
@@ -44,36 +44,48 @@ class CodeEditorComponent implements OnInit {
   @override
   ngOnInit() {
     ace.implementation = ACE_PROXY_IMPLEMENTATION;
-    editor = ace.edit('code-edit');
-    editor
-      ..theme = new ace.Theme.named(ace.Theme.SOLARIZED_DARK)
-      ..session.mode = new ace.Mode.named(ace.Mode.RUBY);
-    editor.keyboardHandler =
-        new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
+    codeEditor = setupCodeEditor('code-edit');
+    editors = [codeEditor, setupMdEditor('explanation-edit')];
+    editors.forEach((e) {
+      e.theme = new ace.Theme.named(ace.Theme.SOLARIZED_DARK);
+      e.keyboardHandler = new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
+    });
+  }
 
+  ace.Editor setupCodeEditor(String selector) {
+    ace.Editor editor = ace.edit(selector);
     editor.selection.onChangeCursor.listen(onData);
-    stepContextService.loadedCode = editor.session.document.value; // todo
+    return editor;
+  }
+
+  ace.Editor setupMdEditor(String selector) {
+    ace.Editor editor = ace.edit(selector);
+    editor.session.mode = new ace.Mode.named(ace.Mode.MARKDOWN);
+    return editor;
   }
 
   addActionMarker() {
-    _insertMarker(editor.selectionRange, 'cs-mark');
+    _insertMarker(codeEditor.selectionRange, 'cs-mark');
   }
 
   removeActionMarker(int id) {
     actionRegions.remove(id);
-    editor.session.removeMarker(id);
+    codeEditor.session.removeMarker(id);
   }
 
   int nextUniq = 0;
   _insertMarker(ace.Range selection, String tag) {
     String uniqClass = 'mark-${nextUniq++}';
-    int id = editor.session
+    int id = codeEditor.session
         .addMarker(selection, tag + ' $uniqClass', type: ace.Marker.TEXT);
     actionRegions[id] =
-        new ActionRegion(editor.session.getMarkers()[id.toString()], uniqClass);
+        new ActionRegion(codeEditor.session.getMarkers()[id.toString()], uniqClass);
     activeRegion = getRegionAtCursor();
   }
 
+  updateCodeEditorFiletype(String filepath) {
+    codeEditor.session.mode = new ace.Mode.forFile(filepath);
+  }
   void onData(Null) {
     activeRegion = getRegionAtCursor();
   }
@@ -81,14 +93,14 @@ class CodeEditorComponent implements OnInit {
   ActionRegion getRegionAtCursor() => actionRegions.values.firstWhere(
       (ActionRegion region) =>
           region.marker.className.contains('cs-mark') &&
-          region.marker.range.comparePoint(editor.selection.cursor) == 0,
+          region.marker.range.comparePoint(codeEditor.selection.cursor) == 0,
       orElse: () {});
 
   _updateMarkerFields(ace.Marker oldMarker,
       {ace.Range newRange: null, String newClass: null}) {
     ace.Range desiredRange = newRange ?? oldMarker.range;
     String desiredClass = newClass ?? oldMarker.className;
-    int newId = editor.session.addMarker(desiredRange, desiredClass,
+    int newId = codeEditor.session.addMarker(desiredRange, desiredClass,
         type: oldMarker.type, inFront: oldMarker.inFront);
     actionRegions[newId] = actionRegions[oldMarker.id];
     removeActionMarker(oldMarker.id);
