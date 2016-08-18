@@ -1,3 +1,5 @@
+import 'dart:js';
+import 'dart:math';
 import 'package:angular2/core.dart';
 import 'package:ace/ace.dart' as ace;
 import 'package:ace/proxy.dart';
@@ -6,6 +8,8 @@ import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/step_action.dart';
 import 'package:code_steps/code_guide_component.dart';
 import 'package:code_steps/step_context_service.dart';
+import 'jss_interop.dart' as jss;
+import 'package:fff/color.dart';
 
 @Component(
     selector: 'code-editor',
@@ -23,7 +27,7 @@ import 'package:code_steps/step_context_service.dart';
         font-size: 1.2rem;
     }
     :host div.cs-mark {
-        background-color: gray;
+        background-color: rgba(132,132,132,0.25);
         position: absolute;
     }
     '''
@@ -60,10 +64,13 @@ class CodeEditorComponent implements OnInit {
     editor.session.removeMarker(id);
   }
 
+  int nextUniq = 0;
   _insertMarker(ace.Range selection, String tag) {
-    int id = editor.session.addMarker(selection, tag, type: ace.Marker.TEXT);
+    String uniqClass = 'mark-${nextUniq++}';
+    int id = editor.session
+        .addMarker(selection, tag + ' $uniqClass', type: ace.Marker.TEXT);
     actionRegions[id] =
-        new ActionRegion(editor.session.getMarkers()[id.toString()]);
+        new ActionRegion(editor.session.getMarkers()[id.toString()], uniqClass);
     activeRegion = getRegionAtCursor();
   }
 
@@ -88,15 +95,36 @@ class CodeEditorComponent implements OnInit {
   }
 
   jsonTest() {
-    print(LessonSerializer.encode(actionRegions.values.toList()));
+    String jsonData = LessonSerializer.encode(actionRegions.values.toList());
+    print(jsonData);
+    print(LessonSerializer.decode(jsonData));
+  }
+
+  static const green = const Color(80, 131, 30, 0.35);
+  static const blue = const Color(53, 191, 188, 0.2);
+  static const red = const Color(126, 13, 13, 0.68);
+  static const purple = const Color(197, 23, 158, 0.25);
+  static const yellow = const Color(79, 76, 15, 0.66);
+  recolorActiveRegion(Map<StepActionType, bool> typeEnabledState) {
+    Color c = null;
+    if (typeEnabledState[StepActionType.Pass] == true) {
+      c = green;
+    } else if (typeEnabledState[StepActionType.Fail] == true) {
+      c = red;
+    } else if (typeEnabledState[StepActionType.Spotlight] == true || typeEnabledState[StepActionType.LineSpotlight]) {
+      c = yellow;
+    }
+    jss.set('div.cs-mark.${activeRegion.uniqClass}',
+        new JsObject.jsify({'background-color': c.toString()}));
   }
 }
 
 class ActionRegion {
   ace.Marker marker;
+  String uniqClass;
   Map<int, Set<StepActionType>> stepData = {};
 
-  ActionRegion(this.marker);
+  ActionRegion(this.marker, this.uniqClass);
 
   String toString() => "ActionEditRegion($marker, $stepData)";
 

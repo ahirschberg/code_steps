@@ -12,6 +12,7 @@ dependencies:
   ng_bootstrap: any
   sass: any
   jsonx: any
+  fff: ^0.0.3
 transformers:
 - angular2:
     platform_directives:

@@ -38,4 +38,23 @@ class LessonSerializer {
       set
           .map((t) => _stepActionTypeSerializer.stringFromEnum(t).toLowerCase())
           .toList();
+
+  static dynamic decode(String jsonData) {
+    return jsonx.decode(jsonData, reviver: (var key, var val) {
+      if (key == 'start' || key == 'end') {
+        return new Point(val['row'], val['column']);
+      } else if (key == 'range') {
+        return new Range.fromPoints(val['start'], val['end']);
+      } else if (key == 'stepData') {
+        Map<int, List<String>> stringedActionTypes =
+            val as Map<int, List<String>>;
+        return new Map.fromIterables(
+            stringedActionTypes.keys,
+            stringedActionTypes.values.map((type_list) => type_list.map(
+                (type_str) =>
+                    _stepActionTypeSerializer.enumFromString(type_str))));
+      }
+      return val;
+    });
+  }
 }

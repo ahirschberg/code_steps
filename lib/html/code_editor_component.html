@@ -22,4 +22,7 @@ end
 </pre>
 <button (click)="addActionMarker()">Select</button>
 <button (click)="jsonTest()">jsonTest</button>
-<action-region-editor [region]="activeRegion" (onDelete)="removeActionMarker($event)"></action-region-editor>
+<action-region-editor [region]="activeRegion"
+                      (onDelete)="removeActionMarker($event)"
+                      (onDataChange)="recolorActiveRegion($event)">
+</action-region-editor>

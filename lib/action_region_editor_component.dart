@@ -1,5 +1,6 @@
 import 'package:angular2/core.dart';
 import 'package:code_steps/code_editor_component.dart';
+import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/step_action.dart';
 import 'package:code_steps/step_actions_provider.dart';
 import 'package:code_steps/step_context_service.dart';
@@ -21,6 +22,8 @@ class ActionRegionEditorComponent implements OnChanges {
   ActionRegion region;
   @Output()
   EventEmitter onDelete;
+  @Output()
+  EventEmitter onDataChange;
 
   StepActionsProvider stepActionsProvider;
   StepContextService stepContextService;
@@ -36,6 +39,7 @@ class ActionRegionEditorComponent implements OnChanges {
   ActionRegionEditorComponent(
       this.stepActionsProvider, this.stepContextService) {
     onDelete = new EventEmitter();
+    onDataChange = new EventEmitter();
     esh = new EnumStringHelper<StepActionType>();
   }
 
@@ -55,11 +59,12 @@ class ActionRegionEditorComponent implements OnChanges {
   }
 
   void updateSelected(StepActionType type, bool event) {
+    onDataChange.emit(actionUIToggles);
     actionUIToggles[type] = event;
     event ? currentStepActions.add(type) : currentStepActions.remove(type);
   }
 
-  @override
+  @override // called when @input() region is changed
   void ngOnChanges(Map<String, SimpleChange> changes) {
     if(changes.containsKey('region')) {
       _actionUIToggles = {};
