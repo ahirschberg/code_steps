@@ -34,8 +34,7 @@ import 'package:fff/color.dart';
 class CodeEditorComponent implements OnInit {
   ActionRegion activeRegion;
   Map<int, ActionRegion> actionRegions = {};
-  List<ace.Editor> editors;
-  ace.Editor codeEditor;
+  Map<Symbol, ace.Editor> editors = {};
 
   StepContextService stepContextService;
 
@@ -44,11 +43,12 @@ class CodeEditorComponent implements OnInit {
   @override
   ngOnInit() {
     ace.implementation = ACE_PROXY_IMPLEMENTATION;
-    codeEditor = setupCodeEditor('code-edit');
-    editors = [codeEditor, setupMdEditor('explanation-edit')];
-    editors.forEach((e) {
+    editors[#code] = setupCodeEditor('code-edit');
+    editors[#expl] = setupMdEditor('explanation-edit');
+    editors.values.forEach((e) {
       e.theme = new ace.Theme.named(ace.Theme.SOLARIZED_DARK);
-      e.keyboardHandler = new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
+      e.keyboardHandler =
+          new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
     });
   }
 
@@ -65,27 +65,28 @@ class CodeEditorComponent implements OnInit {
   }
 
   addActionMarker() {
-    _insertMarker(codeEditor.selectionRange, 'cs-mark');
+    _insertMarker(editors[#code].selectionRange, 'cs-mark');
   }
 
   removeActionMarker(int id) {
     actionRegions.remove(id);
-    codeEditor.session.removeMarker(id);
+    editors[#code].session.removeMarker(id);
   }
 
   int nextUniq = 0;
   _insertMarker(ace.Range selection, String tag) {
     String uniqClass = 'mark-${nextUniq++}';
-    int id = codeEditor.session
+    int id = editors[#code].session
         .addMarker(selection, tag + ' $uniqClass', type: ace.Marker.TEXT);
-    actionRegions[id] =
-        new ActionRegion(codeEditor.session.getMarkers()[id.toString()], uniqClass);
+    actionRegions[id] = new ActionRegion(
+        editors[#code].session.getMarkers()[id.toString()], uniqClass);
     activeRegion = getRegionAtCursor();
   }
 
   updateCodeEditorFiletype(String filepath) {
-    codeEditor.session.mode = new ace.Mode.forFile(filepath);
+    editors[#code].session.mode = new ace.Mode.forFile(filepath);
   }
+
   void onData(Null) {
     activeRegion = getRegionAtCursor();
   }
@@ -93,24 +94,31 @@ class CodeEditorComponent implements OnInit {
   ActionRegion getRegionAtCursor() => actionRegions.values.firstWhere(
       (ActionRegion region) =>
           region.marker.className.contains('cs-mark') &&
-          region.marker.range.comparePoint(codeEditor.selection.cursor) == 0,
+          region.marker.range.comparePoint(editors[#code].selection.cursor) == 0,
       orElse: () {});
 
   _updateMarkerFields(ace.Marker oldMarker,
       {ace.Range newRange: null, String newClass: null}) {
     ace.Range desiredRange = newRange ?? oldMarker.range;
     String desiredClass = newClass ?? oldMarker.className;
-    int newId = codeEditor.session.addMarker(desiredRange, desiredClass,
+    int newId = editors[#code].session.addMarker(desiredRange, desiredClass,
         type: oldMarker.type, inFront: oldMarker.inFront);
     actionRegions[newId] = actionRegions[oldMarker.id];
     removeActionMarker(oldMarker.id);
   }
 
   jsonTest() {
-    String jsonData = LessonSerializer.encode(actionRegions.values.toList());
+    String jsonData = LessonSerializer.encode(this);
     print(jsonData);
-    print(LessonSerializer.decode(jsonData));
+    Map decoded = LessonSerializer.decode(jsonData);
+    print(decoded);
   }
+
+  Map toJson() => {
+    'code': editors[#code].value,
+    'expl': editors[#expl].value,
+    'regions': actionRegions.values.toList(growable: false)
+  };
 
   static const green = const Color(80, 131, 30, 0.35);
   static const blue = const Color(53, 191, 188, 0.2);
@@ -118,16 +126,26 @@ class CodeEditorComponent implements OnInit {
   static const purple = const Color(197, 23, 158, 0.25);
   static const yellow = const Color(79, 76, 15, 0.66);
   recolorActiveRegion(Map<StepActionType, bool> typeEnabledState) {
-    Color c = null;
+    Color c = null; // todo experimental
+    Function addColor = (Color base, Color toAdd) =>
+        base == null ? toAdd : toAdd + base;
     if (typeEnabledState[StepActionType.Pass] == true) {
-      c = green;
-    } else if (typeEnabledState[StepActionType.Fail] == true) {
-      c = red;
-    } else if (typeEnabledState[StepActionType.Spotlight] == true || typeEnabledState[StepActionType.LineSpotlight]) {
-      c = yellow;
+      c = addColor(c, green);
     }
-    jss.set('div.cs-mark.${activeRegion.uniqClass}',
-        new JsObject.jsify({'background-color': c.toString()}));
+    if (typeEnabledState[StepActionType.Fail] == true) {
+      c = addColor(c, red);
+    }
+    if (typeEnabledState[StepActionType.Spotlight] == true ||
+        typeEnabledState[StepActionType.LineSpotlight]) {
+      c = addColor(c, yellow);
+    }
+    if (typeEnabledState[StepActionType.Show] == true || typeEnabledState[StepActionType.Hide] == true) {
+      c = addColor(c, blue);
+    }
+    if (c != null) {
+      jss.set('div.cs-mark.${activeRegion.uniqClass}',
+          new JsObject.jsify({'background-color': c.toString()}));
+    }
   }
 }
 

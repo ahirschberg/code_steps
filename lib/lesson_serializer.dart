@@ -16,11 +16,12 @@ class EnumStringHelper<T> {
 }
 
 class LessonSerializer {
-  static Function defaultStringify = (v) => v.toString();
+  static final Function identity = (v) => v;
+  static final Function stringify = (v) => v.toString();
   static Map stringifyMapData(Map m,
       {Function keysTransformer: null, Function valuesTransformer: null}) {
-    keysTransformer ??= defaultStringify;
-    valuesTransformer ??= defaultStringify;
+    keysTransformer ??= stringify; // json keys must be strings.
+    valuesTransformer ??= identity;
     return new Map.fromIterables(
         m.keys.map(keysTransformer), m.values.map(valuesTransformer));
   }
