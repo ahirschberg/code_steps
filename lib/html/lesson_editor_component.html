@@ -1,0 +1,11 @@
+{{codeEditor?.actionRegions}}
+<ace-edit id="md-edit" (onInit)="setupMarkdownEditor($event)"></ace-edit>
+<input type="text" #filepath_form placeholder="ex: Example.java" [(ngModel)]="codeEditorFilepath">
+<ace-code-edit (onInit)="setupCodeEditor($event)"></ace-code-edit>
+<button (click)="localStorageSave()">save</button>
+<button (click)="localStorageRetrieve()">load</button>
+<button (click)="codeEditor.addActionMarker()">Select</button>
+<action-region-editor [region]="codeEditor?.activeRegion"
+                      (onDelete)="codeEditor.removeActionMarker($event)"
+                      (onDataChange)="codeEditor.recolorActiveRegion($event)">
+</action-region-editor>

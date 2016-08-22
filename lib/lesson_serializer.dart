@@ -16,9 +16,10 @@ class EnumStringHelper<T> {
 }
 
 class LessonSerializer {
-  static final Function identity = (v) => v;
-  static final Function stringify = (v) => v.toString();
-  static Map stringifyMapData(Map m,
+  static final Function identity    = (v) => v;
+  static final Function stringify   = (v) => v.toString();
+  static final Function destringifyInt = (String s) => int.parse(s);
+  static Map transformMap(Map m,
       {Function keysTransformer: null, Function valuesTransformer: null}) {
     keysTransformer ??= stringify; // json keys must be strings.
     valuesTransformer ??= identity;
@@ -35,10 +36,7 @@ class LessonSerializer {
 
   static EnumStringHelper<StepActionType> _stepActionTypeSerializer =
       new EnumStringHelper<StepActionType>();
-  static Function stepActionTypeSetTransformer = (Set<StepActionType> set) =>
-      set
-          .map((t) => _stepActionTypeSerializer.stringFromEnum(t).toLowerCase())
-          .toList();
+  static Function stepActionTypeTransformer = (StepActionType t) => _stepActionTypeSerializer.stringFromEnum(t).toLowerCase();
 
   static dynamic decode(String jsonData) {
     return jsonx.decode(jsonData, reviver: (var key, var val) {
@@ -46,7 +44,7 @@ class LessonSerializer {
         return new Point(val['row'], val['column']);
       } else if (key == 'range') {
         return new Range.fromPoints(val['start'], val['end']);
-      } else if (key == 'stepData') {
+      } else if (key == 'step_data') {
         Map<int, List<String>> stringedActionTypes =
             val as Map<int, List<String>>;
         return new Map.fromIterables(

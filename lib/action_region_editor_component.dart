@@ -1,5 +1,5 @@
 import 'package:angular2/core.dart';
-import 'package:code_steps/code_editor_component.dart';
+import 'package:code_steps/lesson_editor_component.dart';
 import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/step_action.dart';
 import 'package:code_steps/step_actions_provider.dart';

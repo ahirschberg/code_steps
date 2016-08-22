@@ -1,6 +1,6 @@
 import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
-import 'package:code_steps/code_editor_component.dart';
+import 'package:code_steps/lesson_editor_component.dart';
 import 'package:code_steps/code_guide_component.dart';
 import 'package:code_steps/lesson_list_component.dart';
 
@@ -16,9 +16,9 @@ import 'package:code_steps/lesson_list_component.dart';
       component: LessonListComponent
   ),
   const Route(
-      path: '/new',
+      path: '/edit',
       name: 'Lesson Editor',
-      component: CodeEditorComponent
+      component: LessonEditorComponent
   ),
   const Redirect(
       path: '/',
