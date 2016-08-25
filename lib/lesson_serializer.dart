@@ -20,11 +20,11 @@ class LessonSerializer {
   static final Function stringify   = (v) => v.toString();
   static final Function destringifyInt = (String s) => int.parse(s);
   static Map transformMap(Map m,
-      {Function keysTransformer: null, Function valuesTransformer: null}) {
-    keysTransformer ??= stringify; // json keys must be strings.
-    valuesTransformer ??= identity;
+      {Function key: null, Function value: null}) {
+    key ??= stringify; // json keys must be strings.
+    value ??= identity;
     return new Map.fromIterables(
-        m.keys.map(keysTransformer), m.values.map(valuesTransformer));
+        m.keys.map(key), m.values.map(value));
   }
 
   static String encode(var obj) {

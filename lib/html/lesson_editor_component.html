@@ -7,5 +7,5 @@
 <button (click)="codeEditor.addActionMarker()">Select</button>
 <action-region-editor [region]="codeEditor?.activeRegion"
                       (onDelete)="codeEditor.removeActionMarker($event)"
-                      (onDataChange)="codeEditor.recolorActiveRegion($event)">
+                      (onDataChange)="codeEditor.recolorRegion(codeEditor.activeRegion, $event)">
 </action-region-editor>
