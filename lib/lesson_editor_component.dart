@@ -12,6 +12,7 @@ import 'package:code_steps/step_action.dart';
 import 'package:code_steps/code_guide_component.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'jss_interop.dart' as jss;
+import 'package:code_steps/util.dart';
 import 'package:fff/color.dart';
 
 @Component(
@@ -135,7 +136,8 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
 
   ActionRegion activeRegion;
   Map<int, ActionRegion> actionRegions = {};
-  LessonCodeEditorComponent(ElementRef elementRef) : super(elementRef) {
+  StepContextService stepContextService;
+  LessonCodeEditorComponent(ElementRef elementRef, this.stepContextService) : super(elementRef) {
     super.dom_id = code_edit_id;
   }
 
@@ -143,6 +145,9 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   ngOnInit() {
     super.ngOnInit();
     this.aceController.selection.onChangeCursor.listen(onData);
+    Util.filterChangeStreamByProp(stepContextService.changes, const [#changeStep]).listen((e) {
+      actionRegions.values.forEach((r) => recolorRegion(r, r.getActionStates(stepContextService.stepIndex)));
+    });
   }
 
   void addSerializedRegions(List regions) {
@@ -151,6 +156,7 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
         ..stepData = LessonSerializer.transformMap(region_map['step_data'],
             key: LessonSerializer.destringifyInt,
             value: (v) => v.toSet());
+      recolorRegion(r, r.getActionStates(stepContextService.stepIndex));
       print('=====serialized region output=====');
       print(r);
     });
@@ -205,7 +211,7 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const yellow = const Color(79, 76, 15, 0.66);
   recolorRegion(
       ActionRegion region, Map<StepActionType, bool> typeEnabledState) {
-    Color c = null; // todo experimental
+    Color c = null;
     Function addColor =
         (Color base, Color toAdd) => base == null ? toAdd : toAdd + base;
     if (typeEnabledState[StepActionType.Pass] == true) {

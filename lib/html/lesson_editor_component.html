@@ -1,7 +1,15 @@
-{{codeEditor?.actionRegions}}
-<ace-edit id="md-edit" (onInit)="setupMarkdownEditor($event)"></ace-edit>
-<input type="text" #filepath_form placeholder="ex: Example.java" [(ngModel)]="codeEditorFilepath">
-<ace-code-edit (onInit)="setupCodeEditor($event)"></ace-code-edit>
+<button (click)="stepContextService.gotoPrevious()">Previous</button>
+{{stepContextService.stepIndex}}
+<button (click)="stepContextService.gotoNext()">Next</button>
+<div class="container-fluid">
+    <div class="row">
+        <ace-edit id="md-edit" class="col-sm-6" (onInit)="setupMarkdownEditor($event)"></ace-edit>
+        <div class="col-sm-6">
+            <input type="text" #filepath_form placeholder="ex: Example.java" [(ngModel)]="codeEditorFilepath">
+            <ace-code-edit (onInit)="setupCodeEditor($event)"></ace-code-edit>
+        </div>
+    </div>
+</div>
 <button (click)="localStorageSave()">save</button>
 <button (click)="localStorageRetrieve()">load</button>
 <button (click)="codeEditor.addActionMarker()">Select</button>

@@ -24,6 +24,6 @@ class ActionRegion {
 
   Map<StepActionType, bool> getActionStates(int step) {
     return new Map.fromIterable(
-      StepActionType.values, value: (state) => stepData[step].contains(state) == true);
+      StepActionType.values, value: (state) => stepData[step]?.contains(state) == true);
   }
 }
