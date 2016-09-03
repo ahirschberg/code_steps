@@ -20,7 +20,7 @@ import 'package:ng_bootstrap/ng_bootstrap.dart';
     ])
 class ActionRegionEditorComponent implements OnChanges {
   @Input()
-  ActionRegion region;
+  EditorActionRegion region;
   @Output()
   EventEmitter onDelete;
   @Output()

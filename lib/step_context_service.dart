@@ -1,9 +1,10 @@
 import 'package:angular2/core.dart';
+import 'package:code_steps/action_region.dart';
+import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/step_actions_provider.dart';
 import 'package:observe/observe.dart';
 import 'dart:collection';
 import 'package:code_steps/lesson_loader.dart';
-import 'package:code_steps/step_data.dart';
 import 'dart:async';
 
 @Injectable()
@@ -15,47 +16,33 @@ class StepContextService extends Injectable with ChangeNotifier {
 
   Future selectLesson(url, [initial_step_index]) {
     return _lessonLoader.loadData(url).then((HashMap lessonData) {
-      loadedSteps =
-          StepData.toStepData(_stepActionsProvider, lessonData['steps']);
-      StepData.interpolateSteps(_stepActionsProvider, loadedSteps);
+      loadedSteps = lessonData['expl'];
       loadedCode = lessonData['code'];
+      loadedRegions = lessonData['regions'];
+      print('regions: $loadedRegions');
+      print('code: $loadedCode');
       stepIndex = initial_step_index ?? 0;
-    });
+    }).catchError((e) => print(e));
   }
 
   int _stepIndex = 0;
+  List<String> loadedSteps;
+  String loadedCode;
+  List<ActionRegion> loadedRegions;
 
-  List<StepData> _loadedSteps;
-  @reflectable
-  List<StepData> get loadedSteps => _loadedSteps;
-  @reflectable
-  set loadedSteps(List<StepData> val) =>
-      _loadedSteps = notifyPropertyChange(#loadedSteps, _loadedSteps, val);
-
-  String _loadedCode;
-  @reflectable
-  String get loadedCode => _loadedCode;
-  @reflectable
-  set loadedCode(String val) {
-    _loadedCode = null; // hack to force refresh the code even if equal
-    _loadedCode = notifyPropertyChange(#loadedCode, _loadedCode, val);
-  }
 
   void gotoNext() {
     _stepIndex = notifyPropertyChange(#changeStep, _stepIndex, _stepIndex + 1);
   }
 
   bool hasNext() =>
-      _loadedSteps != null && _stepIndex < _loadedSteps.length - 1;
+      loadedSteps != null && _stepIndex < loadedSteps.length - 1;
 
   void gotoPrevious() {
     _stepIndex = notifyPropertyChange(#changeStep, _stepIndex, _stepIndex - 1);
   }
 
-  bool hasPrevious() => _loadedSteps != null && _stepIndex > 0;
-
-  StepData get currStep => loadedSteps == null ? null : loadedSteps[_stepIndex];
-
+  bool hasPrevious() => loadedSteps != null && _stepIndex > 0;
   int get stepIndex => _stepIndex;
 
   /**
@@ -76,4 +63,5 @@ class StepContextService extends Injectable with ChangeNotifier {
   int get length => loadedSteps?.length ?? 0;
 
   String get currCodeHtml => loadedCode;
+  String get currStepHtml => loadedSteps[stepIndex];
 }

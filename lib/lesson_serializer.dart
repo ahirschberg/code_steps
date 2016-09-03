@@ -1,4 +1,5 @@
 import 'dart:mirrors';
+import 'package:code_steps/action_region.dart';
 import 'package:code_steps/step_action.dart' show StepActionType;
 import 'package:jsonx/jsonx.dart' as jsonx;
 import 'package:ace/ace.dart';
@@ -16,16 +17,17 @@ class EnumStringHelper<T> {
 }
 
 class LessonSerializer {
-  static final Function identity    = (v) => v;
-  static final Function stringify   = (v) => v.toString();
+  static final Function identity = (v) => v;
+  static final Function stringify = (v) => v.toString();
   static final Function destringifyInt = (String s) => int.parse(s);
-  static Map transformMap(Map m,
-      {Function key: null, Function value: null}) {
+  static Map transformMap(Map m, {Function key: null, Function value: null}) {
     key ??= stringify; // json keys must be strings.
     value ??= identity;
-    return new Map.fromIterables(
-        m.keys.map(key), m.values.map(value));
+    return new Map.fromIterables(m.keys.map(key), m.values.map(value));
   }
+
+  static final EnumStringHelper<StepActionType> stepActionTypeHelper =
+      new EnumStringHelper<StepActionType>();
 
   static String encode(var obj) {
     jsonx.objectToJsons[Point] =
@@ -34,9 +36,8 @@ class LessonSerializer {
     return jsonx.encode(obj);
   }
 
-  static EnumStringHelper<StepActionType> _stepActionTypeSerializer =
-      new EnumStringHelper<StepActionType>();
-  static Function stepActionTypeTransformer = (StepActionType t) => _stepActionTypeSerializer.stringFromEnum(t).toLowerCase();
+  static Function stepActionTypeTransformer = (StepActionType t) =>
+      stepActionTypeHelper.stringFromEnum(t).toLowerCase();
 
   static dynamic decode(String jsonData) {
     return jsonx.decode(jsonData, reviver: (var key, var val) {
@@ -48,10 +49,13 @@ class LessonSerializer {
         Map<int, List<String>> stringedActionTypes =
             val as Map<int, List<String>>;
         return new Map.fromIterables(
-            stringedActionTypes.keys,
+            stringedActionTypes.keys.map(destringifyInt),
             stringedActionTypes.values.map((type_list) => type_list.map(
                 (type_str) =>
-                    _stepActionTypeSerializer.enumFromString(type_str))));
+                    stepActionTypeHelper.enumFromString(type_str)).toSet()));
+      } else if (key == 'regions') {
+        print('val: $val');
+        return val.map((region_map) => new ActionRegion(region_map['range'], region_map['step_data'])).toList();
       }
       return val;
     });

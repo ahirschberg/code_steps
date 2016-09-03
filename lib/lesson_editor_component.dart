@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:html';
 import 'dart:js';
 import 'package:angular2/core.dart';
@@ -14,6 +13,7 @@ import 'package:code_steps/step_context_service.dart';
 import 'jss_interop.dart' as jss;
 import 'package:code_steps/util.dart';
 import 'package:fff/color.dart';
+import 'package:observe/observe.dart';
 
 @Component(
     selector: 'lesson-editor',
@@ -30,6 +30,7 @@ class LessonEditorComponent implements OnInit {
   AceEditorComponent markdownEditor;
   LessonCodeEditorComponent codeEditor;
   StreamController editorInitStreamController = new StreamController();
+  List<String> explanations = [''];
 
   @override
   ngOnInit() {
@@ -38,6 +39,15 @@ class LessonEditorComponent implements OnInit {
       aceController.theme = new ace.Theme.named(ace.Theme.SOLARIZED_DARK);
       aceController.keyboardHandler =
           new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
+    });
+    Util.filterChangeStreamByProp(stepContextService.changes, [#changeStep]).listen((PropertyChangeRecord data) {
+      print('data was $data');
+      explanations[data.oldValue] = markdownEditor.aceController.value;
+      if (explanations.length <= data.newValue) {
+        explanations.add(markdownEditor.aceController.value);
+      } else {
+        markdownEditor.aceController.setValue(explanations[data.newValue]);
+      }
     });
   }
 
@@ -49,7 +59,8 @@ class LessonEditorComponent implements OnInit {
 
   void initFromMap(Map serializedEditData) {
     codeEditor.aceController.setValue(serializedEditData['code']);
-    markdownEditor.aceController.setValue(serializedEditData['expl']);
+    explanations = serializedEditData['expl'];
+    markdownEditor.aceController.setValue(explanations[stepContextService.stepIndex]);
     codeEditor.addSerializedRegions(serializedEditData['regions']);
   }
 
@@ -88,14 +99,14 @@ class LessonEditorComponent implements OnInit {
 
   Map toJson() => {
         'code': codeEditor.aceController.value,
-        'expl': markdownEditor.aceController.value,
+        'expl': explanations,
         'regions': codeEditor.actionRegions.values.toList(growable: false)
       };
 }
 
 @Component(
     selector: 'ace-edit',
-    template: '<pre>Not special :(</pre>',
+    template: '',
     styleUrls: const ['css/ace_editor_component.css'])
 class AceEditorComponent implements OnInit {
   static int _uniq_id_num = 0;
@@ -134,8 +145,8 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   @Output('onInit')
   get init => super.init; // workaround for annotations not inheriting properly
 
-  ActionRegion activeRegion;
-  Map<int, ActionRegion> actionRegions = {};
+  EditorActionRegion activeRegion;
+  Map<int, EditorActionRegion> actionRegions = {};
   StepContextService stepContextService;
   LessonCodeEditorComponent(ElementRef elementRef, this.stepContextService) : super(elementRef) {
     super.dom_id = code_edit_id;
@@ -151,21 +162,21 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   }
 
   void addSerializedRegions(List regions) {
-    regions.forEach((region_map) {
-      ActionRegion r = addActionMarker(region_map['range'])
-        ..stepData = LessonSerializer.transformMap(region_map['step_data'],
-            key: LessonSerializer.destringifyInt,
-            value: (v) => v.toSet());
+    regions.forEach((ActionRegion region) {
+      print('Serialized step data: ${region.stepData}');
+      EditorActionRegion r = addActionMarker(region.range)
+        ..stepData = region.stepData;
       recolorRegion(r, r.getActionStates(stepContextService.stepIndex));
       print('=====serialized region output=====');
       print(r);
     });
   }
 
-  ActionRegion addActionMarker([ace.Range range = null]) {
+  EditorActionRegion addActionMarker([ace.Range range = null]) {
     range ??= aceController.selectionRange;
-    ActionRegion inserted = _insertMarker(range, 'cs-mark');
+    EditorActionRegion inserted = _insertMarker(range, 'cs-mark');
     activeRegion = inserted;
+    print(activeRegion.stepData.runtimeType);
     return inserted;
   }
 
@@ -175,11 +186,11 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   }
 
   int nextUniq = 0;
-  ActionRegion _insertMarker(ace.Range selection, String tag) {
+  EditorActionRegion _insertMarker(ace.Range selection, String tag) {
     String uniqClass = 'mark-${nextUniq++}';
     int id = aceController.session
         .addMarker(selection, tag + ' $uniqClass', type: ace.Marker.TEXT);
-    actionRegions[id] = new ActionRegion(
+    actionRegions[id] = new EditorActionRegion(
         aceController.session.getMarkers()[id.toString()], uniqClass);
     return actionRegions[id];
   }
@@ -188,8 +199,8 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
     activeRegion = getRegionAtCursor();
   }
 
-  ActionRegion getRegionAtCursor() => actionRegions.values.firstWhere(
-      (ActionRegion region) =>
+  EditorActionRegion getRegionAtCursor() => actionRegions.values.firstWhere(
+      (EditorActionRegion region) =>
           region.marker.className.contains('cs-mark') &&
           region.marker.range.comparePoint(aceController.selection.cursor) == 0,
       orElse: () {});
@@ -210,7 +221,7 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const purple = const Color(197, 23, 158, 0.25);
   static const yellow = const Color(79, 76, 15, 0.66);
   recolorRegion(
-      ActionRegion region, Map<StepActionType, bool> typeEnabledState) {
+      EditorActionRegion region, Map<StepActionType, bool> typeEnabledState) {
     Color c = null;
     Function addColor =
         (Color base, Color toAdd) => base == null ? toAdd : toAdd + base;

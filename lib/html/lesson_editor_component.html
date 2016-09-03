@@ -1,6 +1,7 @@
 <button (click)="stepContextService.gotoPrevious()">Previous</button>
 {{stepContextService.stepIndex}}
 <button (click)="stepContextService.gotoNext()">Next</button>
+{{explanations}}
 <div class="container-fluid">
     <div class="row">
         <ace-edit id="md-edit" class="col-sm-6" (onInit)="setupMarkdownEditor($event)"></ace-edit>

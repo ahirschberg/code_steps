@@ -20,7 +20,8 @@ class CodeGuideComponent implements OnInit {
     String lesson_name = _routeParams.get('lesson_name');
     stepContextService
         .selectLesson(
-            'static/lesson-$lesson_name.json', _routeParams.get('step'))
+            //'static/lesson-$lesson_name.json', _routeParams.get('step'))
+            lesson_name, _routeParams.get('step'))
         .catchError((dynamic err) => print('ERROR: $err'));
   }
 }
