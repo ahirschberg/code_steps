@@ -17,7 +17,7 @@ import 'package:code_steps/util.dart';
 class CodeViewerComponent implements OnInit {
   final NodeValidatorBuilder _codeViewerValidator = new NodeValidatorBuilder()
     ..allowElement('pre')
-    ..allowElement('cs-region', attributes: const ["f-id"]);
+    ..allowElement('cs-region', attributes: const ["class"]);
 
   final StepContextService stepContextService;
   ElementRef _elementRef;
@@ -51,21 +51,51 @@ class CodeViewerComponent implements OnInit {
       "${s.substring(0, col)}$toInsert${s.substring(col + 1)}";
 
   String _addHtmlRegions(String code, List<ActionRegion> regions, int step) {
-    List<String> rows = code.split('\n');
+    List<LineInsert> rows = code.split('\n').map((row) => new LineInsert(row)).toList(growable: false);
     regions.forEach((ActionRegion region) {
       Set<StepActionType> actions = region.stepData[step];
       ace.Point start = region.range.start;
       ace.Point end = region.range.end;
       if(actions != null) {
-        rows[start.row] = _strInsertAt(
-            rows[start.row],
-            start.column,
-            '<cs-region class="action-'
-                '${actions.map((t) => 'lesson-' + LessonSerializer.stepActionTypeHelper.
-            stringFromEnum(t).toLowerCase()).join(' ')}');
-        rows[end.row] = _strInsertAt(rows[end.row], end.column, '</cs-region>');
+        String openTag = '<cs-region class="'
+                '${actions.map((t) => 'action-' + LessonSerializer.stepActionTypeHelper.
+            stringFromEnum(t).toLowerCase()).join(' ')}">';
+        rows[start.row].insert(openTag, start.column);
+        rows[end.row].insert('</cs-region>', end.column);
       }
     });
+    print('rows $rows');
     return rows.join('\n');
   }
+}
+
+class StringInsert {
+  String value;
+  StringInsert(this.value);
+  String toString() => value;
+}
+
+class LineInsert {
+  List<String> parts;
+  LineInsert(String row) : this.parts = [row];
+
+  void insert(String toInsert, int col) {
+    int length = 0;
+    parts = parts.expand((var s) {
+      if (!(s is StringInsert)) {
+        if (length + s.length >= col) {
+          return [
+            s.substring(0, col - length),
+            new StringInsert(toInsert),
+            s.substring(col - length)
+          ];
+        }
+          length += s.length;
+      }
+
+      return [s];
+    }).toList();
+  }
+
+  String toString() => parts.join(); // flatten and join
 }

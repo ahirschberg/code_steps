@@ -25,7 +25,7 @@ class StepContextService extends Injectable with ChangeNotifier {
     }).catchError((e) => print(e));
   }
 
-  int _stepIndex = 0;
+  int _stepIndex = -1;
   List<String> loadedSteps;
   String loadedCode;
   List<ActionRegion> loadedRegions;
