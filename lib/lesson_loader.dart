@@ -6,13 +6,19 @@ import 'dart:html';
 import 'package:angular2/core.dart';
 import 'package:code_steps/lesson_serializer.dart';
 
-
 @Injectable()
 class LessonLoader {
-  Future<HashMap> loadData(url) =>
-      new Future.value(LessonSerializer.decode(window.localStorage[url]));
-//      HttpRequest.getString(url).then((String value) {
-//        return JSON.decode(value);
-//      }).catchError((Object o) => print(o));
-}
+  static const String LESSON_PREFIX = 'lesson-';
 
+  Future<HashMap> smartLoadData(lesson_name) {
+    if (window.localStorage.containsKey(LESSON_PREFIX + lesson_name)) {
+      return new Future.value(
+          LessonSerializer.decode(window.localStorage[lesson_name]));
+    } else {
+      return HttpRequest
+          .getString('static/$LESSON_PREFIX$lesson_name.json')
+          .then((String value) => LessonSerializer.decode(value))
+          .catchError((Object o) => print(o));
+    }
+  }
+}

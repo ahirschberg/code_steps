@@ -19,9 +19,7 @@ class CodeGuideComponent implements OnInit {
   ngOnInit() {
     String lesson_name = _routeParams.get('lesson_name');
     stepContextService
-        .selectLesson(
-            //'static/lesson-$lesson_name.json', _routeParams.get('step'))
-            lesson_name, _routeParams.get('step'))
+        .selectLesson(lesson_name, _routeParams.get('step'))
         .catchError((dynamic err) => print('ERROR: $err'));
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:angular2/core.dart';
 import 'package:code_steps/action_region.dart';
 import 'package:code_steps/lesson_serializer.dart';
@@ -8,7 +7,6 @@ import 'package:ace/ace.dart' as ace;
 import 'package:observe/observe.dart';
 import 'package:code_steps/highlightjs_interop.dart' as highlighter;
 import 'dart:html';
-import 'package:code_steps/util.dart';
 
 @Component(
     selector: 'code-viewer',
@@ -26,9 +24,7 @@ class CodeViewerComponent implements OnInit {
 
   ngOnInit() {
 
-    Util.filterChangeStreamByProp(stepContextService.changes, [
-      #changeStep
-    ]).listen((PropertyChangeRecord change) => _addCodeHtml(_addHtmlRegions(
+    stepContextService.onStepChange.listen((PropertyChangeRecord change) => _addCodeHtml(_addHtmlRegions(
         stepContextService.currCodeHtml,
         stepContextService.loadedRegions,
         stepContextService.stepIndex)));

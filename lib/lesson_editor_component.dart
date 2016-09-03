@@ -31,6 +31,7 @@ class LessonEditorComponent implements OnInit {
   LessonCodeEditorComponent codeEditor;
   StreamController editorInitStreamController = new StreamController();
   List<String> explanations = [''];
+  String lessonName;
 
   @override
   ngOnInit() {
@@ -40,7 +41,7 @@ class LessonEditorComponent implements OnInit {
       aceController.keyboardHandler =
           new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
     });
-    Util.filterChangeStreamByProp(stepContextService.changes, [#changeStep]).listen((PropertyChangeRecord data) {
+    stepContextService.onStepChange.listen((PropertyChangeRecord data) {
       print('data was $data');
       explanations[data.oldValue] = markdownEditor.aceController.value;
       if (explanations.length <= data.newValue) {
@@ -60,8 +61,10 @@ class LessonEditorComponent implements OnInit {
   void initFromMap(Map serializedEditData) {
     codeEditor.aceController.setValue(serializedEditData['code']);
     explanations = serializedEditData['expl'];
-    markdownEditor.aceController.setValue(explanations[stepContextService.stepIndex]);
+    markdownEditor.aceController
+        .setValue(explanations[stepContextService.stepIndex]);
     codeEditor.addSerializedRegions(serializedEditData['regions']);
+    codeEditorFilepath = serializedEditData['meta']['code_filename'];
   }
 
   setupMarkdownEditor(AceEditorComponent editor) {
@@ -87,20 +90,27 @@ class LessonEditorComponent implements OnInit {
   }
 
   localStorageSave() {
-    String jsonData = LessonSerializer.encode(this);
-    print(jsonData);
-    window.localStorage['lesson-test'] = jsonData;
+    if (lessonName == null || lessonName.length == 0) {
+      print('Cannot save an empty lesson name!');
+    } else {
+      String jsonData = LessonSerializer.encode(this);
+      print(jsonData);
+      window.localStorage['lesson-$lessonName'] = jsonData;
+    }
   }
 
   localStorageRetrieve() {
-    Map decoded = LessonSerializer.decode(window.localStorage['lesson-test']);
+    Map decoded = LessonSerializer.decode(window.localStorage['lesson-$lessonName']);
     initFromMap(decoded);
   }
 
   Map toJson() => {
         'code': codeEditor.aceController.value,
         'expl': explanations,
-        'regions': codeEditor.actionRegions.values.toList(growable: false)
+        'regions': codeEditor.actionRegions.values.toList(growable: false),
+        'meta': {
+          'code_filename': _codeEditorFilepath
+        }
       };
 }
 
@@ -129,7 +139,6 @@ class AceEditorComponent implements OnInit {
   set dom_id(id) => elementRef.nativeElement.id = id;
 }
 
-
 @Component(selector: 'ace-code-edit', template: '', styles: const [
   '''
     :host div.cs-mark {
@@ -148,7 +157,8 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   EditorActionRegion activeRegion;
   Map<int, EditorActionRegion> actionRegions = {};
   StepContextService stepContextService;
-  LessonCodeEditorComponent(ElementRef elementRef, this.stepContextService) : super(elementRef) {
+  LessonCodeEditorComponent(ElementRef elementRef, this.stepContextService)
+      : super(elementRef) {
     super.dom_id = code_edit_id;
   }
 
@@ -156,8 +166,9 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   ngOnInit() {
     super.ngOnInit();
     this.aceController.selection.onChangeCursor.listen(onData);
-    Util.filterChangeStreamByProp(stepContextService.changes, const [#changeStep]).listen((e) {
-      actionRegions.values.forEach((r) => recolorRegion(r, r.getActionStates(stepContextService.stepIndex)));
+    stepContextService.onStepChange.listen((e) {
+      actionRegions.values.forEach((r) =>
+          recolorRegion(r, r.getActionStates(stepContextService.stepIndex)));
     });
   }
 
@@ -240,6 +251,6 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
       c = addColor(c, blue);
     }
     jss.set('div.cs-mark.${region.uniqClass}',
-        new JsObject.jsify({'background-color': c.toString()}));
+        new JsObject.jsify({'background-color': (c ?? '').toString()}));
   }
 }

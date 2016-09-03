@@ -1,4 +1,4 @@
-import 'dart:collection';
+import 'dart:html';
 import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
 import 'package:code_steps/lesson_loader.dart';
@@ -6,8 +6,7 @@ import 'package:code_steps/lesson_loader.dart';
 @Component(
     selector: 'lesson-list',
     templateUrl: 'html/lesson_list_component.html',
-    directives: const [ROUTER_DIRECTIVES]
-)
+    directives: const [ROUTER_DIRECTIVES])
 class LessonListComponent implements OnInit {
   LessonLoader lessonLoader;
   List lessons;
@@ -15,8 +14,9 @@ class LessonListComponent implements OnInit {
 
   @override
   ngOnInit() {
-    lessonLoader.loadData('static/lessons.json').then((HashMap lessons_json) {
-      this.lessons = lessons_json['lessons'];
-    });
+    lessons = window.localStorage.keys
+        .where((String k) => k.startsWith(LessonLoader.LESSON_PREFIX))
+        .map((s) => s.replaceFirst(LessonLoader.LESSON_PREFIX, ''))
+        .toList();
   }
 }

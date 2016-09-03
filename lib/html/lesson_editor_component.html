@@ -11,6 +11,7 @@
         </div>
     </div>
 </div>
+<input type="text" placeholder="Lesson name" [(ngModel)]="lessonName">
 <button (click)="localStorageSave()">save</button>
 <button (click)="localStorageRetrieve()">load</button>
 <button (click)="codeEditor.addActionMarker()">Select</button>

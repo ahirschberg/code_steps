@@ -5,7 +5,7 @@ import 'package:code_steps/step_actions_provider.dart';
 
 @Injectable()
 stepContextServiceFactory(LessonLoader lessonLoader, StepActionsProvider stepActionsProvider) =>
-    new StepContextService(lessonLoader, stepActionsProvider);
+    new StepContextService(lessonLoader);
 
 const stepContextServiceProvider = const Provider(StepContextService,
     useFactory: stepContextServiceFactory,
