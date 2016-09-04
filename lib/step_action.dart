@@ -1,7 +1,7 @@
-import 'package:angular2/core.dart';
-import 'package:dson/dson.dart';
+library step_action;
 
-@serializable
+import 'package:angular2/core.dart';
+
 enum StepActionType { Pass, Fail, Spotlight, Hide, Show, LineSpotlight }
 
 abstract class StepActionModel {

@@ -1,8 +1,14 @@
-import 'dart:mirrors';
+library lesson_serializer;
+
 import 'package:code_steps/action_region.dart';
 import 'package:code_steps/step_action.dart' show StepActionType;
+
 import 'package:jsonx/jsonx.dart' as jsonx;
 import 'package:ace/ace.dart';
+
+@MirrorsUsed(targets: 'step_action.StepActionType.values')
+import 'dart:mirrors';
+
 
 class EnumStringHelper<T> {
   T enumFromString(String value) {
@@ -54,7 +60,6 @@ class LessonSerializer {
                 (type_str) =>
                     stepActionTypeHelper.enumFromString(type_str)).toSet()));
       } else if (key == 'regions') {
-        print('val: $val');
         return val.map((region_map) => new ActionRegion(region_map['range'], region_map['step_data'])).toList();
       }
       return val;

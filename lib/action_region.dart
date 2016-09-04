@@ -1,3 +1,4 @@
+library action_region;
 import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/step_action.dart';
 import 'package:ace/ace.dart' as ace;
@@ -20,7 +21,6 @@ class ActionRegion {
           value: (Set<StepActionType> set) =>
               set.map(LessonSerializer.stepActionTypeTransformer).toList())
     };
-    print(obj);
     return obj;
   }
 

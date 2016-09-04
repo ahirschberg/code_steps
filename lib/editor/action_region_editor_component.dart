@@ -1,6 +1,6 @@
 import 'package:angular2/core.dart';
 import 'package:code_steps/action_region.dart';
-import 'package:code_steps/lesson_editor_component.dart';
+import 'package:code_steps/editor/lesson_editor_component.dart';
 import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/step_action.dart';
 import 'package:code_steps/step_actions_provider.dart';

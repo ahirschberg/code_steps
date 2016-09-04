@@ -13,7 +13,7 @@ class LessonLoader {
   Future<HashMap> smartLoadData(lesson_name) {
     if (window.localStorage.containsKey(LESSON_PREFIX + lesson_name)) {
       return new Future.value(
-          LessonSerializer.decode(window.localStorage[lesson_name]));
+          LessonSerializer.decode(window.localStorage[LESSON_PREFIX + lesson_name]));
     } else {
       return HttpRequest
           .getString('static/$LESSON_PREFIX$lesson_name.json')

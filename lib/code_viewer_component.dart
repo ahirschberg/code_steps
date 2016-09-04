@@ -60,7 +60,6 @@ class CodeViewerComponent implements OnInit {
         rows[end.row].insert('</cs-region>', end.column);
       }
     });
-    print('rows $rows');
     return rows.join('\n');
   }
 }

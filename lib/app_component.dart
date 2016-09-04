@@ -1,8 +1,11 @@
 import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
-import 'package:code_steps/lesson_editor_component.dart';
+import 'package:code_steps/editor/lesson_editor_component.dart';
 import 'package:code_steps/code_guide_component.dart';
 import 'package:code_steps/lesson_list_component.dart';
+
+@MirrorsUsed(override: '*', symbols: '') // we don't need any jsonx mirrors.
+import 'dart:mirrors';
 
 @RouteConfig(const [
   const Route(
@@ -16,7 +19,7 @@ import 'package:code_steps/lesson_list_component.dart';
       component: LessonListComponent
   ),
   const Route(
-      path: '/edit',
+      path: '/edit/:lesson_name',
       name: 'Lesson Editor',
       component: LessonEditorComponent
   ),

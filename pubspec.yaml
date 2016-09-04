@@ -2,7 +2,7 @@ name: code_steps
 description: Platform for rapidly developing step-by-step tutorials with robust features for content creators
 version: 0.4.0
 environment:
-  sdk: '>=1.13.0 <2.0.0'
+  sdk: any
 dependencies:
   angular2: any
   browser: any
