@@ -1,0 +1,21 @@
+<button (click)="stepContextService.gotoPrevious()">Previous</button>
+{{stepContextService.stepIndex}}
+<button (click)="stepContextService.gotoNext()">Next</button>
+{{explanations}}
+<div class="container-fluid">
+    <div class="row">
+        <ace-edit id="md-edit" class="col-sm-6" (onInit)="setupMarkdownEditor($event)"></ace-edit>
+        <div class="col-sm-6">
+            <input type="text" #filepath_form placeholder="ex: Example.java" [(ngModel)]="codeEditorFilepath">
+            <ace-code-edit (onInit)="setupCodeEditor($event)"></ace-code-edit>
+        </div>
+    </div>
+</div>
+<input type="text" placeholder="Lesson name" [(ngModel)]="lessonName">
+<button (click)="serializedSave()">save</button>
+<button (click)="serializedRetrieve()">load</button>
+<button (click)="codeEditor.addActionMarker()">Select</button>
+<action-region-editor [region]="codeEditor?.activeRegion"
+                      (onDelete)="codeEditor.removeActionMarker($event)"
+                      (onDataChange)="codeEditor.recolorRegion(codeEditor.activeRegion, $event)">
+</action-region-editor>

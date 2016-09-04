@@ -1,7 +1,7 @@
 import 'package:angular2/core.dart' show Component, OnInit;
 
-import 'code_explanation_component.dart';
-import 'code_viewer_component.dart';
+import 'package:code_steps/code_explanation_component.dart';
+import 'package:code_steps/code_viewer_component.dart';
 import 'package:angular2/router.dart';
 import 'package:code_steps/step_action.dart';
 import 'package:code_steps/step_context_service.dart';
@@ -19,8 +19,7 @@ class CodeGuideComponent implements OnInit {
   ngOnInit() {
     String lesson_name = _routeParams.get('lesson_name');
     stepContextService
-        .selectLesson(
-            'static/lesson-$lesson_name.json', _routeParams.get('step'))
+        .selectLesson(lesson_name, _routeParams.get('step'))
         .catchError((dynamic err) => print('ERROR: $err'));
   }
 }

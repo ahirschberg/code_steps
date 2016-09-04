@@ -2,12 +2,16 @@ name: code_steps
 description: Platform for rapidly developing step-by-step tutorials with robust features for content creators
 version: 0.4.0
 environment:
-  sdk: '>=1.13.0 <2.0.0'
+  sdk: any
 dependencies:
-  angular2: 2.0.0-beta.19
-  browser: ^0.10.0
-  dart_to_js_script_rewriter: ^1.0.1
-  js: ^0.6.0
+  angular2: any
+  browser: any
+  dart_to_js_script_rewriter: any
+  js: any
+  ace: any
+  ng_bootstrap: any
+  jsonx: any
+  fff: any
 transformers:
 - angular2:
     platform_directives:

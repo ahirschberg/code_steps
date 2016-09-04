@@ -1,8 +1,9 @@
+library step_action;
+
 import 'package:angular2/core.dart';
 
-enum StepActionType {
-  Pass, Fail, Spotlight, Hide, Show, LineSpotlight
-}
+enum StepActionType { Pass, Fail, Spotlight, Hide, Show, LineSpotlight }
+
 abstract class StepActionModel {
   Function _apply, _destroy;
   final StepActionType type;
@@ -11,27 +12,29 @@ abstract class StepActionModel {
   void apply(ElementRef root, String target) {
     _apply(root, target);
   }
-  void destroy(ElementRef root, String target) =>
-      _destroy(root, target);
+
+  void destroy(ElementRef root, String target) => _destroy(root, target);
 
   @override
   String toString() => "<${this.runtimeType}: $type>";
 }
 
 class NonDirectionalActionModel extends StepActionModel {
-  NonDirectionalActionModel(StepActionType type, Function apply, Function destroy)
+  NonDirectionalActionModel(
+      StepActionType type, Function apply, Function destroy)
       : super(type, apply, destroy);
-  NonDirectionalActionModel.fromPair(StepActionType type,
-      List<Function> pair) // typed constructor, neat!
+  NonDirectionalActionModel.fromPair(
+      StepActionType type, List<Function> pair) // typed constructor, neat!
       : this(type, pair[0], pair[1]);
 }
 
 class ToggleActionModel extends StepActionModel {
   final StepActionType opposite;
-  ToggleActionModel(StepActionType type,
-      Function apply, Function destroy_to_previous, this.opposite)
+  ToggleActionModel(StepActionType type, Function apply,
+      Function destroy_to_previous, this.opposite)
       : super(type, apply, destroy_to_previous);
-  ToggleActionModel.fromPair(StepActionType type, List<Function> pair, StepActionType opposite)
+  ToggleActionModel.fromPair(
+      StepActionType type, List<Function> pair, StepActionType opposite)
       : this(type, pair[0], pair[1], opposite);
 }
 

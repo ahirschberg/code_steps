@@ -1,5 +1,5 @@
 import 'package:angular2/core.dart';
-import 'step_context_service.dart';
+import 'package:code_steps/step_context_service.dart';
 import 'package:observe/observe.dart';
 import 'dart:html';
 
@@ -20,8 +20,8 @@ class CodeExplanationComponent implements OnInit {
   CodeExplanationComponent(this._elementRef, this.stepContextService);
 
   ngOnInit() {
-    stepContextService.changes.listen((List<ChangeRecord> a) {
-      _elementRef.nativeElement.setInnerHtml(stepContextService.currStep.html,
+    stepContextService.onStepChange.listen((_) {
+      _elementRef.nativeElement.setInnerHtml(stepContextService.currStepHtml,
           validator: _explanationViewerValidator);
     });
   }

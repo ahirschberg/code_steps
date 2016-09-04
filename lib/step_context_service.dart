@@ -1,61 +1,50 @@
 import 'package:angular2/core.dart';
-import 'package:code_steps/step_actions_provider.dart';
+import 'package:code_steps/action_region.dart';
 import 'package:observe/observe.dart';
 import 'dart:collection';
-import 'lesson_loader.dart';
-import 'package:code_steps/step_data.dart';
+import 'package:code_steps/lesson_io.dart';
 import 'dart:async';
 
 @Injectable()
-class StepContextService extends Injectable with ChangeNotifier {
-  LessonLoader _lessonLoader;
-  StepActionsProvider _stepActionsProvider;
-  StepContextService(
-      LessonLoader this._lessonLoader, this._stepActionsProvider);
+class StepContextService extends Injectable {
+  LessonIO _lessonIO;
+  StepContextService(LessonIO this._lessonIO);
+  StreamController<PropertyChangeRecord<int>> _stepChangeController =
+      new StreamController<PropertyChangeRecord<int>>.broadcast();
+  Stream<PropertyChangeRecord<int>> get onStepChange =>
+      _stepChangeController.stream;
 
-  Future selectLesson(url, [initial_step_index]) {
-    return _lessonLoader.loadData(url).then((HashMap lessonData) {
-      loadedSteps =
-          StepData.toStepData(_stepActionsProvider, lessonData['steps']);
-      StepData.interpolateSteps(_stepActionsProvider, loadedSteps);
+  Future selectLesson(lesson_name, [initial_step_index]) {
+    return _lessonIO.smartLoadData(lesson_name).then((HashMap lessonData) {
+      loadedSteps = lessonData['expl'];
       loadedCode = lessonData['code'];
+      loadedRegions = lessonData['regions'];
       stepIndex = initial_step_index ?? 0;
-    });
+    }).catchError((e) => print(e));
   }
 
   int _stepIndex = 0;
+  List<String> loadedSteps;
+  String loadedCode;
+  List<ActionRegion> loadedRegions;
 
-  List<StepData> _loadedSteps;
-  @reflectable
-  List<StepData> get loadedSteps => _loadedSteps;
-  @reflectable
-  set loadedSteps(List<StepData> val) =>
-      _loadedSteps = notifyPropertyChange(#loadedSteps, _loadedSteps, val);
-
-  String _loadedCode;
-  @reflectable
-  String get loadedCode => _loadedCode;
-  @reflectable
-  set loadedCode(String val) {
-    _loadedCode = null; // hack to force refresh the code even if equal
-    _loadedCode = notifyPropertyChange(#loadedCode, _loadedCode, val);
+  dynamic _onChangeStepIndex(newValue) {
+    _stepChangeController
+        .add(new PropertyChangeRecord(this, #stepIndex, _stepIndex, newValue));
+    return newValue;
   }
 
   void gotoNext() {
-    _stepIndex = notifyPropertyChange(#changeStep, _stepIndex, _stepIndex + 1);
+    stepIndex = _stepIndex + 1;
   }
 
-  bool hasNext() =>
-      _loadedSteps != null && _stepIndex < _loadedSteps.length - 1;
+  bool hasNext() => loadedSteps != null && _stepIndex < loadedSteps.length - 1;
 
   void gotoPrevious() {
-    _stepIndex = notifyPropertyChange(#changeStep, _stepIndex, _stepIndex - 1);
+    stepIndex = _stepIndex - 1;
   }
 
-  bool hasPrevious() => _loadedSteps != null && _stepIndex > 0;
-
-  StepData get currStep => loadedSteps == null ? null : loadedSteps[_stepIndex];
-
+  bool hasPrevious() => loadedSteps != null && _stepIndex > 0;
   int get stepIndex => _stepIndex;
 
   /**
@@ -63,11 +52,10 @@ class StepContextService extends Injectable with ChangeNotifier {
    */
   set stepIndex(new_stepIndex) {
     if (new_stepIndex is String) new_stepIndex = int.parse(new_stepIndex);
-    if (new_stepIndex >= 0 && new_stepIndex < length) {
-      _stepIndex = notifyPropertyChange(#changeStep, _stepIndex, new_stepIndex);
-    } else {
-      print('ERROR: Index $new_stepIndex out of bounds.');
+    if (new_stepIndex < 0 || new_stepIndex > length) {
+      print('WARN: Index $new_stepIndex out of bounds.');
     }
+    _stepIndex = _onChangeStepIndex(new_stepIndex);
   }
 
   /**
@@ -76,4 +64,5 @@ class StepContextService extends Injectable with ChangeNotifier {
   int get length => loadedSteps?.length ?? 0;
 
   String get currCodeHtml => loadedCode;
+  String get currStepHtml => loadedSteps[stepIndex];
 }

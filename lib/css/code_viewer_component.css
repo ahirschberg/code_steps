@@ -7,20 +7,20 @@
     margin: 0;
     height: 100%;
 }
-:host c-frm.hl-pass {
+:host .action-pass {
     box-shadow: 0 0 0 1px #256825;
     background-color: #256825;
 }
-:host c-frm.hl-fail {
+:host .action-fail {
     box-shadow: 0 0 0 1px #532323;
     background-color: #532323;
 }
 
-:host c-frm.hl-hide {
+:host .action-hide {
     display: none;
 }
 
-:host c-frm.hl-spotlight {
+:host .action-spotlight {
     box-shadow: 0 0 0 1px rgba(125, 103, 7, 0.5);
     background-color: rgba(125, 103, 7, 0.5)
 }

@@ -1,10 +1,12 @@
 import 'package:angular2/core.dart';
+import 'package:code_steps/action_region.dart';
+import 'package:code_steps/lesson_serializer.dart';
+import 'package:code_steps/step_action.dart';
 import 'package:code_steps/step_context_service.dart';
-import 'package:code_steps/step_data.dart';
+import 'package:ace/ace.dart' as ace;
 import 'package:observe/observe.dart';
 import 'package:code_steps/highlightjs_interop.dart' as highlighter;
 import 'dart:html';
-import 'package:code_steps/util.dart';
 
 @Component(
     selector: 'code-viewer',
@@ -13,37 +15,82 @@ import 'package:code_steps/util.dart';
 class CodeViewerComponent implements OnInit {
   final NodeValidatorBuilder _codeViewerValidator = new NodeValidatorBuilder()
     ..allowElement('pre')
-    ..allowElement('c-frm', attributes: const ["f-id"])
-    ..allowElement('c-line', attributes: const ["f-id"]);
+    ..allowElement('cs-region', attributes: const ["class"]);
 
   final StepContextService stepContextService;
   ElementRef _elementRef;
-  StepData _lastStep;
 
   CodeViewerComponent(this.stepContextService, this._elementRef);
 
   ngOnInit() {
-    Util.filterChangeStreamByProp(stepContextService.changes,
-        [#loadedCode]).listen((PropertyChangeRecord change) {
-      // why is nativeElement dynamic :{
-      Element root = _elementRef.nativeElement as Element;
 
-      root.setInnerHtml("<pre>${stepContextService.currCodeHtml}</pre>",
-          validator: _codeViewerValidator);
-      try {
-        highlighter.highlightBlock(root.firstChild);
-      } catch (exception) {
-        print("WARN: Failed to highlight the code viewer.\n$exception");
+    stepContextService.onStepChange.listen((PropertyChangeRecord change) => _addCodeHtml(_addHtmlRegions(
+        stepContextService.currCodeHtml,
+        stepContextService.loadedRegions,
+        stepContextService.stepIndex)));
+  }
+
+  _addCodeHtml(String codeHtml) {
+    // why is nativeElement dynamic :(
+    Element root = _elementRef.nativeElement as Element;
+
+    root.setInnerHtml("<pre>${codeHtml}</pre>",
+        validator: _codeViewerValidator);
+    try {
+      highlighter.highlightBlock(root.firstChild);
+    } catch (exception) {
+      print("WARN: Failed to highlight the code viewer.\n$exception");
+    }
+  }
+
+  String _strInsertAt(String s, int col, String toInsert) =>
+      "${s.substring(0, col)}$toInsert${s.substring(col + 1)}";
+
+  String _addHtmlRegions(String code, List<ActionRegion> regions, int step) {
+    List<LineInsert> rows = code.split('\n').map((row) => new LineInsert(row)).toList(growable: false);
+    regions.forEach((ActionRegion region) {
+      Set<StepActionType> actions = region.stepData[step];
+      ace.Point start = region.range.start;
+      ace.Point end = region.range.end;
+      if(actions != null) {
+        String openTag = '<cs-region class="'
+                '${actions.map((t) => 'action-' + LessonSerializer.stepActionTypeHelper.
+            stringFromEnum(t).toLowerCase()).join(' ')}">';
+        rows[start.row].insert(openTag, start.column);
+        rows[end.row].insert('</cs-region>', end.column);
       }
     });
-
-    Util.filterChangeStreamByProp(stepContextService.changes, [
-      #changeStep, #loadedCode
-    ]).listen((PropertyChangeRecord change) {
-      _lastStep?.destroy(_elementRef);
-      stepContextService
-          .currStep.applyAllActions(_elementRef);
-      _lastStep = stepContextService.currStep;
-    });
+    return rows.join('\n');
   }
+}
+
+class StringInsert {
+  String value;
+  StringInsert(this.value);
+  String toString() => value;
+}
+
+class LineInsert {
+  List<String> parts;
+  LineInsert(String row) : this.parts = [row];
+
+  void insert(String toInsert, int col) {
+    int length = 0;
+    parts = parts.expand((var s) {
+      if (!(s is StringInsert)) {
+        if (length + s.length >= col) {
+          return [
+            s.substring(0, col - length),
+            new StringInsert(toInsert),
+            s.substring(col - length)
+          ];
+        }
+          length += s.length;
+      }
+
+      return [s];
+    }).toList();
+  }
+
+  String toString() => parts.join(); // flatten and join
 }

@@ -1,0 +1,10 @@
+<h3>Action Region Editor</h3>
+<div *ngIf="region != null">
+    <bs-button-group>
+        <bs-toggle-button class="btn btn-primary" *ngFor="let action of actionUIToggles.keys"
+                          [ngModel]="actionUIToggles[action]" (ngModelChange)="updateSelected(action, $event)">
+            {{esh.stringFromEnum(action)}}
+        </bs-toggle-button>
+    </bs-button-group>
+    <button (click)="deleteRegion()">Delete Region</button>
+</div>

@@ -1,8 +1,8 @@
 <h2>Lesson List</h2>
 <ul>
     <li *ngFor="let lesson of lessons">
-        <a [routerLink]="['Lesson', {'lesson_name': lesson['name']}]">{{lesson['name']}} ({{lesson['length']}} steps)</a>
+        <a [routerLink]="['Lesson', {'lesson_name': lesson}]">{{lesson}}</a> -
+        <a [routerLink]="['Lesson Editor', {'lesson_name': lesson}]">(edit)</a>
     </li>
+    <a [routerLink]="['New Lesson']">+ New Lesson</a>
 </ul>
-
-<i>Generated from <code>make lessons</code></i>
