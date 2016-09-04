@@ -7,6 +7,7 @@ import 'package:angular2/router.dart';
 import 'package:code_steps/editor/ace_editor_component.dart';
 import 'package:code_steps/editor/action_region_editor_component.dart';
 import 'package:code_steps/editor/lesson_code_editor_component.dart';
+import 'package:code_steps/lesson_io.dart';
 import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/code_guide_component.dart';
 import 'package:code_steps/step_context_service.dart';
@@ -28,9 +29,10 @@ class LessonEditorComponent implements OnInit {
   StreamController editorInitStreamController = new StreamController.broadcast();
   List<String> explanations = [''];
   String lessonName;
+  LessonIO _lessonIO;
   RouteParams _routeParams;
 
-  LessonEditorComponent(this.stepContextService, this._routeParams);
+  LessonEditorComponent(this.stepContextService, this._routeParams, this._lessonIO);
 
   @override
   ngOnInit() {
@@ -42,7 +44,7 @@ class LessonEditorComponent implements OnInit {
     });
     editorInitStreamController.stream.take(2).drain().then((_) {
       lessonName = _routeParams.get('lesson_name');
-      if (lessonName != null) localStorageRetrieve();
+      if (lessonName != null) serializedRetrieve();
     });
     stepContextService.onStepChange.listen((PropertyChangeRecord data) {
       explanations[data.oldValue] = markdownEditor.aceController.value;
@@ -98,20 +100,16 @@ class LessonEditorComponent implements OnInit {
     codeEditor.aceController.session.mode = new ace.Mode.forFile(filepath);
   }
 
-  localStorageSave() {
+  serializedSave() {
     if (lessonName == null || lessonName.length == 0) {
       print('Cannot save an empty lesson name!');
     } else {
-      String jsonData = LessonSerializer.encode(this);
-      window.localStorage['lesson-$lessonName'] = jsonData;
-      print('saved: $jsonData');
+      _lessonIO.saveLesson(lessonName, this);
     }
   }
 
-  localStorageRetrieve() {
-    Map decoded = LessonSerializer.decode(window.localStorage['lesson-$lessonName']);
-    initFromMap(decoded);
-  }
+  serializedRetrieve() =>
+    _lessonIO.smartLoadData(lessonName).then((decoded) => initFromMap(decoded));
 
   Map toJson() => {
         'code': codeEditor.aceController.value,

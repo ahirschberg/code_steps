@@ -23,9 +23,15 @@ import 'dart:mirrors';
       name: 'Lesson Editor',
       component: LessonEditorComponent
   ),
+  const Route(
+      path: '/new',
+      name: 'New Lesson',
+      component:  LessonEditorComponent
+  ),
   const Redirect(
       path: '/',
-      redirectTo: const ['Lesson List']
+      //redirectTo: const ['Lesson List']
+      redirectTo: const ['Lesson', const {'lesson_name': 'tutorial'}]
   )
 ])
 

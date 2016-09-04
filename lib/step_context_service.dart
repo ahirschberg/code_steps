@@ -2,20 +2,20 @@ import 'package:angular2/core.dart';
 import 'package:code_steps/action_region.dart';
 import 'package:observe/observe.dart';
 import 'dart:collection';
-import 'package:code_steps/lesson_loader.dart';
+import 'package:code_steps/lesson_io.dart';
 import 'dart:async';
 
 @Injectable()
 class StepContextService extends Injectable {
-  LessonLoader _lessonLoader;
-  StepContextService(LessonLoader this._lessonLoader);
+  LessonIO _lessonIO;
+  StepContextService(LessonIO this._lessonIO);
   StreamController<PropertyChangeRecord<int>> _stepChangeController =
       new StreamController<PropertyChangeRecord<int>>.broadcast();
   Stream<PropertyChangeRecord<int>> get onStepChange =>
       _stepChangeController.stream;
 
   Future selectLesson(lesson_name, [initial_step_index]) {
-    return _lessonLoader.smartLoadData(lesson_name).then((HashMap lessonData) {
+    return _lessonIO.smartLoadData(lesson_name).then((HashMap lessonData) {
       loadedSteps = lessonData['expl'];
       loadedCode = lessonData['code'];
       loadedRegions = lessonData['regions'];
