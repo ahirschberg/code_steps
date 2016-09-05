@@ -1,9 +1,8 @@
 import 'package:angular2/core.dart';
-import 'package:code_steps/action_region.dart';
-import 'package:code_steps/editor/lesson_editor_component.dart';
+import 'package:code_steps/action/action_region.dart';
 import 'package:code_steps/lesson_serializer.dart';
-import 'package:code_steps/step_action.dart';
-import 'package:code_steps/step_actions_provider.dart';
+import 'package:code_steps/action/step_action.dart';
+import 'package:code_steps/action/step_actions_provider.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'package:ng_bootstrap/ng_bootstrap.dart';
 
@@ -18,7 +17,7 @@ import 'package:ng_bootstrap/ng_bootstrap.dart';
     :host { display: block; }
     '''
     ])
-class ActionRegionEditorComponent implements OnChanges {
+class ActionRegionEditorComponent {
   @Input()
   EditorActionRegion region;
   @Output()
@@ -51,9 +50,5 @@ class ActionRegionEditorComponent implements OnChanges {
     if (currentStepActions == null) currentStepActions = new Set<StepActionType>();
     event ? currentStepActions.add(type) : currentStepActions.remove(type);
     onDataChange.emit(actionUIToggles);
-  }
-
-  @override // called when @input() region is changed
-  void ngOnChanges(Map<String, SimpleChange> changes) {
   }
 }

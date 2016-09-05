@@ -1,7 +1,7 @@
 library lesson_serializer;
 
-import 'package:code_steps/action_region.dart';
-import 'package:code_steps/step_action.dart' show StepActionType;
+import 'package:code_steps/action/action_region.dart';
+import 'package:code_steps/action/step_action.dart' show StepActionType;
 
 import 'package:jsonx/jsonx.dart' as jsonx;
 import 'package:ace/ace.dart';

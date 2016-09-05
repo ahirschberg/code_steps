@@ -9,7 +9,7 @@ import 'package:code_steps/editor/action_region_editor_component.dart';
 import 'package:code_steps/editor/lesson_code_editor_component.dart';
 import 'package:code_steps/lesson_io.dart';
 import 'package:code_steps/lesson_serializer.dart';
-import 'package:code_steps/code_guide_component.dart';
+import 'package:code_steps/viewer/code_guide_component.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'package:observe/observe.dart';
 

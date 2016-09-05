@@ -9,7 +9,7 @@ import 'package:angular2/router.dart';
 import 'package:code_steps/app_component.dart';
 import 'package:code_steps/lesson_io.dart';
 import 'package:code_steps/step_context_service_provider.dart';
-import 'package:code_steps/step_actions_provider.dart';
+import 'package:code_steps/action/step_actions_provider.dart';
 
 main() {
   bootstrap(AppComponent, [

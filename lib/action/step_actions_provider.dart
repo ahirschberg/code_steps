@@ -1,6 +1,6 @@
 import 'dart:html';
 import 'package:angular2/core.dart';
-import 'package:code_steps/step_action.dart';
+import 'package:code_steps/action/step_action.dart';
 
 @Injectable()
 class StepActionsProvider extends Injectable {
