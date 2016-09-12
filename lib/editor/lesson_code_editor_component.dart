@@ -82,11 +82,16 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
     activeRegion = getRegionAtCursor();
   }
 
-  EditorActionRegion getRegionAtCursor() => actionRegions.values.firstWhere(
-      (EditorActionRegion region) =>
-  region.marker.className.contains('cs-mark') &&
-      region.marker.range.comparePoint(aceController.selection.cursor) == 0,
-      orElse: () {});
+  EditorActionRegion getRegionAtCursor() {
+    Iterable<EditorActionRegion> regions = actionRegions.values.where((region) =>
+        region.marker.className.contains('cs-mark') &&
+        region.marker.range.comparePoint(aceController.selection.cursor) == 0);
+    if (regions.isNotEmpty) {
+      return regions.skip(1).fold(regions.first,
+          (smallest, e) => smallest.range.containsRange(e.range) ? e : smallest);
+    }
+    return null;
+  }
 
   static const green = const Color(80, 131, 30, 0.35);
   static const blue = const Color(53, 191, 188, 0.2);

@@ -25,12 +25,10 @@ class ActionRegionEditorComponent {
   @Output()
   EventEmitter onDataChange;
 
-  StepActionsProvider stepActionsProvider;
   StepContextService stepContextService;
   EnumStringHelper<StepActionType> esh;
 
-  ActionRegionEditorComponent(
-      this.stepActionsProvider, this.stepContextService) {
+  ActionRegionEditorComponent(this.stepContextService) {
     onDelete = new EventEmitter();
     onDataChange = new EventEmitter();
     esh = new EnumStringHelper<StepActionType>();

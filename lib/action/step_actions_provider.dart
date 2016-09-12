@@ -1,60 +1,119 @@
-import 'dart:html';
 import 'package:angular2/core.dart';
+import 'package:ace/ace.dart' as ace;
 import 'package:code_steps/action/step_action.dart';
+import 'package:code_steps/lesson_serializer.dart';
 
 @Injectable()
 class StepActionsProvider extends Injectable {
-  Map<StepActionType, StepActionModel> _commandActions;
+  Map<StepActionType, Function> transformers;
 
   StepActionsProvider() {
-    _commandActions = { // TODO: CLEAN THIS UP x_x
-      StepActionType.Pass: new NonDirectionalActionModel.fromPair(
-          StepActionType.Pass, _easyPairAddClass('hl-pass')),
-      StepActionType.Fail: new NonDirectionalActionModel.fromPair(
-          StepActionType.Fail, _easyPairAddClass('hl-fail')),
-      StepActionType.Spotlight: new NonDirectionalActionModel.fromPair(
-          StepActionType.Spotlight, _easyPairAddClass('hl-spotlight')),
-      StepActionType.Show: new ToggleActionModel.fromPair(StepActionType.Show,
-          _easyPairAddClass('hl-hide').reversed.toList(), StepActionType.Hide),
-      StepActionType.Hide: new ToggleActionModel.fromPair(StepActionType.Hide,
-          _easyPairAddClass('hl-hide'), StepActionType.Show),
-      StepActionType.LineSpotlight: new NonDirectionalActionModel.fromPair(
-          StepActionType.LineSpotlight,
-          _easyPairAddClass('active')) // little bit hack-ey here...
+    transformers = new Map.fromIterable(StepActionType.values,
+        value: (t) => _generateTagWrap(t));
+
+    transformers[StepActionType.Pass](
+        [new RegionInsert([])], new ace.Range(0, 0, 0, 0));
+
+    // override default tag actions for certain types
+    transformers.addAll({
+      StepActionType.Hide: _hide
+    });
+  }
+
+  static final Function _hide = (List<RegionInsert> lines, ace.Range range) {
+    RegionInsert startLine = lines[range.start.row];
+    if (range.start.row == range.end.row) {
+      startLine.delete(range.start.column, range.end.column);
+    } else {
+      lines[range.start.row]
+          .delete(range.start.column, lines[range.start.row].length);
+      if (range.end.row - range.start.row > 1) {
+        lines.fillRange(
+            range.start.row + 1, range.end.row, new RegionInsert([]));
+      }
+      lines[range.end.row].delete(0, range.end.column);
+    }
+  };
+
+  static Function _generateTagWrap(StepActionType t) {
+    String typeString = LessonSerializer.stepActionTypeHelper.stringFromEnum(t);
+    String openTag = '<cs-region class="action-${typeString.toLowerCase()}">';
+    String closeTag = '</cs-region>';
+    return (List<RegionInsert> lines, ace.Range range) {
+      if (range.isEmpty) {
+        print('WARN: empty range $range');
+        return;
+      }
+      int openIndex = lines[range.start.row].split(range.start.column);
+      lines[range.start.row].insertShadow(openIndex + 1, openTag);
+      int closeIndex = lines[range.end.row].split(range.end.column);
+      lines[range.end.row].insertShadow(closeIndex + 1, closeTag);
     };
   }
+}
 
-  StepActionModel modelFromType(StepActionType t) => _commandActions[t];
+class StringShadow {
+  String val;
 
-  StepActionModel getActionModel(String action_name) {
-    const transformer = const {
-      'pass': StepActionType.Pass,
-      'fail': StepActionType.Fail,
-      'spotlight': StepActionType.Spotlight,
-      'show': StepActionType.Show,
-      'hide': StepActionType.Hide,
-      'spotlight-line': StepActionType.LineSpotlight
-    };
-    return _commandActions[transformer[action_name]];
+  StringShadow(this.val);
+
+  int get length => 0;
+  String toString() => val;
+  StringShadow substring(int a, [int b]) =>
+      new StringShadow(val.substring(a, b));
+}
+
+class StringFiller {
+  var val;
+  bool show;
+  StringFiller(this.val, [this.show = false]);
+  String toString() => show ? val : "";
+  StringFiller substring(int a, [int b]) =>
+      new StringFiller(val.substring(a, b), this.show);
+  int get length => val.length;
+}
+
+class RegionInsert {
+  List parts;
+
+  RegionInsert(this.parts);
+
+  int split(int col) {
+    int traversed = 0;
+    int i = 0;
+    bool go = true;
+    parts = parts.expand((s) {
+      if (go) {
+        if (col >= traversed && col <= traversed + s.length) {
+          go = false;
+          var split = [
+            s.substring(0, col - traversed),
+            s.substring(col - traversed)
+          ];
+          return split;
+        }
+        i++;
+        traversed += s.length;
+      }
+      return [s];
+    }).toList();
+    return i;
   }
 
-  Function _applyToRegion(Function action) {
-    return (ElementRef root, String target) {
-      dynamic matches = root.nativeElement.querySelectorAll('[f-id="$target"]');
-      matches.forEach((Element e) => action(e));
-    };
+  void insertShadow(int index, String s) =>
+      parts.insert(index, new StringShadow(s));
+
+  void delete(int from, int to) {
+    split(from);
+    int toIndex = split(to);
+    StringFiller filler = new StringFiller(parts.elementAt(toIndex));
+    parts.removeAt(toIndex);
+    parts.insert(toIndex, filler);
   }
 
-  /**
-   * Provides a shortcut for generating functions to add and remove html
-   * classes from targeted regions.
-   *
-   * Returns a [List] of length 2 with the pattern [apply(), destroy()].
-   */
-  List<Function> _easyPairAddClass(String html_class) {
-    return [
-      _applyToRegion((Element e) => e.classes.add(html_class)),
-      _applyToRegion((Element e) => e.classes.remove(html_class))
-    ];
+  String toString() {
+    return parts.join();
   }
+
+  get length => parts.fold(0, (int memo, var part) => memo += part.length);
 }

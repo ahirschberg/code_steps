@@ -22,6 +22,5 @@ doc/api/
 *.iws
 
 # Additional excludes
-web/static
 tags
 Gemfile.lock

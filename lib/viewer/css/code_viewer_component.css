@@ -16,10 +16,6 @@
     background-color: #532323;
 }
 
-:host .action-hide {
-    display: none;
-}
-
 :host .action-spotlight {
     box-shadow: 0 0 0 1px rgba(125, 103, 7, 0.5);
     background-color: rgba(125, 103, 7, 0.5)

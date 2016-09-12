@@ -1,7 +1,7 @@
 import 'package:angular2/core.dart';
 import 'package:code_steps/step_context_service.dart';
-import 'package:observe/observe.dart';
 import 'dart:html';
+import 'package:markdown/markdown.dart';
 
 @Component(
     selector: 'code-explanation',
@@ -21,7 +21,7 @@ class CodeExplanationComponent implements OnInit {
 
   ngOnInit() {
     stepContextService.onStepChange.listen((_) {
-      _elementRef.nativeElement.setInnerHtml(stepContextService.currStepHtml,
+      _elementRef.nativeElement.setInnerHtml(markdownToHtml(stepContextService.currStepHtml),
           validator: _explanationViewerValidator);
     });
   }
