@@ -16862,7 +16862,8 @@ z=y
 z.ghz(z).dc(this.gAe())
 this.f.gkB().dc(new T.HS(this))},
 yl:function(){var z=this.e
-return z.gao(z).dI(0).M(0,new T.HO(this))},
+z.gao(z).dI(0).M(0,new T.HO(this))
+z.aw(0)},
 y0:function(a){J.b1(a,new T.HN(this))},
 qb:function(a){var z,y,x,w,v,u
 if(a==null)a=B.mB(this.a.a.a5("getSelectionRange",null))
@@ -16900,7 +16901,7 @@ if(J.n(y.h(b,C.cL),!0))x=z.$2(x,C.fQ)
 if(J.n(y.h(b,C.cM),!0)||J.n(y.h(b,C.cO),!0))x=z.$2(x,C.fN)
 if(J.n(y.h(b,C.cN),!0)||J.n(y.h(b,C.ba),!0))x=z.$2(x,C.fO)
 y="div.cs-mark."+a.gB1()
-w=P.kX(P.P(["background-color",J.a1(x==null?"":x)]))
+w=P.kX(P.P(["background-color",J.a1(x),"CANARY",!0]))
 jss.set(y,w)},
 n1:function(a){return this.gn0().$1(a)},
 E:{"^":"Zl<,Zk<,Zm<"}},HS:{"^":"a:0;a",
