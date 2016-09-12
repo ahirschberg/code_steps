@@ -68,7 +68,7 @@ git status
 
 # Clean and replace build
 git rm -q --ignore-unmatch -rf .
-cp -a $dir/{build/web} .
+cp -a $dir/build/web .
 git checkout HEAD -- .gitignore # regenerate from current head
 
 git add .
