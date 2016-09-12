@@ -23,7 +23,7 @@
         "5": false
       },
       {
-        "1": "package:code_steps/lesson_loader.dart",
+        "1": "package:code_steps/lesson_io.dart",
         "5": false
       },
       {
@@ -31,7 +31,7 @@
         "5": false
       },
       {
-        "1": "package:code_steps/step_actions_provider.dart",
+        "1": "package:code_steps/action/step_actions_provider.dart",
         "5": false
       }
     ],
