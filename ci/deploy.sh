@@ -1,5 +1,4 @@
 #!/bin/bash
-# inspired by https://gist.github.com/Stebalien/d4a32c4abc03376db903
 
 # Ensure there is a branch set to build to
 if [ -z $TARGET_BRANCH ]
@@ -69,19 +68,11 @@ git status
 
 # Clean and replace build
 git rm -q --ignore-unmatch -rf .
-cp -a $dir/{build/web,build_json.rb,lessons,Gemfile} .
-git checkout HEAD -- Makefile .gitignore # regenerate from current head
-
-# Ensure the proper ruby version
-source "$HOME/.rvm/scripts/rvm"
-rvm install ruby 2.3.1
-rvm use 2.3.1
-bundle install
-GEM_PATH=~/cache/bundler:$GEM_PATH # necessary on Codeship to get requires to work.
-make lessons
+cp -a $dir/{build/web} .
+git checkout HEAD -- .gitignore # regenerate from current head
 
 git add .
-git commit -m "Commit '$last_msg' built to js" -m "Original commit: $last_rev" -m ":runner: *This commit was created automatically*" || true
+git commit -m "Commit '$last_rev' built to js" -m "Original commit: $last_msg" -m ":runner: *This commit was created automatically*" || true
 git push -u origin $TARGET_BRANCH || true # pushes to original local repo
 echo "Done and ready to push to github."
 cd $dir
