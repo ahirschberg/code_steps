@@ -42,8 +42,10 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
     });
   }
 
-  cleanRegions() =>
-      actionRegions.keys.toSet().forEach((id) => removeActionMarker(id));
+  cleanRegions() {
+    actionRegions.keys.toSet().forEach((id) => removeActionMarker(id));
+    actionRegions.clear();
+  }
 
   void addSerializedRegions(List regions) {
     regions.forEach((ActionRegion region) {
@@ -83,12 +85,16 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   }
 
   EditorActionRegion getRegionAtCursor() {
-    Iterable<EditorActionRegion> regions = actionRegions.values.where((region) =>
-        region.marker.className.contains('cs-mark') &&
-        region.marker.range.comparePoint(aceController.selection.cursor) == 0);
+    Iterable<EditorActionRegion> regions = actionRegions.values.where(
+        (region) =>
+            region.marker.className.contains('cs-mark') &&
+            region.marker.range.comparePoint(aceController.selection.cursor) ==
+                0);
     if (regions.isNotEmpty) {
-      return regions.skip(1).fold(regions.first,
-          (smallest, e) => smallest.range.containsRange(e.range) ? e : smallest);
+      return regions.skip(1).fold(
+          regions.first,
+          (smallest, e) =>
+              smallest.range.containsRange(e.range) ? e : smallest);
     }
     return null;
   }
@@ -117,7 +123,8 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
         typeEnabledState[StepActionType.Hide] == true) {
       c = addColor(c, blue);
     }
+    // FIXME remove canary once dart2js updated with proper object support for interops
     jss.set('div.cs-mark.${region.uniqClass}',
-        new JsObject.jsify({'background-color': (c ?? '').toString()}));
+        new JsObject.jsify({'background-color': c.toString(), 'CANARY': true}));
   }
 }

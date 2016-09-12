@@ -56,7 +56,6 @@ class LessonEditorComponent implements OnInit {
     });
   }
 
-  // TODO clean up!
   void reset() {
     explanations = [''];
     codeEditor.cleanRegions();
