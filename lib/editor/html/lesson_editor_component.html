@@ -1,10 +1,11 @@
-<button (click)="stepContextService.gotoPrevious()">Previous</button>
-{{stepContextService.stepIndex}}
-<button (click)="stepContextService.gotoNext()">Next</button>
-{{explanations}}
+<header>
+    <button (click)="stepContextService.gotoPrevious()">Previous</button>
+    {{stepContextService.stepIndex}}
+    <button (click)="stepContextService.gotoNext()">Next</button>
+</header>
 <div class="container-fluid">
     <div class="row">
-        <ace-edit id="md-edit" class="col-sm-6" (onInit)="setupMarkdownEditor($event)"></ace-edit>
+        <ace-edit id="md-edit" class="col-md-6" (onInit)="setupMarkdownEditor($event)"></ace-edit>
         <div class="col-sm-6">
             <input type="text" #filepath_form placeholder="ex: Example.java" [(ngModel)]="codeEditorFilepath">
             <ace-code-edit (onInit)="setupCodeEditor($event)"></ace-code-edit>
@@ -19,3 +20,7 @@
                       (onDelete)="codeEditor.removeActionMarker($event)"
                       (onDataChange)="codeEditor.recolorRegion(codeEditor.activeRegion, $event)">
 </action-region-editor>
+
+<bs-button-group>
+    <bs-toggle-button class="btn btn-primary" [ngModel]="vimModeEnabled" (ngModelChange)="vimModeEnabled = $event">Vim Mode</bs-toggle-button>
+</bs-button-group>
