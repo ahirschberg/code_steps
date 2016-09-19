@@ -74,7 +74,6 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
     String uniqClass = 'mark-${nextUniq++}';
     int id = aceController.session
         .addMarker(selection, tag + ' $uniqClass', type: ace.Marker.TEXT);
-    print('got id $id');
     actionRegions[id] = new EditorActionRegion(
         aceController.session.getMarkers()[id.toString()], uniqClass);
     return actionRegions[id];

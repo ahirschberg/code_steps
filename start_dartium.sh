@@ -5,4 +5,4 @@
 
 [ -z $DARTIUM_USER_DATA_DIR ] && >&2 echo -e "\e[31mWARNING: Dartium launched by this script may not function correctly without the DARTIUM_USER_DATA_DIR environment variable set.\e[39m"
 
-DART_FLAGS='--checked' $DARTIUM_BIN --no-sandbox --user-data-dir=$DARTIUM_USER_DATA_DIR localhost:8080 &
+DART_FLAGS='--checked' $DARTIUM_BIN --no-sandbox --user-data-dir=$DARTIUM_USER_DATA_DIR localhost:8080

@@ -2,7 +2,6 @@ import 'package:angular2/core.dart';
 import 'package:code_steps/action/action_region.dart';
 import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/action/step_action.dart';
-import 'package:code_steps/action/step_actions_provider.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'package:ng_bootstrap/ng_bootstrap.dart';
 
