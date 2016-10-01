@@ -1,7 +1,5 @@
 // FIXME once dart2js is updated with proper interop support
 // This abstraction layer is necessary to ensure the proper object gets passed to the jss library
-
-
 if (window['jss'] == undefined) console.warn("WARN: jss was not overridden");
 else {
     window['jss_pure'] = window['jss'];
@@ -21,4 +19,5 @@ else {
         }
     };
 }
+
 
