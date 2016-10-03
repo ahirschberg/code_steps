@@ -45,16 +45,23 @@ class LessonEditorComponent implements OnInit {
   @override
   ngOnInit() {
     ace.implementation = ACE_PROXY_IMPLEMENTATION;
+
+    // fires for each editor load
     editorInitStreamController.stream
       .listen((ace.Editor aceController) {
         aceController.theme = new ace.Theme.named(ace.Theme.SOLARIZED_DARK);
         aceController.keyboardHandler =
             new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
         _isVim = true;
+
+
       });
+
+    // fires once both editors loaded
     editorInitStreamController.stream.take(2).drain().then((_) {
       lessonName = _routeParams.get('lesson_name');
       if (lessonName != null) serializedRetrieve();
+      codeEditor.aceController.onChange.listen((ace.Delta d) => print(d.text));
     });
     stepContextService.onStepChange.listen((PropertyChangeRecord data) {
       explanations[data.oldValue] = markdownEditor.aceController.value;
