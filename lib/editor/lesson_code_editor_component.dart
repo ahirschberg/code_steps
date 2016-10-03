@@ -1,4 +1,3 @@
-import 'dart:js';
 import 'package:angular2/core.dart';
 import 'package:code_steps/action/action_region.dart';
 import 'package:code_steps/editor/ace_editor_component.dart';
@@ -6,7 +5,6 @@ import 'package:code_steps/action/step_action.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'package:fff/color.dart';
 
-import 'package:code_steps/editor/jss_interop.dart' as jss;
 import 'package:ace/ace.dart' as ace;
 
 @Component(selector: 'ace-code-edit', template: '', styles: const [
