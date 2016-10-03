@@ -123,7 +123,7 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
       c = addColor(c, blue);
     }
     // FIXME remove canary once dart2js updated with proper object support for interops
-    jss.set('div.cs-mark.${region.uniqClass}',
-        new JsObject.jsify({'background-color': c.toString(), 'CANARY': true}));
+//    jss.set('div.cs-mark.${region.uniqClass}',
+//        new JsObject.jsify({'background-color': c.toString(), 'CANARY': true}));
   }
 }

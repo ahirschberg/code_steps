@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:html';
+import 'package:ace/ace.dart';
 import 'package:angular2/core.dart';
 import 'package:ace/ace.dart' as ace;
 import 'package:ace/proxy.dart';
@@ -117,6 +118,7 @@ class LessonEditorComponent implements OnInit {
   }
 
   serializedSave() {
+    explanations[stepContextService.stepIndex] = markdownEditor.aceController.value;
     if (lessonName == null || lessonName.length == 0) {
       print('Cannot save an empty lesson name!');
     } else {
