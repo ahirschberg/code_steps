@@ -1,0 +1,112 @@
+{
+   "code":"// Person.java\npublic class Person {\n    public void eat(String food) {\n        System.out.printf(\"Eating %s\\n\");\n    }\n}\n// Student.java\npublic class Student extends Person {\n    public void study() {\n        System.out.println(\"urgh...\");\n    }\n}\n\nPerson p = new Student();\n",
+   "expl":[
+      "### Compile time inheritance in Java\n\nHow does Java check to see if your inheritance code \nis correct?",
+      "Let's look at some code snippets",
+      "Person has an `eat` method.\n\nStudent has a `study` method.",
+      "",
+      "Let's take a look at how the compiler parses code.",
+      "First, the compiler checks whether the type on the left of\nthe equal sign matches the type on the right.\n\nIs this a legal combination?",
+      "This is valid, because `Student` inherits from `Person`",
+      "This is valid, because `Student` inherits from `Person`"
+   ],
+   "regions":[
+      {
+         "range":{
+            "start":{
+               "row":2,
+               "column":4
+            },
+            "end":{
+               "row":2,
+               "column":34
+            }
+         },
+         "step_data":{
+            "2":[
+               "spotlight"
+            ]
+         }
+      },
+      {
+         "range":{
+            "start":{
+               "row":8,
+               "column":4
+            },
+            "end":{
+               "row":8,
+               "column":25
+            }
+         },
+         "step_data":{
+            "2":[
+               "spotlight"
+            ]
+         }
+      },
+      {
+         "range":{
+            "start":{
+               "row":0,
+               "column":0
+            },
+            "end":{
+               "row":11,
+               "column":1
+            }
+         },
+         "step_data":{
+            "4":[
+               "hide"
+            ],
+            "5":[
+               "hide"
+            ]
+         }
+      },
+      {
+         "range":{
+            "start":{
+               "row":13,
+               "column":0
+            },
+            "end":{
+               "row":13,
+               "column":6
+            }
+         },
+         "step_data":{
+            "5":[
+               "spotlight"
+            ],
+            "6":[
+               "pass"
+            ]
+         }
+      },
+      {
+         "range":{
+            "start":{
+               "row":13,
+               "column":15
+            },
+            "end":{
+               "row":13,
+               "column":22
+            }
+         },
+         "step_data":{
+            "5":[
+               "spotlight"
+            ],
+            "6":[
+               "pass"
+            ]
+         }
+      }
+   ],
+   "meta":{
+      "code_filename":"Person.java"
+   }
+}
