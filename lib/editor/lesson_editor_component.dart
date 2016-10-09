@@ -45,32 +45,36 @@ class LessonEditorComponent implements OnInit {
   @override
   ngOnInit() {
     ace.implementation = ACE_PROXY_IMPLEMENTATION;
+    editorInitStreamController.stream.listen(_onEditorReady);
+    editorInitStreamController.stream.take(2).drain().then(_onAllEditorsReady);
 
-    // fires for each editor load
-    editorInitStreamController.stream
-      .listen((ace.Editor aceController) {
-        aceController.theme = new ace.Theme.named(ace.Theme.SOLARIZED_DARK);
-        aceController.keyboardHandler =
-            new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
-        _isVim = true;
+    stepContextService.onStepChange.listen(_onStepChange);
+  }
 
+  void _onEditorReady(ace.Editor aceController) {
+    aceController.theme = new ace.Theme.named(ace.Theme.SOLARIZED_DARK);
+    aceController.keyboardHandler =
+    new ace.KeyboardHandler.named(ace.KeyboardHandler.VIM);
+    _isVim = true;
+  }
 
-      });
+  void _onAllEditorsReady(_) {
+    codeEditor.aceController.onChange.listen((ace.Delta d) => print(d.text));
 
-    // fires once both editors loaded
-    editorInitStreamController.stream.take(2).drain().then((_) {
-      lessonName = _routeParams.get('lesson_name');
-      if (lessonName != null) serializedRetrieve();
-      codeEditor.aceController.onChange.listen((ace.Delta d) => print(d.text));
-    });
-    stepContextService.onStepChange.listen((PropertyChangeRecord data) {
-      explanations[data.oldValue] = markdownEditor.aceController.value;
-      if (explanations.length <= data.newValue) {
-        explanations.add(markdownEditor.aceController.value);
-      } else {
-        markdownEditor.aceController.setValue(explanations[data.newValue]);
-      }
-    });
+    markdownEditor.aceController.renderer.showGutter = false;
+    markdownEditor.aceController.session.useWrapMode = true;
+
+    lessonName = _routeParams.get('lesson_name');
+    if (lessonName != null) serializedRetrieve();
+  }
+
+  void _onStepChange(PropertyChangeRecord data) {
+    explanations[data.oldValue] = markdownEditor.aceController.value;
+    if (explanations.length <= data.newValue) {
+      explanations.add(markdownEditor.aceController.value);
+    } else {
+      markdownEditor.aceController.setValue(explanations[data.newValue]);
+    }
   }
 
   void reset() {
