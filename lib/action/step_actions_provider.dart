@@ -67,7 +67,7 @@ class StringFiller {
   var val;
   bool show;
   StringFiller(this.val, [this.show = false]);
-  String toString() => show ? val : "";
+  String toString() => show ? "{{$val}}" : "";
   StringFiller substring(int a, [int b]) =>
       new StringFiller(val.substring(a, b), this.show);
   int get length => val.length;
@@ -114,6 +114,9 @@ class RegionInsert {
   String toString() {
     return parts.join();
   }
+
+  bool isEmpty() =>
+    parts.every((e) => e.runtimeType == StringFiller || e.length == 0);
 
   get length => parts.fold(0, (int memo, var part) => memo += part.length);
 }

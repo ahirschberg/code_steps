@@ -5,3 +5,11 @@
     font-size: 1.2rem;
     display: block;
 }
+
+:host .test-breakpoint {
+    background-color: red;
+}
+
+:host .othertest-breakpoint {
+    background-color: blue;
+}

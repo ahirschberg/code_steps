@@ -54,6 +54,6 @@ class CodeViewerComponent implements OnInit {
       actions?.forEach((actionType) => stepActionsProvider
           .transformers[actionType](rows, region.range));
     });
-    return rows.join('\n');
+    return rows.where((s) => !s.isEmpty()).join('\n');
   }
 }
