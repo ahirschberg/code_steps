@@ -14,11 +14,25 @@ import 'package:ng_bootstrap/ng_bootstrap.dart';
     styles: const [
       '''
     :host { display: block; }
+    :host .steps-picker {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        overflow-y: scroll;
+    }
+    :host .steps-picker > option {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    :host .step-actions-picker {
+        display: block;
+    }
     '''
     ])
 class ActionRegionEditorComponent {
   @Input()
   EditorActionRegion region;
+  @Input()
+  List<String> stepDescriptions;
   @Output()
   EventEmitter onDelete;
   @Output()
@@ -43,9 +57,9 @@ class ActionRegionEditorComponent {
 
   Map<StepActionType, bool> get actionUIToggles => region.getActionStates(stepContextService.stepIndex);
 
-  void updateSelected(StepActionType type, bool event) {
-    if (currentStepActions == null) currentStepActions = new Set<StepActionType>();
-    event ? currentStepActions.add(type) : currentStepActions.remove(type);
-    onDataChange.emit(actionUIToggles);
+  get selectedActionType => currentStepActions.first;
+  set selectedActionType(StepActionType type) {
+    currentStepActions.clear();
+    currentStepActions.add(type);
   }
 }

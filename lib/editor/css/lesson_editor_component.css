@@ -1,3 +1,7 @@
 :host ace-edit#md-edit {
     margin-top: 36px;
 }
+
+.container {
+    max-width: 1300px;
+}
