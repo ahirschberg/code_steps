@@ -11,7 +11,9 @@
     </div>
     <div class="col-md-6">
         <select class="steps-picker form-control" multiple>
-            <option *ngFor="let stepDescription of stepDescriptions">{{stepDescription}}</option>
+            <option [selected]="region.stepData.keys.contains(0)" *ngFor="let stepDescription of stepDescriptions">
+                {{stepDescription}}
+            </option>
         </select>
         <button (click)="deleteRegion()">Delete Region</button>
     </div>
