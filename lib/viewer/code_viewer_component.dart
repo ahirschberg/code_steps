@@ -1,13 +1,11 @@
 import 'package:angular2/core.dart';
 import 'package:code_steps/action/action_region.dart';
 import 'package:code_steps/action/step_actions_provider.dart';
-import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/action/step_action.dart';
 import 'package:code_steps/step_context_service.dart';
-import 'package:ace/ace.dart' as ace;
-import 'package:observe/observe.dart';
 import 'package:code_steps/viewer/highlightjs_interop.dart' as highlighter;
 import 'dart:html';
+import 'package:observe/observe.dart';
 
 @Component(
     selector: 'code-viewer',

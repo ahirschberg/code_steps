@@ -1,9 +1,9 @@
 import 'package:angular2/core.dart';
 import 'package:code_steps/action/action_region.dart';
-import 'package:observe/observe.dart';
 import 'dart:collection';
 import 'package:code_steps/lesson_io.dart';
 import 'dart:async';
+import 'package:observe/observe.dart';
 
 @Injectable()
 class StepContextService extends Injectable {

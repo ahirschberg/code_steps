@@ -1,5 +1,6 @@
 import 'package:angular2/core.dart';
 import 'package:code_steps/action/action_region.dart';
+import 'package:code_steps/editor/lesson_code_editor_component.dart';
 import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/action/step_action.dart';
 import 'package:code_steps/step_context_service.dart';
@@ -30,7 +31,7 @@ import 'package:ng_bootstrap/ng_bootstrap.dart';
     ])
 class ActionRegionEditorComponent {
   @Input()
-  EditorActionRegion region;
+  AceActionRegion guiRegion;
   @Input()
   List<String> stepDescriptions;
   @Output()
@@ -47,19 +48,15 @@ class ActionRegionEditorComponent {
     esh = new EnumStringHelper<StepActionType>();
   }
 
-  Set<StepActionType> get currentStepActions => region.stepData[stepContextService.stepIndex];
-  set currentStepActions(Set<StepActionType> actions) => region.stepData[stepContextService.stepIndex] = actions;
-
   void deleteRegion() {
-    onDelete.emit(region.marker.id);
-    region = null;
+    onDelete.emit(guiRegion.marker.id);
+    guiRegion = null;
   }
 
-  Map<StepActionType, bool> get actionUIToggles => region.getActionStates(stepContextService.stepIndex);
-
-  get selectedActionType => currentStepActions.first;
+  get selectedActionType => guiRegion.region.actions.first;
   set selectedActionType(StepActionType type) {
-    currentStepActions.clear();
-    currentStepActions.add(type);
+    guiRegion.region.actions
+      ..clear()
+      ..add(type);
   }
 }

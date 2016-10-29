@@ -1,7 +1,9 @@
+import 'dart:js';
 import 'package:angular2/core.dart';
 import 'package:code_steps/action/action_region.dart';
+import 'package:code_steps/action/step.dart';
 import 'package:code_steps/editor/ace_editor_component.dart';
-import 'package:code_steps/action/step_action.dart';
+import 'jss_interop.dart' as jss;
 import 'package:code_steps/step_context_service.dart';
 import 'package:fff/color.dart';
 
@@ -19,11 +21,12 @@ import 'package:ace/ace.dart' as ace;
 ])
 class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const String code_edit_id = 'lesson-code-edit';
+  @Input() Step currentStep;
   @Output('onInit')
   get init => super.init; // workaround for annotations not inheriting properly
 
-  EditorActionRegion activeRegion;
-  Map<int, EditorActionRegion> actionRegions = {};
+  Map<int, AceActionRegion> guiRegions = new Map();
+
   StepContextService stepContextService;
   LessonCodeEditorComponent(ElementRef elementRef, this.stepContextService)
       : super(elementRef) {
@@ -35,63 +38,51 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
     super.ngOnInit();
     this.aceController.selection.onChangeCursor.listen(onData);
     stepContextService.onStepChange.listen((e) {
-      actionRegions.values.forEach((r) =>
-          recolorRegion(r, r.getActionStates(stepContextService.stepIndex)));
+      cleanRegions();
+      currentStep.activeRegions.forEach((r) => _addRegionToEditor(r));
     });
   }
 
   cleanRegions() {
-    actionRegions.keys.toSet().forEach((id) => removeActionMarker(id));
-    actionRegions.clear();
+    guiRegions.keys.toSet().forEach((id) => removeActionMarker(id));
+    guiRegions.clear();
   }
 
-  void addSerializedRegions(List regions) {
-    regions.forEach((ActionRegion region) {
-      EditorActionRegion r = addActionMarker(region.range)
-        ..stepData = region.stepData;
-      recolorRegion(r, r.getActionStates(stepContextService.stepIndex));
-    });
-  }
-
-  EditorActionRegion addActionMarker([ace.Range range = null]) {
-    range ??= aceController.selectionRange;
-    EditorActionRegion inserted = _insertMarker(range, 'cs-mark');
-    activeRegion = inserted;
-    return inserted;
+  _addRegionToEditor(ActionRegion r) {
+    AceActionRegion guiRegion = new AceActionRegion(null, 'cs-mark', r);
+    return _insertMarker(guiRegion);
   }
 
   removeActionMarker(int id) {
-    print(aceController.session.getMarkers().length);
     aceController.session.removeMarker(id);
-    print(aceController.session.getMarkers().length);
-    actionRegions.remove(id);
   }
 
   int nextUniq = 0;
-  EditorActionRegion _insertMarker(ace.Range selection, String tag) {
+  _insertMarker(AceActionRegion guiRegion) {
     String uniqClass = 'mark-${nextUniq++}';
     int id = aceController.session
-        .addMarker(selection, tag + ' $uniqClass', type: ace.Marker.TEXT);
-    actionRegions[id] = new EditorActionRegion(
-        aceController.session.getMarkers()[id.toString()], uniqClass);
-    return actionRegions[id];
+        .addMarker(guiRegion.region.range, guiRegion.css_class + ' $uniqClass',
+        type: ace.Marker.TEXT);
+    guiRegions[id] = guiRegion
+      ..marker = aceController.session.getMarkers()[id.toString()];
+    return id;
   }
 
   void onData(Null) {
-    activeRegion = getRegionAtCursor();
+    getRegionAtCursor();
   }
 
-  EditorActionRegion getRegionAtCursor() {
-    Iterable<EditorActionRegion> regions = actionRegions.values.where(
+  AceActionRegion getRegionAtCursor() {
+    Iterable<AceActionRegion> regions = guiRegions.values.where(
         (region) =>
             region.marker.className.contains('cs-mark') &&
             region.marker.range.comparePoint(aceController.selection.cursor) ==
                 0);
-    if (regions.isNotEmpty) {
+    if (regions.isNotEmpty) { // FIXME why is this skip 1?
       return regions.skip(1).fold(
           regions.first,
           (smallest, e) =>
-              smallest.range.containsRange(e.range) ? e : smallest);
+              smallest.range.containsRange(e.region.range) ? e : smallest);
     }
     return null;
   }
@@ -102,26 +93,17 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const purple = const Color(197, 23, 158, 0.25);
   static const yellow = const Color(79, 76, 15, 0.66);
   recolorRegion(
-      EditorActionRegion region, Map<StepActionType, bool> typeEnabledState) {
-    Color c = null;
-    Function addColor =
-        (Color base, Color toAdd) => base == null ? toAdd : toAdd + base;
-    if (typeEnabledState[StepActionType.Pass] == true) {
-      c = addColor(c, green);
-    }
-    if (typeEnabledState[StepActionType.Fail] == true) {
-      c = addColor(c, red);
-    }
-    if (typeEnabledState[StepActionType.Spotlight] == true ||
-        typeEnabledState[StepActionType.LineSpotlight] == true) {
-      c = addColor(c, yellow);
-    }
-    if (typeEnabledState[StepActionType.Show] == true ||
-        typeEnabledState[StepActionType.Hide] == true) {
-      c = addColor(c, blue);
-    }
+      AceActionRegion guiRegion) {
+    Color c = purple;
     // FIXME remove canary once dart2js updated with proper object support for interops
-//    jss.set('div.cs-mark.${region.uniqClass}',
-//        new JsObject.jsify({'background-color': c.toString(), 'CANARY': true}));
+    jss.set('div.cs-mark.${guiRegion.marker.className}',
+        new JsObject.jsify({'background-color': c.toString(), 'CANARY': true}));
   }
+}
+
+class AceActionRegion {
+  ace.Marker marker;
+  String css_class;
+  ActionRegion region;
+  AceActionRegion(this.marker, this.css_class, this.region);
 }

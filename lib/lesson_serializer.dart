@@ -51,18 +51,8 @@ class LessonSerializer {
         return new Point(val['row'], val['column']);
       } else if (key == 'range') {
         return new Range.fromPoints(val['start'], val['end']);
-      } else if (key == 'step_data') {
-        Map<int, List<String>> stringedActionTypes =
-            val as Map<int, List<String>>;
-        return new Map.fromIterables(
-            stringedActionTypes.keys.map(destringifyInt),
-            stringedActionTypes.values.map((type_list) => type_list.map(
-                (type_str) =>
-                    stepActionTypeHelper.enumFromString(type_str)).toSet()));
-      } else if (key == 'regions') {
-        return val.map((region_map) => new ActionRegion(region_map['range'], region_map['step_data'])).toList();
       }
-      return val;
     });
   }
 }
+
