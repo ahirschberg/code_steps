@@ -1,19 +1,51 @@
 {
-  "steps": [
-    {
-      "code": "from python import python\nabcdefg.",
-      "explanation": "*first* step",
-      "regions": [
+    "steps": [
         {
-          "range": {"from": {"row": 0, "column": 0}, "to": {"row": 1, "column": 0}},
-          "actions": ["hide"]
+            "code": "",
+            "explanation": "Welcome to `code_steps`. This app is an interactive teaching tool for computer science. It is a platform where anyone can create and share step by step lessons to teach others about code concepts. Click the next button below to continue to the next step.",
+            "regions": []
+        },
+        {
+            "explanation": "You can think of `code_steps` in terms of a step-by-step slideshow with two panes: code and explanation.",
+            "regions": []
+        },
+        {
+            "explanation": "This is the explanation pane...",
+            "code": "...and this is the code pane.",
+            "regions": []
+        },
+        {
+            "explanation": "In the explanation pane, we can describe what we are doing, and what the user should take away from the given step. In the code pane, we show the code we are working on. Let's look at a simple code snippet as an example.",
+            "code": "public class MyJavaClass {\n\tpublic void main(String[] args){\n\t\t//...\n\t}\n}",
+            "regions": []
+        },
+        {
+            "explanation": "Oops, looks like we forgot to add the static keyword to our main method! The incorrect line is highlighted over in the code pane in red.",
+            "regions": [
+                {
+                    "range": {"from": {"row": 1, "column": 0}, "to": {"row": 2, "column": 0}},
+                    "actions": ["fail"]
+                }
+            ]
+        },
+        {
+            "code": "public class MyJavaClass {\n\tpublic static void main(String[] args){\n\t\t//...\n\t}\n}",
+            "explanation": "Alright. It's fixed! Phew.",
+            "regions": [
+                {
+                    "range": {"from": {"row": 1, "column": 0}, "to": {"row": 2, "column": 0}},
+                    "actions": ["pass"]
+                }
+            ]
+        },
+        {
+            "explanation": "That's the basic usage of `code_steps`. Users are able to view lessons in which code is dynamically refactored before their eyes, with each step accompanied by a helpful explanation!",
+            "regions": [
+                {
+                    "range": {"from": {"row": 1, "column": 0}, "to": {"row": 2, "column": 0}},
+                    "actions": []
+                }
+            ]
         }
-      ]
-    },
-    {
-      "explanation": "test expl",
-      "regions": [
-      ]
-    }
-  ]
+    ]
 }
