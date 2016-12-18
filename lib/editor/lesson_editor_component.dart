@@ -83,10 +83,11 @@ class LessonEditorComponent implements OnInit {
         .map((k) => [k, window.localStorage[k]]);
   }
 
+  // FIXME
   void initFromMap(Map serializedEditData) {
     reset();
     codeEditor.aceController.setValue(serializedEditData['code']);
-    steps = serializedEditData['steps'].map((Map jsonStep) => Step.fromJson(jsonStep));
+    steps = serializedEditData['steps'].map((Map jsonStep) => Step.deserialize(jsonStep));
     markdownEditor.aceController
         .setValue(currentStep.explanation);
 //    codeEditor.addSerializedRegions(serializedEditData['regions']);

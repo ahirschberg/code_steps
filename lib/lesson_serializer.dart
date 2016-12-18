@@ -47,20 +47,18 @@ class LessonSerializer {
   static Function stepActionTypeTransformer = (StepActionType t) =>
       stepActionTypeHelper.stringFromEnum(t).toLowerCase();
 
-  static dynamic decode(String jsonData) {
+  static Map decode(String jsonData) {
     var decoded = jsonx.decode(jsonData, reviver: (var key, var val) {
-      print("key: $key, val: $val");
       if (key == 'from' || key == 'to') {
         return new Point(val['row'], val['column']);
       } else if (key == 'range') {
         return new Range.fromPoints(val['from'], val['to']);
       } else if (key == 'steps') {
-        return (val).map((s) => Step.fromJson(s));
+        return (val).map((s) => Step.deserialize(s));
       } else {
         return val;
       }
     });
-    debugger();
     return decoded;
   }
 }

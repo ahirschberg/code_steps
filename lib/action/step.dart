@@ -2,18 +2,17 @@ import 'package:code_steps/action/action_region.dart';
 
 class Step {
   String explanation;
-  Set<ActionRegion> _activeRegions;
+  String code;
+  Set<ActionRegion> activeRegions;
 
-  Step(this.explanation, this._activeRegions) {
-    this._activeRegions ??= new Set<ActionRegion>();
+  Step(this.explanation, this.code, this.activeRegions) {
+    this.activeRegions ??= new Set<ActionRegion>();
   }
 
-  Set<ActionRegion> get activeRegions => this._activeRegions;
 
   Map toJson() => {'explanation': explanation, 'regions': activeRegions};
 
-  static Step fromJson(Map json) {
-    // FIXME
-    return new Step(json['explanation'], null);
+  static Step deserialize(Map data) {
+    return new Step(data['explanation'], data['code'], null);
   }
 }

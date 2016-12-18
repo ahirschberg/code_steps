@@ -25,12 +25,11 @@ class CodeViewerComponent implements OnInit {
 
   ngOnInit() {
     stepContextService.onStepChange.listen((PropertyChangeRecord change) =>
-        _addCodeHtml(_addHtmlRegions(stepContextService.currentLesson.code,
+        _addCodeHtml(_addHtmlRegions(stepContextService.currentStep.code,
             stepContextService.currentStep.activeRegions, stepContextService.stepIndex)));
   }
 
   _addCodeHtml(String codeHtml) {
-    // why is nativeElement dynamic :(
     Element root = _elementRef.nativeElement as Element;
 
     root.setInnerHtml("<pre>${codeHtml}</pre>",
