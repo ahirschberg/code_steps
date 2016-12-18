@@ -1,6 +1,8 @@
 library lesson_serializer;
 
+import 'dart:developer';
 import 'package:code_steps/action/action_region.dart';
+import 'package:code_steps/action/step.dart';
 import 'package:code_steps/action/step_action.dart' show StepActionType;
 
 import 'package:jsonx/jsonx.dart' as jsonx;
@@ -46,13 +48,20 @@ class LessonSerializer {
       stepActionTypeHelper.stringFromEnum(t).toLowerCase();
 
   static dynamic decode(String jsonData) {
-    return jsonx.decode(jsonData, reviver: (var key, var val) {
-      if (key == 'start' || key == 'end') {
+    var decoded = jsonx.decode(jsonData, reviver: (var key, var val) {
+      print("key: $key, val: $val");
+      if (key == 'from' || key == 'to') {
         return new Point(val['row'], val['column']);
       } else if (key == 'range') {
-        return new Range.fromPoints(val['start'], val['end']);
+        return new Range.fromPoints(val['from'], val['to']);
+      } else if (key == 'steps') {
+        return (val).map((s) => Step.fromJson(s));
+      } else {
+        return val;
       }
     });
+    debugger();
+    return decoded;
   }
 }
 

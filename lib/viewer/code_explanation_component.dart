@@ -21,7 +21,7 @@ class CodeExplanationComponent implements OnInit {
 
   ngOnInit() {
     stepContextService.onStepChange.listen((_) {
-      _elementRef.nativeElement.setInnerHtml(markdownToHtml(stepContextService.currStepHtml),
+      _elementRef.nativeElement.setInnerHtml(markdownToHtml(stepContextService.currentStep.explanation),
           validator: _explanationViewerValidator);
     });
   }

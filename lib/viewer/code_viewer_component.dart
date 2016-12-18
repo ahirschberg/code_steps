@@ -25,8 +25,8 @@ class CodeViewerComponent implements OnInit {
 
   ngOnInit() {
     stepContextService.onStepChange.listen((PropertyChangeRecord change) =>
-        _addCodeHtml(_addHtmlRegions(stepContextService.currCodeHtml,
-            stepContextService.loadedRegions, stepContextService.stepIndex)));
+        _addCodeHtml(_addHtmlRegions(stepContextService.currentLesson.code,
+            stepContextService.currentStep.activeRegions, stepContextService.stepIndex)));
   }
 
   _addCodeHtml(String codeHtml) {
@@ -42,13 +42,13 @@ class CodeViewerComponent implements OnInit {
     }
   }
 
-  String _addHtmlRegions(String code, List<ActionRegion> regions, int step) {
+  String _addHtmlRegions(String code, Set<ActionRegion> regions, int step) {
     List<RegionInsert> rows = code
         .split('\n')
         .map((row) => new RegionInsert([row]))
         .toList(growable: false);
     regions.forEach((ActionRegion region) {
-      Set<StepActionType> actions = region.stepData[step];
+      Set<StepActionType> actions = region.actions;
       actions?.forEach((actionType) => stepActionsProvider
           .transformers[actionType](rows, region.range));
     });

@@ -10,9 +10,10 @@ class Step {
 
   Set<ActionRegion> get activeRegions => this._activeRegions;
 
-  Map toJson() => {'explanation': explanation, 'action_region': activeRegions};
+  Map toJson() => {'explanation': explanation, 'regions': activeRegions};
 
   static Step fromJson(Map json) {
-    return new Step(json['explanation'], json['action_region']);
+    // FIXME
+    return new Step(json['explanation'], null);
   }
 }

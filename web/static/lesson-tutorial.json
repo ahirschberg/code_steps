@@ -1,1 +1,13 @@
-{"code":"## This is the code pane.\n## code_steps is designed as a teaching tool for\n## computer science!\nclass RubyExample\n    def initialize\n        @code_steps = 'neat'\n    end\nend","expl":["(DISCLAMER: code_steps is a work in progress, and it is likely that lessons will break as the format is updated.)\n\nWelcome to code_steps! This is an example lesson.\nIt will take you through the basic features of the site.\n\nPress the Next button to continue...","It consists of two panes, the explanation pane,\nwhich you're looking at right now, and the code pane,\nwhich is the gray box to your right.","The code_steps tool allows you to write interactive code\nslices and explanations. Within a lesson, you can define\nregions of the code to modify for specific steps. \n","For example,\nif we wanted to draw the user's attention to a syntax error,\nwe could highlight it in red...\n","Or maybe even fix it!","You can edit lessons right in your browser (although it's a little bit buggy right now.)\n\n[Check it out...](#/edit/tutorial)"],"regions":[{"range":{"start":{"row":5,"column":27},"end":{"row":5,"column":28}},"step_data":{"2":["hide"],"3":["hide"],"4":["pass"]}},{"range":{"start":{"row":0,"column":0},"end":{"row":0,"column":25}},"step_data":{"0":["hide"]}},{"range":{"start":{"row":1,"column":0},"end":{"row":7,"column":3}},"step_data":{"0":["hide"],"1":["hide"]}},{"range":{"start":{"row":5,"column":22},"end":{"row":5,"column":27}},"step_data":{"2":[],"3":["fail"],"4":["pass"]}}],"meta":{"code_filename":"Example.rb"}}
+{
+  "steps": [
+    {
+      "explanation": "test expl",
+      "regions": [
+        {
+          "range": {"from": {"row": 0, "column": 0}, "to": {"row": 1, "column": 0}},
+          "actions": ["pass"]
+        }
+      ]
+    }
+  ]
+}

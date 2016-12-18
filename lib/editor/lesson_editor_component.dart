@@ -86,10 +86,10 @@ class LessonEditorComponent implements OnInit {
   void initFromMap(Map serializedEditData) {
     reset();
     codeEditor.aceController.setValue(serializedEditData['code']);
-    steps = serializedEditData['steps'].map((Map jsonStep) => Step.deserialize(jsonStep));
+    steps = serializedEditData['steps'].map((Map jsonStep) => Step.fromJson(jsonStep));
     markdownEditor.aceController
         .setValue(currentStep.explanation);
-    codeEditor.addSerializedRegions(serializedEditData['regions']);
+//    codeEditor.addSerializedRegions(serializedEditData['regions']);
     codeEditorFilepath = serializedEditData['meta']['code_filename'];
   }
 

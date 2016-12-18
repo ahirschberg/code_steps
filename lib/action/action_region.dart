@@ -16,7 +16,7 @@ class ActionRegion {
 
   Map toJson() {
     var obj = {
-      'region': range,
+      'range': range,
       'actions': actions.map((type) =>
           LessonSerializer.stepActionTypeHelper.stringFromEnum(type)).toList()
     };
