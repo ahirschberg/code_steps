@@ -2,21 +2,17 @@
   "steps": [
     {
       "code": "from python import python\nabcdefg.",
-      "explanation": "first step",
+      "explanation": "*first* step",
       "regions": [
         {
           "range": {"from": {"row": 0, "column": 0}, "to": {"row": 1, "column": 0}},
-          "actions": ["pass"]
+          "actions": ["hide"]
         }
       ]
     },
     {
       "explanation": "test expl",
       "regions": [
-        {
-          "range": {"from": {"row": 0, "column": 0}, "to": {"row": 1, "column": 0}},
-          "actions": ["pass"]
-        }
       ]
     }
   ]

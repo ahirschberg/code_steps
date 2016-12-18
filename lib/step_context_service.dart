@@ -3,7 +3,7 @@ import 'package:code_steps/action/lesson.dart';
 import 'package:code_steps/action/step.dart';
 import 'package:code_steps/lesson_io.dart';
 import 'dart:async';
-import 'package:observe/observe.dart';
+import 'package:observable/observable.dart';
 
 @Injectable()
 class StepContextService extends Injectable {

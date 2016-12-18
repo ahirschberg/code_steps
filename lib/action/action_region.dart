@@ -1,4 +1,5 @@
 library action_region;
+
 import 'package:code_steps/editor/lesson_code_editor_component.dart';
 import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/action/step_action.dart';
@@ -17,10 +18,21 @@ class ActionRegion {
   Map toJson() {
     var obj = {
       'range': range,
-      'actions': actions.map((type) =>
-          LessonSerializer.stepActionTypeHelper.stringFromEnum(type)).toList()
+      'actions': actions
+          .map((type) =>
+              LessonSerializer.stepActionTypeHelper.stringFromEnum(type))
+          .toList()
     };
     return obj;
+  }
+
+  static ActionRegion deserialize(Map data) {
+    return new ActionRegion(
+        data['range'],
+        data['actions']
+            .map((action_str) => LessonSerializer.stepActionTypeHelper
+                .enumFromString(action_str))
+            .toSet());
   }
 
   Map<StepActionType, bool> getActionStates() {

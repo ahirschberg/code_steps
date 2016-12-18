@@ -9,10 +9,12 @@ class Step {
     this.activeRegions ??= new Set<ActionRegion>();
   }
 
-
   Map toJson() => {'explanation': explanation, 'regions': activeRegions};
 
   static Step deserialize(Map data) {
-    return new Step(data['explanation'], data['code'], null);
+    Set<ActionRegion> regions = (data['regions'] as List)
+        .map((data_region) => ActionRegion.deserialize(data_region))
+        .toSet();
+    return new Step(data['explanation'], data['code'], regions);
   }
 }

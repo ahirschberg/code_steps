@@ -11,8 +11,7 @@ import 'package:code_steps/editor/lesson_code_editor_component.dart';
 import 'package:code_steps/lesson_io.dart';
 import 'package:code_steps/viewer/code_guide_component.dart';
 import 'package:code_steps/step_context_service.dart';
-import 'package:observe/observe.dart';
-import 'package:ng_bootstrap/ng_bootstrap.dart';
+import 'package:observable/observable.dart';
 
 @Component(
     selector: 'lesson-editor',
@@ -25,7 +24,6 @@ import 'package:ng_bootstrap/ng_bootstrap.dart';
       CodeGuideComponent,
       AceEditorComponent,
       LessonCodeEditorComponent,
-      NG_BOOTSTRAP_DIRECTIVES
     ])
 class LessonEditorComponent implements OnInit {
   StepContextService stepContextService;

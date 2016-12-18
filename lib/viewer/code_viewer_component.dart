@@ -5,7 +5,7 @@ import 'package:code_steps/action/step_action.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'package:code_steps/viewer/highlightjs_interop.dart' as highlighter;
 import 'dart:html';
-import 'package:observe/observe.dart';
+import 'package:observable/observable.dart';
 
 @Component(
     selector: 'code-viewer',
