@@ -1,19 +1,17 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:html';
-import 'package:ace/ace.dart';
 import 'package:angular2/core.dart';
 import 'package:ace/ace.dart' as ace;
 import 'package:ace/proxy.dart';
 import 'package:angular2/router.dart';
+import 'package:code_steps/action/step.dart';
 import 'package:code_steps/editor/ace_editor_component.dart';
 import 'package:code_steps/editor/action_region_editor_component.dart';
 import 'package:code_steps/editor/lesson_code_editor_component.dart';
 import 'package:code_steps/lesson_io.dart';
 import 'package:code_steps/viewer/code_guide_component.dart';
 import 'package:code_steps/step_context_service.dart';
-import 'package:ng_bootstrap/ng_bootstrap.dart';
-import 'package:observe/observe.dart';
+import 'package:observable/observable.dart';
 
 @Component(
     selector: 'lesson-editor',
@@ -26,7 +24,6 @@ import 'package:observe/observe.dart';
       CodeGuideComponent,
       AceEditorComponent,
       LessonCodeEditorComponent,
-      NG_BOOTSTRAP_DIRECTIVES
     ])
 class LessonEditorComponent implements OnInit {
   StepContextService stepContextService;
@@ -34,7 +31,8 @@ class LessonEditorComponent implements OnInit {
   LessonCodeEditorComponent codeEditor;
   StreamController editorInitStreamController =
       new StreamController.broadcast();
-  List<String> explanations = [''];
+  List<Step> steps = [];
+  Step get currentStep => steps[stepContextService.stepIndex];
   String lessonName;
   LessonIO _lessonIO;
   RouteParams _routeParams;
@@ -69,16 +67,11 @@ class LessonEditorComponent implements OnInit {
   }
 
   void _onStepChange(PropertyChangeRecord data) {
-    explanations[data.oldValue] = markdownEditor.aceController.value;
-    if (explanations.length <= data.newValue) {
-      explanations.add(markdownEditor.aceController.value);
-    } else {
-      markdownEditor.aceController.setValue(explanations[data.newValue]);
-    }
+    markdownEditor.aceController.setValue(steps[data.newValue].explanation);
   }
 
   void reset() {
-    explanations = [''];
+    steps = [];
     codeEditor.cleanRegions();
   }
 
@@ -88,13 +81,14 @@ class LessonEditorComponent implements OnInit {
         .map((k) => [k, window.localStorage[k]]);
   }
 
+  // FIXME
   void initFromMap(Map serializedEditData) {
     reset();
     codeEditor.aceController.setValue(serializedEditData['code']);
-    explanations = serializedEditData['expl'];
+    steps = serializedEditData['steps'].map((Map jsonStep) => Step.deserialize(jsonStep));
     markdownEditor.aceController
-        .setValue(explanations[stepContextService.stepIndex]);
-    codeEditor.addSerializedRegions(serializedEditData['regions']);
+        .setValue(currentStep.explanation);
+//    codeEditor.addSerializedRegions(serializedEditData['regions']);
     codeEditorFilepath = serializedEditData['meta']['code_filename'];
   }
 
@@ -129,7 +123,7 @@ class LessonEditorComponent implements OnInit {
   }
 
   serializedSave() {
-    explanations[stepContextService.stepIndex] = markdownEditor.aceController.value;
+    steps[stepContextService.stepIndex].explanation = markdownEditor.aceController.value;
     if (lessonName == null || lessonName.length == 0) {
       print('Cannot save an empty lesson name!');
     } else {
@@ -143,8 +137,7 @@ class LessonEditorComponent implements OnInit {
 
   Map toJson() => {
         'code': codeEditor.aceController.value,
-        'expl': explanations,
-        'regions': codeEditor.actionRegions.values.toList(growable: false),
+        'steps': steps,
         'meta': {'code_filename': _codeEditorFilepath}
       };
 }

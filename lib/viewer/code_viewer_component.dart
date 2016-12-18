@@ -1,13 +1,11 @@
 import 'package:angular2/core.dart';
 import 'package:code_steps/action/action_region.dart';
 import 'package:code_steps/action/step_actions_provider.dart';
-import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/action/step_action.dart';
 import 'package:code_steps/step_context_service.dart';
-import 'package:ace/ace.dart' as ace;
-import 'package:observe/observe.dart';
 import 'package:code_steps/viewer/highlightjs_interop.dart' as highlighter;
 import 'dart:html';
+import 'package:observable/observable.dart';
 
 @Component(
     selector: 'code-viewer',
@@ -27,12 +25,11 @@ class CodeViewerComponent implements OnInit {
 
   ngOnInit() {
     stepContextService.onStepChange.listen((PropertyChangeRecord change) =>
-        _addCodeHtml(_addHtmlRegions(stepContextService.currCodeHtml,
-            stepContextService.loadedRegions, stepContextService.stepIndex)));
+        _addCodeHtml(_addHtmlRegions(stepContextService.currentStep.code,
+            stepContextService.currentStep.activeRegions, stepContextService.stepIndex)));
   }
 
   _addCodeHtml(String codeHtml) {
-    // why is nativeElement dynamic :(
     Element root = _elementRef.nativeElement as Element;
 
     root.setInnerHtml("<pre>${codeHtml}</pre>",
@@ -44,13 +41,13 @@ class CodeViewerComponent implements OnInit {
     }
   }
 
-  String _addHtmlRegions(String code, List<ActionRegion> regions, int step) {
+  String _addHtmlRegions(String code, Set<ActionRegion> regions, int step) {
     List<RegionInsert> rows = code
         .split('\n')
         .map((row) => new RegionInsert([row]))
         .toList(growable: false);
     regions.forEach((ActionRegion region) {
-      Set<StepActionType> actions = region.stepData[step];
+      Set<StepActionType> actions = region.actions;
       actions?.forEach((actionType) => stepActionsProvider
           .transformers[actionType](rows, region.range));
     });

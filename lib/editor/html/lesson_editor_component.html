@@ -1,26 +1,28 @@
 <header>
-    <button (click)="stepContextService.gotoPrevious()">Previous</button>
-    {{stepContextService.stepIndex}}
-    <button (click)="stepContextService.gotoNext()">Next</button>
+    <div>
+        <input type="text" placeholder="Lesson name" [(ngModel)]="lessonName">
+        <button (click)="serializedSave()">save</button>
+        <button (click)="serializedRetrieve()">load</button>
+    </div>
 </header>
-<div class="container-fluid">
+<button (click)="stepContextService.gotoPrevious()">Previous</button>
+{{stepContextService.stepIndex}}
+<button (click)="stepContextService.gotoNext()">Next</button>
+<div class="container">
     <div class="row">
-        <ace-edit id="md-edit" class="col-md-6" (onInit)="setupMarkdownEditor($event)"></ace-edit>
-        <div class="col-sm-6">
+        <div class="col-xl-6">
+            <ace-edit id="md-edit" (onInit)="setupMarkdownEditor($event)"></ace-edit>
+        </div>
+        <div class="col-xl-6">
             <input type="text" #filepath_form placeholder="ex: Example.java" [(ngModel)]="codeEditorFilepath">
             <ace-code-edit (onInit)="setupCodeEditor($event)"></ace-code-edit>
+            <button (click)="codeEditor.addActionMarker()">Select</button>
+            <action-region-editor [region]="codeEditor?.activeRegion"
+                                  [stepDescriptions]="explanations"
+                                  (onDelete)="codeEditor.removeActionMarker($event)"
+                                  (onDataChange)="codeEditor.recolorRegion(codeEditor.activeRegion, $event)">
+            </action-region-editor>
         </div>
     </div>
 </div>
-<input type="text" placeholder="Lesson name" [(ngModel)]="lessonName">
-<button (click)="serializedSave()">save</button>
-<button (click)="serializedRetrieve()">load</button>
-<button (click)="codeEditor.addActionMarker()">Select</button>
-<action-region-editor [region]="codeEditor?.activeRegion"
-                      (onDelete)="codeEditor.removeActionMarker($event)"
-                      (onDataChange)="codeEditor.recolorRegion(codeEditor.activeRegion, $event)">
-</action-region-editor>
-
-<bs-button-group>
-    <bs-toggle-button class="btn btn-primary" [ngModel]="vimModeEnabled" (ngModelChange)="vimModeEnabled = $event">Vim Mode</bs-toggle-button>
-</bs-button-group>
+<bs-toggle-button class="btn btn-primary" [ngModel]="vimModeEnabled" (ngModelChange)="vimModeEnabled = $event">Vim Mode</bs-toggle-button>

@@ -1,41 +1,42 @@
 library action_region;
+
+import 'package:code_steps/editor/lesson_code_editor_component.dart';
 import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/action/step_action.dart';
-import 'package:ace/ace.dart' as ace;
+import 'package:ace/ace.dart';
 
 class ActionRegion {
-  ace.Range _range;
-  Map<int, Set<StepActionType>> stepData;
+  Set<StepActionType> actions;
+  Range range;
 
-  ActionRegion(this._range, [this.stepData]) {
-    if (this.stepData == null) this.stepData = {};
+  ActionRegion(this.range, [this.actions]) {
+    if (this.actions == null) this.actions = new Set<StepActionType>();
   }
 
-  ace.Range get range => _range;
-  String toString() => "ActionRegion($range, $stepData)";
+  String toString() => "ActionRegion($range, $actions)";
 
   Map toJson() {
     var obj = {
       'range': range,
-      'step_data': LessonSerializer.transformMap(stepData,
-          value: (Set<StepActionType> set) =>
-              set.map(LessonSerializer.stepActionTypeTransformer).toList())
+      'actions': actions
+          .map((type) =>
+              LessonSerializer.stepActionTypeHelper.stringFromEnum(type))
+          .toList()
     };
     return obj;
   }
 
-  Map<StepActionType, bool> getActionStates(int step) {
+  static ActionRegion deserialize(Map data) {
+    return new ActionRegion(
+        data['range'],
+        data['actions']
+            .map((action_str) => LessonSerializer.stepActionTypeHelper
+                .enumFromString(action_str))
+            .toSet());
+  }
+
+  Map<StepActionType, bool> getActionStates() {
     return new Map.fromIterable(StepActionType.values,
-        value: (state) => stepData[step]?.contains(state) == true);
+        value: (state) => actions?.contains(state) == true);
   }
-}
-
-class EditorActionRegion extends ActionRegion {
-  ace.Marker marker;
-  String uniqClass;
-  EditorActionRegion(ace.Marker m, this.uniqClass) : super(m.range) {
-    this.marker = m;
-  }
-
-  Map toJson() => super.toJson();
 }

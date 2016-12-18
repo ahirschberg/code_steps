@@ -1,9 +1,9 @@
 import 'package:angular2/core.dart';
-import 'package:code_steps/action/action_region.dart';
-import 'package:observe/observe.dart';
-import 'dart:collection';
+import 'package:code_steps/action/lesson.dart';
+import 'package:code_steps/action/step.dart';
 import 'package:code_steps/lesson_io.dart';
 import 'dart:async';
+import 'package:observable/observable.dart';
 
 @Injectable()
 class StepContextService extends Injectable {
@@ -15,18 +15,18 @@ class StepContextService extends Injectable {
       _stepChangeController.stream;
 
   Future selectLesson(lesson_name, [initial_step_index]) {
-    return _lessonIO.smartLoadData(lesson_name).then((HashMap lessonData) {
-      loadedSteps = lessonData['expl'];
-      loadedCode = lessonData['code'];
-      loadedRegions = lessonData['regions'];
+    print(lesson_name);
+    return _lessonIO.smartLoadData(lesson_name).then((Lesson lesson) {
+      if (lesson == null) {
+        print("Error: could not load lesson data");
+      }
+      currentLesson = lesson;
       stepIndex = initial_step_index ?? 0;
-    }).catchError((e) => print(e));
+    });
   }
 
+  Lesson currentLesson;
   int _stepIndex = 0;
-  List<String> loadedSteps;
-  String loadedCode;
-  List<ActionRegion> loadedRegions;
 
   dynamic _onChangeStepIndex(newValue) {
     _stepChangeController
@@ -38,13 +38,14 @@ class StepContextService extends Injectable {
     stepIndex = _stepIndex + 1;
   }
 
-  bool hasNext() => loadedSteps != null && _stepIndex < loadedSteps.length - 1;
+  bool get _isLessonLoaded => currentLesson != null;
+  bool hasNext() => _isLessonLoaded && _stepIndex < currentLesson.length - 1;
 
   void gotoPrevious() {
     stepIndex = _stepIndex - 1;
   }
 
-  bool hasPrevious() => loadedSteps != null && _stepIndex > 0;
+  bool hasPrevious() => _isLessonLoaded && _stepIndex > 0;
   int get stepIndex => _stepIndex;
 
   /**
@@ -52,17 +53,11 @@ class StepContextService extends Injectable {
    */
   set stepIndex(new_stepIndex) {
     if (new_stepIndex is String) new_stepIndex = int.parse(new_stepIndex);
-    if (new_stepIndex < 0 || new_stepIndex > length) {
+    if (new_stepIndex < 0 || new_stepIndex > currentLesson.length) {
       print('WARN: Index $new_stepIndex out of bounds.');
     }
     _stepIndex = _onChangeStepIndex(new_stepIndex);
   }
 
-  /**
-   * Returns the number of steps, or zero if no steps are loaded
-   */
-  int get length => loadedSteps?.length ?? 0;
-
-  String get currCodeHtml => loadedCode;
-  String get currStepHtml => loadedSteps[stepIndex];
+  Step get currentStep => currentLesson.getStep(_stepIndex);
 }

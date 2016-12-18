@@ -1,6 +1,8 @@
 library lesson_serializer;
 
+import 'dart:developer';
 import 'package:code_steps/action/action_region.dart';
+import 'package:code_steps/action/step.dart';
 import 'package:code_steps/action/step_action.dart' show StepActionType;
 
 import 'package:jsonx/jsonx.dart' as jsonx;
@@ -45,24 +47,19 @@ class LessonSerializer {
   static Function stepActionTypeTransformer = (StepActionType t) =>
       stepActionTypeHelper.stringFromEnum(t).toLowerCase();
 
-  static dynamic decode(String jsonData) {
-    return jsonx.decode(jsonData, reviver: (var key, var val) {
-      if (key == 'start' || key == 'end') {
+  static Map decode(String jsonData) {
+    var decoded = jsonx.decode(jsonData, reviver: (var key, var val) {
+      if (key == 'from' || key == 'to') {
         return new Point(val['row'], val['column']);
       } else if (key == 'range') {
-        return new Range.fromPoints(val['start'], val['end']);
-      } else if (key == 'step_data') {
-        Map<int, List<String>> stringedActionTypes =
-            val as Map<int, List<String>>;
-        return new Map.fromIterables(
-            stringedActionTypes.keys.map(destringifyInt),
-            stringedActionTypes.values.map((type_list) => type_list.map(
-                (type_str) =>
-                    stepActionTypeHelper.enumFromString(type_str)).toSet()));
-      } else if (key == 'regions') {
-        return val.map((region_map) => new ActionRegion(region_map['range'], region_map['step_data'])).toList();
+        return new Range.fromPoints(val['from'], val['to']);
+      } else if (key == 'steps') {
+        return (val).map((s) => Step.deserialize(s));
+      } else {
+        return val;
       }
-      return val;
     });
+    return decoded;
   }
 }
+

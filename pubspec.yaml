@@ -4,15 +4,14 @@ version: 0.4.0
 environment:
   sdk: any
 dependencies:
-  angular2: <= 2.0.0-beta.20 # because of issues with ng_bootstrap
+  angular2: any
   browser: any
   dart_to_js_script_rewriter: any
   js: any
   ace: any
-  ng_bootstrap: any
   jsonx: any
+  markdown: any
   fff: any
-  sass: any
 transformers:
 - angular2:
     platform_directives:
@@ -21,4 +20,3 @@ transformers:
     - 'package:angular2/common.dart#COMMON_PIPES'
     entry_points: web/main.dart
 - dart_to_js_script_rewriter
-- sass

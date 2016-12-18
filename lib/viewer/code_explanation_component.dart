@@ -1,7 +1,7 @@
 import 'package:angular2/core.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'dart:html';
-import 'package:markdown/markdown.dart';
+import 'package:markdown/markdown.dart' show markdownToHtml;
 
 @Component(
     selector: 'code-explanation',
@@ -21,7 +21,8 @@ class CodeExplanationComponent implements OnInit {
 
   ngOnInit() {
     stepContextService.onStepChange.listen((_) {
-      _elementRef.nativeElement.setInnerHtml(markdownToHtml(stepContextService.currStepHtml),
+      String html = markdownToHtml(stepContextService.currentStep.explanation);
+      _elementRef.nativeElement.setInnerHtml(html,
           validator: _explanationViewerValidator);
     });
   }

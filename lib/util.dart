@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:observe/observe.dart';
+
+import 'package:observable/observable.dart';
 
 class Util {
     static Stream filterChangeStreamByProp(Stream propStream, List<Symbol> propNames) =>
