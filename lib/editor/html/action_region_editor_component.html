@@ -1,5 +1,5 @@
 <h3>Action Region Editor</h3>
-<div class="row" *ngIf="region != null">
+<div class="row" *ngIf="guiRegion != null">
     <div class="col-md-3">
         <bs-button-group class="step-actions-picker btn-group-vertical">
             <bs-radio-button *ngFor="let action of actionUIToggles.keys"
@@ -11,7 +11,7 @@
     </div>
     <div class="col-md-6">
         <select class="steps-picker form-control" multiple>
-            <option [selected]="region.stepData.keys.contains(0)" *ngFor="let stepDescription of stepDescriptions">
+            <option [selected]="guiRegion.stepData.keys.contains(0)" *ngFor="let stepDescription of stepDescriptions">
                 {{stepDescription}}
             </option>
         </select>

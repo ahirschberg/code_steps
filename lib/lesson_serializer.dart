@@ -6,7 +6,7 @@ import 'package:code_steps/action/step.dart';
 import 'package:code_steps/action/step_action.dart' show StepActionType;
 
 import 'package:jsonx/jsonx.dart' as jsonx;
-import 'package:ace/ace.dart';
+import 'package:code_steps/editor/ace_facade.dart';
 
 @MirrorsUsed(targets: 'step_action.StepActionType.values')
 import 'dart:mirrors';
@@ -38,8 +38,8 @@ class LessonSerializer {
       new EnumStringHelper<StepActionType>();
 
   static String encode(var obj) {
-    jsonx.objectToJsons[Point] =
-        (Point p) => {'row': p.row, 'column': p.column};
+    jsonx.objectToJsons[Position] =
+        (Position p) => {'row': p.row, 'column': p.column};
     jsonx.objectToJsons[Range] = (Range r) => {'start': r.start, 'end': r.end};
     return jsonx.encode(obj);
   }
@@ -50,9 +50,10 @@ class LessonSerializer {
   static Map decode(String jsonData) {
     var decoded = jsonx.decode(jsonData, reviver: (var key, var val) {
       if (key == 'from' || key == 'to') {
-        return new Point(val['row'], val['column']);
+        return new Position(row: val['row'], column: val['column']);
       } else if (key == 'range') {
-        return new Range.fromPoints(val['from'], val['to']);
+        return new Range(0,0,0,0); // FIXME
+        //return Range.fromPoints(val['from'], val['to']);
       } else if (key == 'steps') {
         return (val).map((s) => Step.deserialize(s));
       } else {

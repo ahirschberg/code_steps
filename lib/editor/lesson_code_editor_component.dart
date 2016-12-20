@@ -1,13 +1,14 @@
+import 'dart:developer';
 import 'dart:js';
 import 'package:angular2/core.dart';
 import 'package:code_steps/action/action_region.dart';
 import 'package:code_steps/action/step.dart';
 import 'package:code_steps/editor/ace_editor_component.dart';
 import 'jss_interop.dart' as jss;
+import 'package:code_steps/editor/ace_facade.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'package:fff/color.dart';
-
-import 'package:ace/ace.dart' as ace;
+import 'package:js/js.dart';
 
 @Component(selector: 'ace-code-edit', template: '', styles: const [
   '''
@@ -36,7 +37,7 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   @override
   ngOnInit() {
     super.ngOnInit();
-    this.aceController.selection.onChangeCursor.listen(onData);
+    this.aceController.selection.on("changeCursor", allowInterop(onData));
     stepContextService.onStepChange.listen((e) {
       cleanRegions();
       currentStep.activeRegions.forEach((r) => _addRegionToEditor(r));
@@ -61,22 +62,23 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   _insertMarker(AceActionRegion guiRegion) {
     String uniqClass = 'mark-${nextUniq++}';
     int id = aceController.session
-        .addMarker(guiRegion.region.range, guiRegion.css_class + ' $uniqClass',
-        type: ace.Marker.TEXT);
+        .addMarker(guiRegion.region.range, guiRegion.css_class + ' $uniqClass', "text", true); // fixme
     guiRegions[id] = guiRegion
-      ..marker = aceController.session.getMarkers()[id.toString()];
+      ..marker = aceController.session.getMarkers(true)[id];
     return id;
   }
 
-  void onData(Null) {
-    getRegionAtCursor();
+  AceActionRegion activeRegion;
+  void onData(event, Selection s) {
+    print("selection text: ${aceController.session.getTextRange(s.getRange())}");
+    activeRegion = getRegionAtCursor();
   }
 
   AceActionRegion getRegionAtCursor() {
     Iterable<AceActionRegion> regions = guiRegions.values.where(
         (region) =>
             region.marker.className.contains('cs-mark') &&
-            region.marker.range.comparePoint(aceController.selection.cursor) ==
+            region.marker.range.comparePoint(aceController.selection.getCursor()) ==
                 0);
     if (regions.isNotEmpty) { // FIXME why is this skip 1?
       return regions.skip(1).fold(
@@ -99,10 +101,15 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
     jss.set('div.cs-mark.${guiRegion.marker.className}',
         new JsObject.jsify({'background-color': c.toString(), 'CANARY': true}));
   }
+
+  void addActionMarker() {
+    // todo
+    print('TODO');
+  }
 }
 
 class AceActionRegion {
-  ace.Marker marker;
+  dynamic marker; // FIXME
   String css_class;
   ActionRegion region;
   AceActionRegion(this.marker, this.css_class, this.region);

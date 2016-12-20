@@ -1,9 +1,9 @@
 library action_region;
 
+import 'package:code_steps/editor/ace_facade.dart';
 import 'package:code_steps/editor/lesson_code_editor_component.dart';
 import 'package:code_steps/lesson_serializer.dart';
 import 'package:code_steps/action/step_action.dart';
-import 'package:ace/ace.dart';
 
 class ActionRegion {
   Set<StepActionType> actions;

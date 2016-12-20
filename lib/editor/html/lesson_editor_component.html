@@ -17,12 +17,11 @@
             <input type="text" #filepath_form placeholder="ex: Example.java" [(ngModel)]="codeEditorFilepath">
             <ace-code-edit (onInit)="setupCodeEditor($event)"></ace-code-edit>
             <button (click)="codeEditor.addActionMarker()">Select</button>
-            <action-region-editor [region]="codeEditor?.activeRegion"
-                                  [stepDescriptions]="explanations"
+            <action-region-editor [guiRegion]="codeEditor?.activeRegion"
                                   (onDelete)="codeEditor.removeActionMarker($event)"
                                   (onDataChange)="codeEditor.recolorRegion(codeEditor.activeRegion, $event)">
             </action-region-editor>
         </div>
     </div>
 </div>
-<bs-toggle-button class="btn btn-primary" [ngModel]="vimModeEnabled" (ngModelChange)="vimModeEnabled = $event">Vim Mode</bs-toggle-button>
+<!--<bs-toggle-button class="btn btn-primary" [ngModel]="vimModeEnabled" (ngModelChange)="vimModeEnabled = $event">Vim Mode</bs-toggle-button>-->

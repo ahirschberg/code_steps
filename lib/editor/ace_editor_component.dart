@@ -1,13 +1,12 @@
 import 'package:angular2/core.dart';
-import 'package:ace/ace.dart' as ace;
-
+import 'ace_facade.dart';
 @Component(
     selector: 'ace-edit',
     template: '',
     styleUrls: const ['css/ace_editor_component.css'])
 class AceEditorComponent implements OnInit {
   static int _uniq_id_num = 0;
-  ace.Editor aceController;
+  Editor aceController;
   ElementRef elementRef;
   @Output('onInit')
   EventEmitter init = new EventEmitter();
