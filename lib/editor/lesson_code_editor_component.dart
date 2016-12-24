@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:js';
 import 'package:angular2/core.dart';
+import 'package:code_steps/js_map.dart';
 import 'package:code_steps/action/action_region.dart';
 import 'package:code_steps/action/step.dart';
 import 'package:code_steps/editor/ace_editor_component.dart';
@@ -63,22 +64,23 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
     String uniqClass = 'mark-${nextUniq++}';
     int id = aceController.session
         .addMarker(guiRegion.region.range, guiRegion.css_class + ' $uniqClass', "text", true); // fixme
-    guiRegions[id] = guiRegion
-      ..marker = aceController.session.getMarkers(true)[id];
+    JsMap obj = new JsMap(aceController.session.getMarkers(true))[id];
+    guiRegion.marker = obj;
+    guiRegions[id] = guiRegion;
+    debugger();
     return id;
   }
 
   AceActionRegion activeRegion;
   void onData(event, Selection s) {
-    print("selection text: ${aceController.session.getTextRange(s.getRange())}");
     activeRegion = getRegionAtCursor();
   }
 
   AceActionRegion getRegionAtCursor() {
     Iterable<AceActionRegion> regions = guiRegions.values.where(
         (region) =>
-            region.marker.className.contains('cs-mark') &&
-            region.marker.range.comparePoint(aceController.selection.getCursor()) ==
+            region.marker["clazz"].contains('cs-mark') &&
+            region.marker["range"].comparePoint(aceController.selection.getCursor()) ==
                 0);
     if (regions.isNotEmpty) { // FIXME why is this skip 1?
       return regions.skip(1).fold(
@@ -103,8 +105,9 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   }
 
   void addActionMarker() {
-    // todo
-    print('TODO');
+    Selection selection = aceController.session.getSelection();
+    print("selection text: ${aceController.session.getTextRange(selection.getRange())}");
+    _addRegionToEditor(new ActionRegion(selection.getRange()));
   }
 }
 
