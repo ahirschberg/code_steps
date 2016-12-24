@@ -1109,9 +1109,11 @@ class RangeList {
 }
 
 @JS()
-@anonymous
-abstract class Marker {
-
+class Marker {
+  external get clazz;
+  external get id;
+  external Range get range;
+  external String get type;
 }
 
 /// /////////////

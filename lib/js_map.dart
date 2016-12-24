@@ -12,7 +12,7 @@ import 'dart:js';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 
-class JsMap extends MapMixin<String, dynamic> {
+class JsMap<V> extends MapMixin<String, dynamic> {
   @JS('Object.keys')
   external static List<String> _getKeys(jsObject);
 
@@ -21,16 +21,13 @@ class JsMap extends MapMixin<String, dynamic> {
   JsMap(this._jsObject);
 
   @override
-  dynamic operator [](Object key) {
-    var prop = getProperty(_jsObject, key.toString());
-    print("$key => $prop");
-    if (prop.toString() == "[object Object]"){
-      print("returning jsmap");
-      return new JsMap(prop);
-    } else {
-      print('returning plain prop');
-      return prop;
-    }
+  V operator [](Object key) {
+    dynamic prop = getProperty(_jsObject, key.toString());
+
+    // if the map is not generic
+    if (V == dynamic) prop = new JsMap(prop);
+
+    return prop;
   }
 
   @override

@@ -64,10 +64,10 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
     String uniqClass = 'mark-${nextUniq++}';
     int id = aceController.session
         .addMarker(guiRegion.region.range, guiRegion.css_class + ' $uniqClass', "text", true); // fixme
-    JsMap obj = new JsMap(aceController.session.getMarkers(true))[id];
+    Marker obj = new JsMap<Marker>(aceController.session.getMarkers(true))[id];
     guiRegion.marker = obj;
     guiRegions[id] = guiRegion;
-    debugger();
+    print(obj.clazz);
     return id;
   }
 
@@ -79,8 +79,8 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   AceActionRegion getRegionAtCursor() {
     Iterable<AceActionRegion> regions = guiRegions.values.where(
         (region) =>
-            region.marker["clazz"].contains('cs-mark') &&
-            region.marker["range"].comparePoint(aceController.selection.getCursor()) ==
+            region.marker.clazz.contains('cs-mark') &&
+            region.marker.range.comparePoint(aceController.selection.getCursor()) ==
                 0);
     if (regions.isNotEmpty) { // FIXME why is this skip 1?
       return regions.skip(1).fold(
@@ -112,7 +112,7 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
 }
 
 class AceActionRegion {
-  dynamic marker; // FIXME
+  Marker marker;
   String css_class;
   ActionRegion region;
   AceActionRegion(this.marker, this.css_class, this.region);
