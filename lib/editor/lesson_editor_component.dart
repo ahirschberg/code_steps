@@ -31,8 +31,14 @@ class LessonEditorComponent implements OnInit {
   StepContextService stepContextService;
   AceEditorComponent markdownEditor;
   LessonCodeEditorComponent codeEditor;
-  StreamController editorInitStreamController =
+  StreamController _editorInitStreamController =
       new StreamController.broadcast();
+
+  StreamController<PropertyChangeRecord<AceActionRegion>>
+      activeRegionChangeController =
+      new StreamController<PropertyChangeRecord<AceActionRegion>>.broadcast();
+  Stream<PropertyChangeRecord<AceActionRegion>> activeRegionOnChange;
+
   List<Step> steps = [];
   Step get currentStep => steps[stepContextService.stepIndex];
   String lessonName;
@@ -44,10 +50,11 @@ class LessonEditorComponent implements OnInit {
 
   @override
   ngOnInit() {
-    editorInitStreamController.stream.listen(_onEditorReady);
-    editorInitStreamController.stream.take(2).drain().then(_onAllEditorsReady);
+    _editorInitStreamController.stream.listen(_onEditorReady);
+    _editorInitStreamController.stream.take(2).drain().then(_onAllEditorsReady);
 
     stepContextService.onStepChange.listen(_onStepChange);
+     activeRegionOnChange = activeRegionChangeController.stream;
   }
 
   // TODO
@@ -69,7 +76,8 @@ class LessonEditorComponent implements OnInit {
   }
 
   void _onStepChange(PropertyChangeRecord data) {
-    markdownEditor.aceController.setValue(stepContextService.currentStep.explanation);
+    markdownEditor.aceController
+        .setValue(stepContextService.currentStep.explanation);
     codeEditor.aceController.setValue(stepContextService.currentStep.code);
   }
 
@@ -95,12 +103,12 @@ class LessonEditorComponent implements OnInit {
   setupMarkdownEditor(AceEditorComponent editor) {
     editor.aceController.session.setMode('ace/mode/markdown'); // FIXME?
     markdownEditor = editor;
-    editorInitStreamController.add(editor.aceController);
+    _editorInitStreamController.add(editor.aceController);
   }
 
   setupCodeEditor(LessonCodeEditorComponent code_editor) {
     codeEditor = code_editor;
-    editorInitStreamController.add(codeEditor.aceController);
+    _editorInitStreamController.add(codeEditor.aceController);
   }
 
   bool _isVim = false;
@@ -123,7 +131,8 @@ class LessonEditorComponent implements OnInit {
   }
 
   serializedSave() {
-    steps[stepContextService.stepIndex].explanation = markdownEditor.aceController.getValue();
+    steps[stepContextService.stepIndex].explanation =
+        markdownEditor.aceController.getValue();
     if (lessonName == null || lessonName.length == 0) {
       print('Cannot save an empty lesson name!');
     } else {
@@ -131,9 +140,8 @@ class LessonEditorComponent implements OnInit {
     }
   }
 
-  serializedRetrieve() => _lessonIO
-      .smartLoadData(lessonName)
-      .then(serializedInit);
+  serializedRetrieve() =>
+      _lessonIO.smartLoadData(lessonName).then(serializedInit);
 
   Map toJson() => {
         'code': codeEditor.aceController.getValue(),

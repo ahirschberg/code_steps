@@ -1156,7 +1156,7 @@ abstract class Range {
   external num compareRange(Range range);
 
   /// Checks the row and column points of `p` with the row and column points of the calling range.
-  external num comparePoint(Range p);
+  external num comparePoint(Position p);
 
   /// Checks the start and end points of `range` and compares them to the calling range. Returns `true` if the `range` is contained within the caller's range.
   external bool containsRange(Range range);

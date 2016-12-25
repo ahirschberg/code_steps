@@ -15,9 +15,9 @@
         </div>
         <div class="col-xl-6">
             <input type="text" #filepath_form placeholder="ex: Example.java" [(ngModel)]="codeEditorFilepath">
-            <ace-code-edit (onInit)="setupCodeEditor($event)"></ace-code-edit>
+            <ace-code-edit (onInit)="setupCodeEditor($event)" [activeRegionChangeController]="activeRegionChangeController"></ace-code-edit>
             <button (click)="codeEditor.addActionMarker()">Select</button>
-            <action-region-editor [guiRegion]="codeEditor?.activeRegion"
+            <action-region-editor [activeRegionOnChange]="activeRegionOnChange"
                                   (onDelete)="codeEditor.removeActionMarker($event)"
                                   (onDataChange)="codeEditor.recolorRegion(codeEditor.activeRegion, $event)">
             </action-region-editor>

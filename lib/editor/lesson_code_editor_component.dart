@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:js';
 import 'package:angular2/core.dart';
@@ -10,6 +11,7 @@ import 'package:code_steps/editor/ace_facade.dart';
 import 'package:code_steps/step_context_service.dart';
 import 'package:fff/color.dart';
 import 'package:js/js.dart';
+import 'package:observable/observable.dart';
 
 @Component(selector: 'ace-code-edit', template: '', styles: const [
   '''
@@ -23,9 +25,13 @@ import 'package:js/js.dart';
 ])
 class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const String code_edit_id = 'lesson-code-edit';
-  @Input() Step currentStep;
+  @Input()
+  StreamController<PropertyChangeRecord<AceActionRegion>> activeRegionChangeController;
   @Output('onInit')
   get init => super.init; // workaround for annotations not inheriting properly
+
+  AceActionRegion _activeRegion = new AceActionRegion(null, null, null);
+  AceActionRegion get activeRegion => _activeRegion;
 
   Map<int, AceActionRegion> guiRegions = new Map();
 
@@ -41,7 +47,7 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
     this.aceController.selection.on("changeCursor", allowInterop(onData));
     stepContextService.onStepChange.listen((e) {
       cleanRegions();
-      currentStep.activeRegions.forEach((r) => _addRegionToEditor(r));
+      stepContextService.currentStep.activeRegions.forEach((r) => _addRegionToEditor(r));
     });
   }
 
@@ -62,31 +68,31 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   int nextUniq = 0;
   _insertMarker(AceActionRegion guiRegion) {
     String uniqClass = 'mark-${nextUniq++}';
-    int id = aceController.session
-        .addMarker(guiRegion.region.range, guiRegion.css_class + ' $uniqClass', "text", true); // fixme
+    int id = aceController.session.addMarker(guiRegion.region.range,
+        guiRegion.css_class + ' $uniqClass', "text", true); // fixme
     Marker obj = new JsMap<Marker>(aceController.session.getMarkers(true))[id];
     guiRegion.marker = obj;
     guiRegions[id] = guiRegion;
-    print(obj.clazz);
     return id;
   }
 
-  AceActionRegion activeRegion;
   void onData(event, Selection s) {
-    activeRegion = getRegionAtCursor();
+    AceActionRegion oldRegion = _activeRegion;
+    _activeRegion = getRegionAtCursor();
+    activeRegionChangeController.add(new PropertyChangeRecord(this, #activeRegion, oldRegion, _activeRegion));
   }
 
   AceActionRegion getRegionAtCursor() {
-    Iterable<AceActionRegion> regions = guiRegions.values.where(
-        (region) =>
-            region.marker.clazz.contains('cs-mark') &&
-            region.marker.range.comparePoint(aceController.selection.getCursor()) ==
-                0);
-    if (regions.isNotEmpty) { // FIXME why is this skip 1?
-      return regions.skip(1).fold(
+    Iterable<AceActionRegion> regions = guiRegions.values.where((region) =>
+        region.marker.clazz.contains('cs-mark') &&
+        region.marker.range.comparePoint(aceController.selection.getCursor()) ==
+            0);
+    if (regions.isNotEmpty) {
+      return regions.fold(
           regions.first,
-          (smallest, e) =>
-              smallest.range.containsRange(e.region.range) ? e : smallest);
+          (smallest, e) => smallest.marker.range.containsRange(e.marker.range)
+              ? e
+              : smallest);
     }
     return null;
   }
@@ -96,17 +102,17 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const red = const Color(126, 13, 13, 0.68);
   static const purple = const Color(197, 23, 158, 0.25);
   static const yellow = const Color(79, 76, 15, 0.66);
-  recolorRegion(
-      AceActionRegion guiRegion) {
+  recolorRegion(AceActionRegion guiRegion) {
     Color c = purple;
     // FIXME remove canary once dart2js updated with proper object support for interops
-    jss.set('div.cs-mark.${guiRegion.marker.className}',
+    jss.set('div.cs-mark.${guiRegion.marker.clazz}',
         new JsObject.jsify({'background-color': c.toString(), 'CANARY': true}));
   }
 
   void addActionMarker() {
     Selection selection = aceController.session.getSelection();
-    print("selection text: ${aceController.session.getTextRange(selection.getRange())}");
+    print(
+        "selection text: ${aceController.session.getTextRange(selection.getRange())}");
     _addRegionToEditor(new ActionRegion(selection.getRange()));
   }
 }
