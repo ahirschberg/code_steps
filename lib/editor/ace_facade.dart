@@ -16,14 +16,14 @@ import "package:code_steps/js_map.dart";
 abstract class Delta {
   external String get action;
   external set action(String v);
-  external Range get range;
-  external set range(Range v);
+  external AceRange get range;
+  external set range(AceRange v);
   external String get text;
   external set text(String v);
   external List<String> get lines;
   external set lines(List<String> v);
   external factory Delta(
-      {String action, Range range, String text, List<String> lines});
+      {String action, AceRange range, String text, List<String> lines});
 }
 
 @anonymous
@@ -247,7 +247,7 @@ abstract class Document {
   external num getLength();
 
   /// [Given a range within the document, this function returns all the text within that range as a single string.]{: #Document.getTextRange.desc}
-  external String getTextRange(Range range);
+  external String getTextRange(AceRange range);
 
   /// Inserts a block of `text` and the indicated `position`.
   external dynamic insert(Position position, String text);
@@ -262,7 +262,7 @@ abstract class Document {
   external dynamic insertInLine(dynamic position, String text);
 
   /// Removes the `range` from the document.
-  external dynamic remove(Range range);
+  external dynamic remove(AceRange range);
 
   /// Removes the specified columns from the `row`. This method also triggers the `'change'` event.
   external dynamic removeInLine(num row, num startColumn, num endColumn);
@@ -274,7 +274,7 @@ abstract class Document {
   external void removeNewLine(num row);
 
   /// Replaces a range in the document with the new `text`.
-  external dynamic replace(Range range, String text);
+  external dynamic replace(AceRange range, String text);
 
   /// Applies all the changes previously accumulated. These can be either `'includeText'`, `'insertLines'`, `'removeText'`, and `'removeLines'`.
   external void applyDeltas(List<Delta> deltas);
@@ -323,7 +323,7 @@ abstract class IEditSession {
   external set doc(Document v);
   external dynamic on(String event, dynamic fn(dynamic e));
   external void findMatchingBracket(Position position);
-  external void addFold(String text, Range range);
+  external void addFold(String text, AceRange range);
   external dynamic getFoldAt(num row, num column);
   external void removeFold(dynamic arg);
   external void expandFold(dynamic arg);
@@ -331,7 +331,7 @@ abstract class IEditSession {
   external void screenToDocumentColumn(num row, num column);
   external dynamic getFoldDisplayLine(
       dynamic foldLine, num docRow, num docColumn);
-  external dynamic getFoldsInRange(Range range);
+  external dynamic getFoldsInRange(AceRange range);
   external void highlight(String text);
 
   /// Sets the `EditSession` to point to a new `Document`. If a `BackgroundTokenizer` exists, it also points to `doc`.
@@ -421,7 +421,7 @@ abstract class IEditSession {
   /*external num addMarker(Range range, String clazz, Function type, bool inFront);*/
   /// Adds a new marker to the given `Range`. If `inFront` is `true`, a front marker is defined, and the `'changeFrontMarker'` event fires; otherwise, the `'changeBackMarker'` event fires.
   /*external num addMarker(Range range, String clazz, String type, bool inFront);*/
-  external num addMarker(Range range, String clazz,
+  external num addMarker(AceRange range, String clazz,
       dynamic /*Function|String*/ type, bool inFront);
 
   /// Adds a dynamic marker to the session.
@@ -446,7 +446,7 @@ abstract class IEditSession {
   external void $detectNewLine(String text);
 
   /// Given a starting row and column, this method returns the `Range` of the first word boundary it finds.
-  external Range getWordRange(num row, num column);
+  external AceRange getWordRange(num row, num column);
 
   /// Gets the range of a word, including its right whitespace.
   external dynamic getAWordRange(num row, num column);
@@ -497,38 +497,38 @@ abstract class IEditSession {
   external num getLength();
 
   /// {:Document.getTextRange.desc}
-  external String getTextRange(Range range);
+  external String getTextRange(AceRange range);
 
   /// Inserts a block of `text` and the indicated `position`.
   external dynamic insert(Position position, String text);
 
   /// Removes the `range` from the document.
-  external dynamic remove(Range range);
+  external dynamic remove(AceRange range);
 
   /// Reverts previous changes to your document.
-  external Range undoChanges(List<dynamic> deltas, bool dontSelect);
+  external AceRange undoChanges(List<dynamic> deltas, bool dontSelect);
 
   /// Re-implements a previously undone change to your document.
-  external Range redoChanges(List<dynamic> deltas, bool dontSelect);
+  external AceRange redoChanges(List<dynamic> deltas, bool dontSelect);
 
   /// Enables or disables highlighting of the range where an undo occured.
   external void setUndoSelect(bool enable);
 
   /// Replaces a range in the document with the new `text`.
-  external dynamic replace(Range range, String text);
+  external dynamic replace(AceRange range, String text);
 
   /// Moves a range of text from the given range to the given position. `toPosition` is an object that looks like this:
   /// ```json
   /// { row: newRowLocation, column: newColumnLocation }
   /// ```
-  external Range moveText(Range fromRange, dynamic toPosition);
+  external AceRange moveText(AceRange fromRange, dynamic toPosition);
 
   /// Indents all the rows, from `startRow` to `endRow` (inclusive), by prefixing each row with the token in `indentString`.
   /// If `indentString` contains the `'\t'` character, it's replaced by whatever is defined by [[EditSession.getTabString `getTabString()`]].
   external void indentRows(num startRow, num endRow, String indentString);
 
   /// Outdents all the rows defined by the `start` and `end` properties of `range`.
-  external void outdentRows(Range range);
+  external void outdentRows(AceRange range);
 
   /// Shifts all the lines in the document up one, starting from `firstRow` and ending at `lastRow`.
   external num moveLinesUp(num firstRow, num lastRow);
@@ -880,7 +880,7 @@ abstract class Editor {
   /// ```json
   /// { row: newRowLocation, column: newColumnLocation }
   /// ```
-  external Range moveText(Range fromRange, dynamic toPosition);
+  external AceRange moveText(AceRange fromRange, dynamic toPosition);
 
   /// Copies all the selected lines up one row.
   external num copyLinesUp();
@@ -935,7 +935,7 @@ abstract class Editor {
   external num getCursorPositionScreen();
 
   /// {:Selection.getRange}
-  external Range getSelectionRange();
+  external AceRange getSelectionRange();
 
   /// Selects all the text in editor.
   external void selectAll();
@@ -1092,12 +1092,12 @@ abstract class PlaceHolder {
 @anonymous
 @JS()
 abstract class IRangeList {
-  external List<Range> get ranges;
-  external set ranges(List<Range> v);
+  external List<AceRange> get ranges;
+  external set ranges(List<AceRange> v);
   external void pointIndex(Position pos, [num startIndex]);
-  external void addList(List<Range> ranges);
-  external void add(Range ranges);
-  external List<Range> merge();
+  external void addList(List<AceRange> ranges);
+  external void add(AceRange ranges);
+  external List<AceRange> merge();
   external void substractPoint(Position pos);
 }
 
@@ -1109,10 +1109,11 @@ class RangeList {
 }
 
 @JS()
+@anonymous
 class Marker {
   external get clazz;
   external get id;
-  external Range get range;
+  external AceRange get range;
   external String get type;
 }
 
@@ -1120,8 +1121,10 @@ class Marker {
 /// Range
 /// /////////////
 /// This object is used in various places to indicate a region within the editor. To better visualize how this works, imagine a rectangle. Each quadrant of the rectangle is analogus to a range, as ranges contain a starting row and starting column, and an ending row, and ending column.
-@JS() // had to remove the AceAjax selector here...
-abstract class Range {
+
+// requires AceRange to be manually loaded in JS as global
+@JS()
+abstract class AceRange {
   external num get startRow;
   external set startRow(num v);
   external num get startColumn;
@@ -1137,7 +1140,7 @@ abstract class Range {
   external bool isEmpty();
 
   /// Returns `true` if and only if the starting row and column, and ending row and column, are equivalent to those given by `range`.
-  external bool isEqual(Range range);
+  external bool isEqual(AceRange range);
 
   /// Returns a string containing the range's row and column information, given like this:
   /// ```
@@ -1153,16 +1156,16 @@ abstract class Range {
   external bool contains(num row, num column);
 
   /// Compares `this` range (A) with another range (B).
-  external num compareRange(Range range);
+  external num compareRange(AceRange range);
 
   /// Checks the row and column points of `p` with the row and column points of the calling range.
   external num comparePoint(Position p);
 
   /// Checks the start and end points of `range` and compares them to the calling range. Returns `true` if the `range` is contained within the caller's range.
-  external bool containsRange(Range range);
+  external bool containsRange(AceRange range);
 
   /// Returns `true` if passed in `range` intersects with the one calling this method.
-  external bool intersects(Range range);
+  external bool intersects(AceRange range);
 
   /// Returns `true` if the caller's ending row point is the same as `row`, and if the caller's ending column is the same as `column`.
   external bool isEnd(num row, num column);
@@ -1198,30 +1201,29 @@ abstract class Range {
   external num compareInside(num row, num column);
 
   /// Returns the part of the current `Range` that occurs within the boundaries of `firstRow` and `lastRow` as a new `Range` object.
-  external Range clipRows(num firstRow, num lastRow);
+  external AceRange clipRows(num firstRow, num lastRow);
 
   /// Changes the row and column points for the calling range for both the starting and ending points.
-  external Range extend(num row, num column);
+  external AceRange extend(num row, num column);
 
   /// Returns `true` if the range spans across multiple lines.
   external bool isMultiLine();
 
   /// Returns a duplicate of the calling range.
-  external Range clone();
+  external AceRange clone();
 
   /// Returns a range containing the starting and ending rows of the original range, but with a column value of `0`.
-  external Range collapseRows();
+  external AceRange collapseRows();
 
   /// Given the current `Range`, this function converts those starting and ending points into screen positions, and then returns a new `Range` object.
-  external Range toScreenRange(IEditSession session);
+  external AceRange toScreenRange(IEditSession session);
 
   /// Creates and returns a new `Range` based on the row and column of the given parameters.
   /*external Range fromPoints(Range start, Range end);*/
   /*external Range fromPoints(Position pos1, Position pos2);*/
-  external Range fromPoints(dynamic /*Range|Position*/ start_pos1,
+  external static AceRange fromPoints(dynamic /*Range|Position*/ start_pos1,
       dynamic /*Range|Position*/ end_pos2);
-  external factory Range(
-      num startRow, num startColumn, num endRow, num endColumn);
+  external factory AceRange(num startRow, num startColumn, num endRow, num endColumn);
 }
 
 /// /////////////
@@ -1273,10 +1275,10 @@ abstract class Search {
   external void setOptions(dynamic An);
 
   /// Searches for `options.needle`. If found, this method returns the [[Range `Range`]] where the text first occurs. If `options.backwards` is `true`, the search goes backwards in the session.
-  external Range find(IEditSession session);
+  external AceRange find(IEditSession session);
 
   /// Searches for all occurances `options.needle`. If found, this method returns an array of [[Range `Range`s]] where the text first occurs. If `options.backwards` is `true`, the search goes backwards in the session.
-  external List<Range> findAll(IEditSession session);
+  external List<AceRange> findAll(IEditSession session);
 
   /// Searches for `options.needle` in `input`, and, if found, replaces it with `replacement`.
   /// + (String): If `options.regExp` is `true`, this function returns `input` with the replacement already made. Otherwise, this function just returns `replacement`.<br/>
@@ -1306,11 +1308,11 @@ abstract class Selection {
   external void addEventListener(String ev, Function callback);
   external void moveCursorWordLeft();
   external void moveCursorWordRight();
-  external void fromOrientedRange(Range range);
+  external void fromOrientedRange(AceRange range);
   external void setSelectionRange(dynamic match);
-  external List<Range> getAllRanges();
+  external List<AceRange> getAllRanges();
   external dynamic on(String event, dynamic fn(dynamic e));
-  external void addRange(Range range);
+  external void addRange(AceRange range);
 
   /// Returns `true` if the selection is empty.
   external bool isEmpty();
@@ -1337,7 +1339,7 @@ abstract class Selection {
   external bool isBackwards();
 
   /// [Returns the [[Range]] for the selected text.]{: #Selection.getRange}
-  external Range getRange();
+  external AceRange getRange();
 
   /// [Empties the selection (by de-selecting it). This function also emits the `'changeSelection'` event.]{: #Selection.clearSelection}
   external void clearSelection();
@@ -1346,7 +1348,7 @@ abstract class Selection {
   external void selectAll();
 
   /// Sets the selection to the provided range.
-  external void setRange(Range range, bool reverse);
+  external void setRange(AceRange range, bool reverse);
 
   /// Moves the selection cursor to the indicated row and column.
   external void selectTo(num row, num column);
@@ -1539,7 +1541,7 @@ abstract class UndoManager {
   external void execute(dynamic options);
 
   /// [Perform an undo operation on the document, reverting the last change.]{: #UndoManager.undo}
-  external Range undo([bool dontSelect]);
+  external AceRange undo([bool dontSelect]);
 
   /// [Perform a redo operation on the document, reimplementing the last change.]{: #UndoManager.redo}
   external void redo(bool dontSelect);

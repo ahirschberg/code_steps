@@ -26,14 +26,14 @@ import 'package:observable/observable.dart';
 class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const String code_edit_id = 'lesson-code-edit';
   @Input()
-  StreamController<PropertyChangeRecord<AceActionRegion>> activeRegionChangeController;
+  StreamController<PropertyChangeRecord<AceRegionBundle>> activeRegionChangeController;
   @Output('onInit')
   get init => super.init; // workaround for annotations not inheriting properly
 
-  AceActionRegion _activeRegion = new AceActionRegion(null, null, null);
-  AceActionRegion get activeRegion => _activeRegion;
+  AceRegionBundle _activeRegion = new AceRegionBundle(null, null, null);
+  AceRegionBundle get activeRegion => _activeRegion;
 
-  Map<int, AceActionRegion> guiRegions = new Map();
+  Map<int, AceRegionBundle> guiRegions = new Map();
 
   StepContextService stepContextService;
   LessonCodeEditorComponent(ElementRef elementRef, this.stepContextService)
@@ -57,7 +57,7 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   }
 
   _addRegionToEditor(ActionRegion r) {
-    AceActionRegion guiRegion = new AceActionRegion(null, 'cs-mark', r);
+    AceRegionBundle guiRegion = new AceRegionBundle(null, 'cs-mark', r);
     return _insertMarker(guiRegion);
   }
 
@@ -66,24 +66,24 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   }
 
   int nextUniq = 0;
-  _insertMarker(AceActionRegion guiRegion) {
+  _insertMarker(AceRegionBundle aceBundle) {
     String uniqClass = 'mark-${nextUniq++}';
-    int id = aceController.session.addMarker(guiRegion.region.range,
-        guiRegion.css_class + ' $uniqClass', "text", true); // fixme
+    int id = aceController.session.addMarker(aceBundle.region.range,
+        aceBundle.css_class + ' $uniqClass', "text", true); // fixme
     Marker obj = new JsMap<Marker>(aceController.session.getMarkers(true))[id];
-    guiRegion.marker = obj;
-    guiRegions[id] = guiRegion;
+    aceBundle.marker = obj;
+    guiRegions[id] = aceBundle;
     return id;
   }
 
   void onData(event, Selection s) {
-    AceActionRegion oldRegion = _activeRegion;
+    AceRegionBundle oldRegion = _activeRegion;
     _activeRegion = getRegionAtCursor();
     activeRegionChangeController.add(new PropertyChangeRecord(this, #activeRegion, oldRegion, _activeRegion));
   }
 
-  AceActionRegion getRegionAtCursor() {
-    Iterable<AceActionRegion> regions = guiRegions.values.where((region) =>
+  AceRegionBundle getRegionAtCursor() {
+    Iterable<AceRegionBundle> regions = guiRegions.values.where((region) =>
         region.marker.clazz.contains('cs-mark') &&
         region.marker.range.comparePoint(aceController.selection.getCursor()) ==
             0);
@@ -102,10 +102,10 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const red = const Color(126, 13, 13, 0.68);
   static const purple = const Color(197, 23, 158, 0.25);
   static const yellow = const Color(79, 76, 15, 0.66);
-  recolorRegion(AceActionRegion guiRegion) {
+  recolorRegion(AceRegionBundle aceBundle) {
     Color c = purple;
     // FIXME remove canary once dart2js updated with proper object support for interops
-    jss.set('div.cs-mark.${guiRegion.marker.clazz}',
+    jss.set('div.cs-mark.${aceBundle.marker.clazz}',
         new JsObject.jsify({'background-color': c.toString(), 'CANARY': true}));
   }
 
@@ -117,9 +117,11 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   }
 }
 
-class AceActionRegion {
+class AceRegionBundle {
   Marker marker;
   String css_class;
   ActionRegion region;
-  AceActionRegion(this.marker, this.css_class, this.region);
+  AceRegionBundle(this.marker, this.css_class, this.region);
+
+  String toString() => "Bundle: ${marker.id}, $region";
 }

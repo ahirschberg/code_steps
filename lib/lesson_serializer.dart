@@ -40,7 +40,7 @@ class LessonSerializer {
   static String encode(var obj) {
     jsonx.objectToJsons[Position] =
         (Position p) => {'row': p.row, 'column': p.column};
-    jsonx.objectToJsons[Range] = (Range r) => {'start': r.start, 'end': r.end};
+    jsonx.objectToJsons[AceRange] = (AceRange r) => {'start': r.start, 'end': r.end};
     return jsonx.encode(obj);
   }
 
@@ -52,8 +52,7 @@ class LessonSerializer {
       if (key == 'from' || key == 'to') {
         return new Position(row: val['row'], column: val['column']);
       } else if (key == 'range') {
-        return new Range(0,0,0,0); // FIXME
-        //return Range.fromPoints(val['from'], val['to']);
+        return AceRange.fromPoints(val['from'], val['to']);
       } else if (key == 'steps') {
         return (val).map((s) => Step.deserialize(s));
       } else {

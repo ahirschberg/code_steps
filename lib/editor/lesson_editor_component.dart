@@ -34,10 +34,10 @@ class LessonEditorComponent implements OnInit {
   StreamController _editorInitStreamController =
       new StreamController.broadcast();
 
-  StreamController<PropertyChangeRecord<AceActionRegion>>
+  StreamController<PropertyChangeRecord<AceRegionBundle>>
       activeRegionChangeController =
-      new StreamController<PropertyChangeRecord<AceActionRegion>>.broadcast();
-  Stream<PropertyChangeRecord<AceActionRegion>> activeRegionOnChange;
+      new StreamController<PropertyChangeRecord<AceRegionBundle>>.broadcast();
+  Stream<PropertyChangeRecord<AceRegionBundle>> activeRegionOnChange;
 
   List<Step> steps = [];
   Step get currentStep => steps[stepContextService.stepIndex];

@@ -2,13 +2,13 @@
 <p> activeRegion: {{ activeRegion }}</p>
 <div class="row" *ngIf="activeRegion != null">
     <div class="col-md-3">
-        <bs-button-group class="step-actions-picker btn-group-vertical">
-            <!--<bs-radio-button *ngFor="let action of actionUIToggles.keys"-->
-                             <!--class="btn btn-sm btn-info" style="width: 100%;"-->
-                             <!--[(ngModel)]="selectedActionType" [option]="action">-->
-                <!--{{esh.stringFromEnum(action)}}-->
-            <!--</bs-radio-button>-->
-        </bs-button-group>
+        <ul class="step-actions-picker btn-group-vertical">
+            <li *ngFor="let action of regionActions"
+                             class="btn btn-sm btn-info" style="width: 100%;"
+                             [(ngModel)]="selectedActionType">
+                {{esh.stringFromEnum(action)}}
+            </li>
+        </ul>
     </div>
     <div class="col-md-6">
         <button (click)="deleteRegion()">Delete Region</button>

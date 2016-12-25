@@ -20,7 +20,7 @@ class StepActionsProvider extends Injectable {
     });
   }
 
-  static final Function _hide = (List<RegionInsert> lines, Range range) {
+  static final Function _hide = (List<RegionInsert> lines, AceRange range) {
     RegionInsert startLine = lines[range.start.row];
     if (range.start.row == range.end.row) {
       startLine.delete(range.start.column, range.end.column);
@@ -39,7 +39,7 @@ class StepActionsProvider extends Injectable {
     String typeString = LessonSerializer.stepActionTypeHelper.stringFromEnum(t);
     String openTag = '<cs-region class="action-${typeString.toLowerCase()}">';
     String closeTag = '</cs-region>';
-    return (List<RegionInsert> lines, Range range) {
+    return (List<RegionInsert> lines, AceRange range) {
       if (range.isEmpty()) {
         print('WARN: empty range $range');
         return;

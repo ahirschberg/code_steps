@@ -36,9 +36,9 @@ class ActionRegionEditorComponent implements OnChanges {
   EventEmitter onDataChange;
 
   @Input()
-  Stream<PropertyChangeRecord<AceActionRegion>> activeRegionOnChange;
+  Stream<PropertyChangeRecord<AceRegionBundle>> activeRegionOnChange;
   StreamSubscription activeRegionChangeListener;
-  AceActionRegion activeRegion;
+  AceRegionBundle activeRegion;
 
   StepContextService stepContextService;
   EnumStringHelper<StepActionType> esh;
@@ -54,12 +54,7 @@ class ActionRegionEditorComponent implements OnChanges {
     activeRegion = null;
   }
 
-  get selectedActionType => activeRegion.region.actions.first;
-  set selectedActionType(StepActionType type) {
-    activeRegion.region.actions
-      ..clear()
-      ..add(type);
-  }
+  Set<StepActionType> get regionActions => activeRegion.region.actions;
 
   @override
   ngOnChanges(Map<String, SimpleChange> changes) {

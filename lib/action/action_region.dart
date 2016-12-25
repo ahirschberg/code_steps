@@ -7,7 +7,7 @@ import 'package:code_steps/action/step_action.dart';
 
 class ActionRegion {
   Set<StepActionType> actions;
-  Range range;
+  AceRange range;
 
   ActionRegion(this.range, [this.actions]) {
     if (this.actions == null) this.actions = new Set<StepActionType>();

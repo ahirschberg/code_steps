@@ -1,6 +1,8 @@
 // FIXME once dart2js is updated with proper interop support
 // This abstraction layer is necessary to ensure the proper object gets passed to the jss library
 
+// get Ace's Range object as a global so it works with our ace_facade.dart interop
+window["AceRange"] = ace.require('ace/range').Range;
 
 if (window['jss'] == undefined) console.warn("WARN: jss was not overridden");
 else {
