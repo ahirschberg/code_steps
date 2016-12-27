@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:js';
 import 'package:angular2/core.dart';
+import 'package:code_steps/action/step_action.dart';
 import 'package:code_steps/js_map.dart';
 import 'package:code_steps/action/action_region.dart';
 import 'package:code_steps/action/step.dart';
@@ -15,7 +16,7 @@ import 'package:observable/observable.dart';
 
 @Component(selector: 'ace-code-edit', template: '', styles: const [
   '''
-    :host div.cs-mark {
+    :host .cs-mark {
         background-color: rgba(132,132,132,0.25);
         position: absolute;
     }
@@ -26,14 +27,21 @@ import 'package:observable/observable.dart';
 class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const String code_edit_id = 'lesson-code-edit';
   @Input()
-  StreamController<PropertyChangeRecord<AceRegionBundle>> activeRegionChangeController;
+  StreamController<PropertyChangeRecord<AceRegionBundle>>
+      activeRegionChangeController;
   @Output('onInit')
   get init => super.init; // workaround for annotations not inheriting properly
 
   AceRegionBundle _activeRegion = new AceRegionBundle(null, null, null);
   AceRegionBundle get activeRegion => _activeRegion;
 
-  Map<int, AceRegionBundle> guiRegions = new Map();
+  Map<int, AceRegionBundle> _aceRegionBundles = new Map();
+  Set<ActionRegion> get regions =>
+      _aceRegionBundles.values.map((bundle) => bundle.region).toSet();
+  set regions(Set<ActionRegion> newRegions) {
+    _clearEditorRegions();
+    newRegions.forEach((region) => _addRegionToEditor(region));
+  }
 
   StepContextService stepContextService;
   LessonCodeEditorComponent(ElementRef elementRef, this.stepContextService)
@@ -45,15 +53,11 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   ngOnInit() {
     super.ngOnInit();
     this.aceController.selection.on("changeCursor", allowInterop(onData));
-    stepContextService.onStepChange.listen((e) {
-      cleanRegions();
-      stepContextService.currentStep.activeRegions.forEach((r) => _addRegionToEditor(r));
-    });
   }
 
-  cleanRegions() {
-    guiRegions.keys.toSet().forEach((id) => removeActionMarker(id));
-    guiRegions.clear();
+  _clearEditorRegions() {
+    _aceRegionBundles.keys.toSet().forEach((id) => removeActionMarker(id));
+    _aceRegionBundles.clear();
   }
 
   _addRegionToEditor(ActionRegion r) {
@@ -72,21 +76,25 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
         aceBundle.css_class + ' $uniqClass', "text", true); // fixme
     Marker obj = new JsMap<Marker>(aceController.session.getMarkers(true))[id];
     aceBundle.marker = obj;
-    guiRegions[id] = aceBundle;
+    _aceRegionBundles[id] = aceBundle;
+    if (!aceBundle.region.actions.isEmpty) recolorRegion(aceBundle);
     return id;
   }
 
   void onData(event, Selection s) {
     AceRegionBundle oldRegion = _activeRegion;
     _activeRegion = getRegionAtCursor();
-    activeRegionChangeController.add(new PropertyChangeRecord(this, #activeRegion, oldRegion, _activeRegion));
+    activeRegionChangeController.add(new PropertyChangeRecord(
+        this, #activeRegion, oldRegion, _activeRegion));
   }
 
   AceRegionBundle getRegionAtCursor() {
-    Iterable<AceRegionBundle> regions = guiRegions.values.where((region) =>
-        region.marker.clazz.contains('cs-mark') &&
-        region.marker.range.comparePoint(aceController.selection.getCursor()) ==
-            0);
+    Iterable<AceRegionBundle> regions = _aceRegionBundles.values.where(
+        (region) =>
+            region.marker.clazz.contains('cs-mark') &&
+            region.marker.range
+                    .comparePoint(aceController.selection.getCursor()) ==
+                0);
     if (regions.isNotEmpty) {
       return regions.fold(
           regions.first,
@@ -103,10 +111,14 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
   static const purple = const Color(197, 23, 158, 0.25);
   static const yellow = const Color(79, 76, 15, 0.66);
   recolorRegion(AceRegionBundle aceBundle) {
-    Color c = purple;
-    // FIXME remove canary once dart2js updated with proper object support for interops
-    jss.set('div.cs-mark.${aceBundle.marker.clazz}',
-        new JsObject.jsify({'background-color': c.toString(), 'CANARY': true}));
+    Color to_color;
+    Function has_action = aceBundle.region.actions.contains;
+    if (has_action(StepActionType.Fail)) to_color = red;
+    else if (has_action(StepActionType.Pass)) to_color = green;
+    else if (has_action(StepActionType.Show)) to_color = yellow;
+    else to_color = purple;
+    jss.set('.' + aceBundle.marker.clazz.replaceAll(new RegExp(r'\s'), '.'),
+        new JsObject.jsify({'background-color': to_color.toString()}));
   }
 
   void addActionMarker() {

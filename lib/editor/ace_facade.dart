@@ -1111,8 +1111,8 @@ class RangeList {
 @JS()
 @anonymous
 class Marker {
-  external get clazz;
-  external get id;
+  external String get clazz;
+  external int get id;
   external AceRange get range;
   external String get type;
 }

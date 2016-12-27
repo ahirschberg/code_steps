@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:html';
 import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
@@ -39,8 +38,6 @@ class LessonEditorComponent implements OnInit {
       new StreamController<PropertyChangeRecord<AceRegionBundle>>.broadcast();
   Stream<PropertyChangeRecord<AceRegionBundle>> activeRegionOnChange;
 
-  List<Step> steps = [];
-  Step get currentStep => steps[stepContextService.stepIndex];
   String lessonName;
   LessonIO _lessonIO;
   RouteParams _routeParams;
@@ -54,7 +51,19 @@ class LessonEditorComponent implements OnInit {
     _editorInitStreamController.stream.take(2).drain().then(_onAllEditorsReady);
 
     stepContextService.onStepChange.listen(_onStepChange);
-     activeRegionOnChange = activeRegionChangeController.stream;
+    activeRegionOnChange = activeRegionChangeController.stream;
+  }
+
+  loadStepToEditors(Step step) {
+    markdownEditor.text = step.explanation;
+    codeEditor.text = step.code;
+    codeEditor.regions = step.activeRegions;
+  }
+  flushEditorsToStep(Step step) {
+    step
+     ..explanation = markdownEditor.text
+     ..code = codeEditor.text
+     ..activeRegions = codeEditor.regions;
   }
 
   // TODO
@@ -66,38 +75,25 @@ class LessonEditorComponent implements OnInit {
   }
 
   void _onAllEditorsReady(_) {
-    codeEditor.aceController.on("change", allowInterop((b, c) => print(b)));
-
+//    codeEditor.aceController.on("change", allowInterop((b, c) {
+//      print('code pane change event:');
+//      window.console.log(b);
+//    }));
     markdownEditor.aceController.renderer.setShowGutter(false);
     markdownEditor.aceController.session.setUseWrapMode(true);
-
     lessonName = _routeParams.get('lesson_name');
     if (lessonName != null) serializedRetrieve();
   }
 
-  void _onStepChange(PropertyChangeRecord data) {
-    markdownEditor.aceController
-        .setValue(stepContextService.currentStep.explanation);
-    codeEditor.aceController.setValue(stepContextService.currentStep.code);
+  void _onStepChange(PropertyChangeRecord<Step> data) {
+    flushEditorsToStep(data.oldValue);
+    loadStepToEditors(data.newValue);
   }
 
-  void reset() {
-    steps = [];
-    codeEditor.cleanRegions();
-  }
-
-  Iterable getSavedLessons() {
-    return window.localStorage.keys
-        .where((k) => k.startsWith('lesson-'))
-        .map((k) => [k, window.localStorage[k]]);
-  }
-
-  // FIXME
   void serializedInit(Lesson lesson) {
-    reset();
     stepContextService.currentLesson = lesson;
-//    codeEditor.addSerializedRegions(serializedEditData['regions']);
     codeEditorFilepath = "TODO"; // FIXME
+    loadStepToEditors(stepContextService.currentStep);
   }
 
   setupMarkdownEditor(AceEditorComponent editor) {
@@ -131,8 +127,7 @@ class LessonEditorComponent implements OnInit {
   }
 
   serializedSave() {
-    steps[stepContextService.stepIndex].explanation =
-        markdownEditor.aceController.getValue();
+    flushEditorsToStep(stepContextService.currentStep);
     if (lessonName == null || lessonName.length == 0) {
       print('Cannot save an empty lesson name!');
     } else {
@@ -143,9 +138,9 @@ class LessonEditorComponent implements OnInit {
   serializedRetrieve() =>
       _lessonIO.smartLoadData(lessonName).then(serializedInit);
 
-  Map toJson() => {
+  Map toJson() => { // FIXME
         'code': codeEditor.aceController.getValue(),
-        'steps': steps,
+        'steps': [],
         'meta': {'code_filename': _codeEditorFilepath}
       };
 }

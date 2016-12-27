@@ -4,8 +4,7 @@
     <div class="col-md-3">
         <ul class="step-actions-picker btn-group-vertical">
             <li *ngFor="let action of regionActions"
-                             class="btn btn-sm btn-info" style="width: 100%;"
-                             [(ngModel)]="selectedActionType">
+                             class="btn btn-sm btn-info" style="width: 100%;" >
                 {{esh.stringFromEnum(action)}}
             </li>
         </ul>

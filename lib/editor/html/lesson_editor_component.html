@@ -2,12 +2,12 @@
     <div>
         <input type="text" placeholder="Lesson name" [(ngModel)]="lessonName">
         <button (click)="serializedSave()">save</button>
-        <button (click)="serializedRetrieve()">load</button>
+        <button (click)="serializedRetrieve()" >load</button>
     </div>
 </header>
-<button (click)="stepContextService.gotoPrevious()">Previous</button>
+<button (click)="stepContextService.gotoPrevious()" [disabled]="!stepContextService.hasPrevious()">Previous</button>
 {{stepContextService.stepIndex}}
-<button (click)="stepContextService.gotoNext()">Next</button>
+<button (click)="stepContextService.gotoNext()" [disabled]="!stepContextService.hasNext()">Next</button>
 <div class="container">
     <div class="row">
         <div class="col-xl-6">

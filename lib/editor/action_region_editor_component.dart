@@ -58,7 +58,7 @@ class ActionRegionEditorComponent implements OnChanges {
 
   @override
   ngOnChanges(Map<String, SimpleChange> changes) {
-    print(changes);
+    print('Got an ngOnChanges event in ActionRegionEditor: $changes');
     if (changes['activeRegionOnChange'] != null) {
       activeRegionChangeListener?.cancel();
       activeRegionChangeListener = activeRegionOnChange.listen((pc) => activeRegion = pc.newValue);
