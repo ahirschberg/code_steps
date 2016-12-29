@@ -1,7 +1,5 @@
 library lesson_serializer;
 
-import 'dart:developer';
-import 'package:code_steps/action/action_region.dart';
 import 'package:code_steps/action/step.dart';
 import 'package:code_steps/action/step_action.dart' show StepActionType;
 
@@ -38,9 +36,10 @@ class LessonSerializer {
       new EnumStringHelper<StepActionType>();
 
   static String encode(var obj) {
-    jsonx.objectToJsons[Position] =
+    jsonx.objectToJsons[Position] = // TODO fix these because interops don't work well with runtimeType
         (Position p) => {'row': p.row, 'column': p.column};
-    jsonx.objectToJsons[AceRange] = (AceRange r) => {'start': r.start, 'end': r.end};
+    jsonx.objectToJsons[AceRange] = (AceRange r) => {'from': r.start, 'to': r.end};
+    jsonx.objectToJsons[new Set().runtimeType] = (Set s) => s.toList(growable: false); // hack to get sets to convert correctly
     return jsonx.encode(obj);
   }
 

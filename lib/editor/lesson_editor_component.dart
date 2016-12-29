@@ -57,13 +57,13 @@ class LessonEditorComponent implements OnInit {
   loadStepToEditors(Step step) {
     markdownEditor.text = step.explanation;
     codeEditor.text = step.code;
-    codeEditor.regions = step.activeRegions;
+    codeEditor.regions = step.regions;
   }
   flushEditorsToStep(Step step) {
     step
      ..explanation = markdownEditor.text
      ..code = codeEditor.text
-     ..activeRegions = codeEditor.regions;
+     ..regions = codeEditor.regions;
   }
 
   // TODO
@@ -131,16 +131,15 @@ class LessonEditorComponent implements OnInit {
     if (lessonName == null || lessonName.length == 0) {
       print('Cannot save an empty lesson name!');
     } else {
-      _lessonIO.saveLesson(lessonName, this);
+      _lessonIO.saveLesson(lessonName, stepContextService.currentLesson);
     }
   }
 
   serializedRetrieve() =>
       _lessonIO.smartLoadData(lessonName).then(serializedInit);
 
-  Map toJson() => { // FIXME
-        'code': codeEditor.aceController.getValue(),
-        'steps': [],
-        'meta': {'code_filename': _codeEditorFilepath}
-      };
+  toJson() {
+    print('calling toJson');
+    throw 'Lesson editor is not serializable'; // FIXME
+  }
 }

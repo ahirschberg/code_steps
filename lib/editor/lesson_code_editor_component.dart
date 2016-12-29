@@ -71,10 +71,10 @@ class LessonCodeEditorComponent extends AceEditorComponent implements OnInit {
 
   int nextUniq = 0;
   _insertMarker(AceRegionBundle aceBundle) {
-    String uniqClass = 'mark-${nextUniq++}';
+    String uniqClass = 'mark-${nextUniq++}'; // Hack to get unique classes for jss to work with
     int id = aceController.session.addMarker(aceBundle.region.range,
-        aceBundle.css_class + ' $uniqClass', "text", true); // fixme
-    Marker obj = new JsMap<Marker>(aceController.session.getMarkers(true))[id];
+        aceBundle.css_class + ' $uniqClass', "text", false);
+    Marker obj = new JsMap<Marker>(aceController.session.getMarkers(false))[id];
     aceBundle.marker = obj;
     _aceRegionBundles[id] = aceBundle;
     if (!aceBundle.region.actions.isEmpty) recolorRegion(aceBundle);

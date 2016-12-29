@@ -14,14 +14,15 @@ class StepContextService extends Injectable {
   Stream<PropertyChangeRecord<Step>> get onStepChange =>
       _stepChangeController.stream;
 
-  Future selectLesson(lesson_name, [initial_step_index]) {
+  // FIXME invert dependency to lessonIO
+  Future selectLesson(lesson_name, [initial_step_index=0]) {
     print(lesson_name);
     return _lessonIO.smartLoadData(lesson_name).then((Lesson lesson) {
       if (lesson == null) {
         print("Error: could not load lesson data");
       }
+      stepIndex = initial_step_index;
       currentLesson = lesson;
-      stepIndex = initial_step_index ?? 0;
     });
   }
 
